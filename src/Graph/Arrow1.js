@@ -34,7 +34,6 @@ export default class Arrow1 extends Polygon {
 
   calcuteShape (pos, time) {
     let posis = _.map(pos, ent => ent.position.getValue(time)) // pos.map(ent => ent.position.getValue(time))
-    console.log('turf: ', _, turf)
     let turfPoints = posis.map(cartesian3 => {
       let longLat = convertCartesian(cartesian3)
       return turf.point(longLat)

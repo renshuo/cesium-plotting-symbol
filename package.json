@@ -1,0 +1,43 @@
+{
+  "name": "cesium-plotting-symbol",
+  "version": "0.0.2",
+  "description": "cesiu plotting symbol",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "jest",
+    "build": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/renshuo/cesium-plotting-symbol.git"
+  },
+  "keywords": [
+    "cesium",
+    "plotting",
+    "symbol"
+  ],
+  "author": "sren",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/renshuo/cesium-plotting-symbol/issues"
+  },
+  "homepage": "https://github.com/renshuo/cesium-plotting-symbol#readme",
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.4",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-stage-2": "^6.24.1",
+    "eslint": "^4.19.1",
+    "eslint-config-enough": "^0.3.3",
+    "eslint-loader": "^2.0.0",
+    "jest": "^23.1.0",
+    "webpack": "^4.11.1",
+    "webpack-cli": "^3.0.1",
+    "webpack-dev-server": "^3.1.4"
+  },
+  "dependencies": {
+    "@turf/turf": "^5.1.6",
+    "cesium": "^1.46.1",
+    "lodash": "^4.17.10"
+  }
+}

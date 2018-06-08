@@ -1,0 +1,8 @@
+{
+  "presets": [
+    ["env", {
+      "include": []
+    }],
+    "stage-2"
+  ]
+}

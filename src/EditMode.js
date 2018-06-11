@@ -1,8 +1,5 @@
 import Cesium from 'cesium/Source/Cesium.js'
-import {
-  convertPos,
-  convertCartesian
-} from './mapUtil.js'
+import * as mu from './mapUtil.js'
 
 export default class EditMode {
   static getInstance () {
@@ -23,7 +20,6 @@ export default class EditMode {
     this.handler = undefined
   }
 
-
   static MODE_VIEW = 'view'
   static MODE_SELECT = 'select'
   static MODE_EDIT = 'edit'
@@ -33,6 +29,8 @@ export default class EditMode {
   static ACT_CREATE = 'create'
   static ACT_SELECT = 'select'
   static ACT_FINISH = 'finish'
+
+  static seq = 0
 
   mode = EditMode.MODE_VIEW
   nextMode (action, ...args) {
@@ -88,7 +86,7 @@ export default class EditMode {
     viewer.canvas.style.cursor = 'auto'
   }
 
-  createMode (graph, viewer = window.viewer) {
+  createMode (graphObj, viewer = window.viewer) {
     this.mode = EditMode.MODE_CREATE
     console.log(`into ${this.mode} mode`)
     let handler = EditMode.getHandler()
@@ -96,33 +94,28 @@ export default class EditMode {
 
     viewer.canvas.style.cursor = 'crosshair'
     handler.setInputAction(move => {
-      window.cursorScreenPos = convertPos(move.endPosition)
-      window.cursorPos = Cesium.Cartesian3.fromDegrees(
-        window.cursorScreenPos[0],
-        window.cursorScreenPos[1],
-        0,
-        Cesium.Ellipsoid.WGS84
-      )
+      window.cursorScreenPos = mu.screen2lonlat(move.endPosition)
+      window.cursorPos = mu.lonlat2Cartesian(window.cursorScreenPos)
     }, Cesium.ScreenSpaceEventType.MOUSE_MOVE)
 
     handler.setInputAction(event => {
-      graph.addCtlPoint(event)
-      if (graph.isFinished()) {
-        this.finishCreate(graph)
+      this.addCtlPoint(event, graphObj)
+      if (graphObj.isFinished()) {
+        this.finishCreate(graphObj)
       }
     }, Cesium.ScreenSpaceEventType.LEFT_CLICK)
 
     handler.setInputAction(event => {
-      graph.deleteLastPoint()
+      graphObj.deleteLastPoint()
     }, Cesium.ScreenSpaceEventType.MIDDLE_CLICK)
 
     handler.setInputAction(event => {
-      this.finishCreate(graph)
+      this.finishCreate(graphObj)
     }, Cesium.ScreenSpaceEventType.RIGHT_CLICK)
 
     window.cursor = viewer.entities.add({
       id: 'cursor',
-      parent: graph.layer.rootEnt,
+      parent: graphObj.layer.rootEnt,
       position: new Cesium.CallbackProperty((time, result) => {
         return window.cursorPos === null
           ? null
@@ -134,13 +127,55 @@ export default class EditMode {
         heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
         outlineWidth: 1,
         outlineColor: Cesium.Color.AQUA
+      },
+      label: {
+        text: new Cesium.CallbackProperty((time, result) => {
+          return window.cursorScreenPos ?
+            'Lon: ' + window.cursorScreenPos[0].toPrecision(5) + '\u00B0' +
+            '\nLat: ' + window.cursorScreenPos[1].toPrecision(5) + '\u00B0' :
+            ''
+        }, true),
+        font : '14px monospace',
+        horizontalOrigin : Cesium.HorizontalOrigin.LEFT,
+        verticalOrigin : Cesium.VerticalOrigin.TOP,
+        pixelOffset : new Cesium.Cartesian2(15, 0)
       }
     })
   }
 
-  finishCreate (graph, viewer = window.viewer) {
+  addCtlPoint (event, graphObj, viewer = window.viewer) {
+    let newpos = mu.screen2Cartesian(event.position)
+    let ctlPoint = viewer.entities.add({
+      id: graphObj.graph.id + '_ctlpoint_' + EditMode.seq++,
+      parent: graphObj.graph.ctl,
+      position: newpos,
+      graphType: 'ctl',
+      point: {
+        pixelSize: 8,
+        color: Cesium.Color.fromBytes(255, 255, 255, 70),
+        heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+        outlineWidth: 1,
+        outlineColor: Cesium.Color.AQUA
+      },
+      label: {
+        text: new Cesium.CallbackProperty((time, result) => {
+          let p = mu.cartesian2lonlat(ctlPoint.position.getValue(time))
+          return 'Lon: ' + p[0].toPrecision(5) + '\u00B0' +
+                 '\nLat: ' + p[1].toPrecision(5) + '\u00B0'
+        }, true),
+        font : '14px monospace',
+        horizontalOrigin : Cesium.HorizontalOrigin.LEFT,
+        verticalOrigin : Cesium.VerticalOrigin.TOP,
+        pixelOffset : new Cesium.Cartesian2(15, 0)
+      }
+    })
+    console.log('added a point: ', ctlPoint)
+    graphObj.addHandler(ctlPoint, graphObj.graph.ctl)
+  }
+
+  finishCreate (graphObj, viewer = window.viewer) {
     viewer.entities.remove(window.cursor)
-    graph.finish()
+    graphObj.finish()
     this.nextMode(EditMode.ACT_FINISH)
   }
 
@@ -207,13 +242,7 @@ export default class EditMode {
     viewer.canvas.style.cursor = 'crosshair'
     ent.toEdit()
     handler.setInputAction(move => {
-      window.cursorScreenPos = convertPos(move.endPosition)
-      window.cursorPos = Cesium.Cartesian3.fromDegrees(
-        window.cursorScreenPos[0],
-        window.cursorScreenPos[1],
-        0,
-        Cesium.Ellipsoid.WGS84
-      )
+      window.cursorPos = mu.screen2Cartesian(move.endPosition)
     }, Cesium.ScreenSpaceEventType.MOUSE_MOVE)
 
     handler.setInputAction(event => {
@@ -242,22 +271,19 @@ export default class EditMode {
 
   pickedctl
   pickup (ent) {
-    console.log('pickup: ', ent)
-    ent.position = new Cesium.CallbackProperty((time, result) => {
-      let degrees = convertCartesian(window.cursorPos)
-      return Cesium.Cartesian3.fromDegrees(
-        degrees[0],
-        degrees[1],
-        0,
-        Cesium.Ellipsoid.WGS84
-      )
-    }, false)
     this.pickedctl = ent
+    console.log('pickup: ', this.pickedctl)
+    ent.position = new Cesium.CallbackProperty((time, result) => {
+      return window.cursorPos.clone()
+    }, false)
+    ent.label.text.setCallback(ent.label.text._callback, false)
   }
 
   unpick (ent) {
     if (this.pickedctl !== undefined) {
+      console.log('unpick: ', this.pickedctl)
       this.pickedctl.position = Cesium.Cartesian3.clone(window.cursorPos)
+      this.pickedctl.label.text.setCallback(this.pickedctl.label.text._callback, true)
       this.pickedctl = undefined
     }
   }

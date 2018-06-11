@@ -1,6 +1,4 @@
-import {
-  convertScreenPos2Cartesian
-} from './mapUtil.js'
+import * as mu from './mapUtil.js'
 import Cesium from 'cesium/Source/Cesium.js'
 
 export default class Graph {
@@ -62,27 +60,7 @@ export default class Graph {
     this.graph.graph = this
   }
 
-  /*
-  add a point to map for rule
-  */
-  addCtlPoint (event) {
-    let newpos = convertScreenPos2Cartesian(event.position)
-    console.log('added a point: ', newpos)
-    let ctlPoint = this.viewer.entities.add({
-      id: this.graph.id + '_ctlpoint_' + Graph.seq++,
-      parent: this.graph.ctl,
-      position: newpos,
-      graphType: 'ctl',
-      point: {
-        pixelSize: 8,
-        color: Cesium.Color.fromBytes(255, 255, 255, 70),
-        heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-        outlineWidth: 1,
-        outlineColor: Cesium.Color.AQUA
-      }
-    })
-    this.addHandler(ctlPoint, this.graph.ctl)
-  }
+
 
   isFinished () {
     return this.graph.ctl._children.length >= this.maxPointNum

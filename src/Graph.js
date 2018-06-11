@@ -126,6 +126,13 @@ export default class Graph {
     window.viewer.entities.remove(ent)
   }
 
+  getCtlPositions () {
+    let dt = Cesium.JulianDate.fromDate(new Date())
+    return this.graph.ctl._children.map((ent) => {
+      return ent.position.getValue(dt)
+    })
+  }
+
   /**
    * 在ctlPoint增加之后被调用
    * @param {Entity} ctlPoint 控制点的实体

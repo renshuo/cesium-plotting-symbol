@@ -30,7 +30,7 @@ export default class EditMode {
   static ACT_SELECT = 'select'
   static ACT_FINISH = 'finish'
 
-  static seq = 0
+  static seq = new Date().getTime()
 
   mode = EditMode.MODE_VIEW
   nextMode (action, ...args) {

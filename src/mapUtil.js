@@ -68,3 +68,11 @@ export function julianDate(date) {
   }
   return Cesium.JulianDate.fromDate(date)
 }
+
+export function distance (cart1, cart2) {
+  let from = turf.point(cartesian2lonlat(cart1));
+  let to = turf.point(cartesian2lonlat(cart2));
+  let options = {units: 'kilometers'};
+  let distance = turf.distance(from, to, options)
+  return distance * 1000
+}

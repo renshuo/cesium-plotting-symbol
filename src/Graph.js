@@ -2,7 +2,7 @@ import * as mu from './mapUtil.js'
 import Cesium from 'cesium/Source/Cesium.js'
 
 export default class Graph {
-  static seq = 0
+  static seq = new Date().getTime()
   static lastGraph
   viewer
   layer

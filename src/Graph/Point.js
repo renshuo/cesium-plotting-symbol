@@ -6,7 +6,7 @@ export default class Point extends Graph {
   ent
 
   addHandler (ctlPoint, ctl) {
-    this.ent = new Cesium.Entity({
+    this.ent = this.addShape({
       id: 'point_' + Graph.seq++,
       parent: this.ent,
       position: new Cesium.CallbackProperty((time, result) => {
@@ -19,7 +19,6 @@ export default class Point extends Graph {
       },
       ctl: ctlPoint
     })
-    this.addShape(this.ent)
   }
   calcuteShape (ctlPoint, time) {
     return ctlPoint.position.getValue(time)

@@ -27,6 +27,11 @@ export default class Graph {
 
   constructor (id, viewer = window.viewer) {
     this.viewer = viewer
+    if (!window.layer) {
+      window.layer = {biaohui: this.viewer.entities.add({'id': 'biaohui', name: 'biaohui'})}
+    } else if (!window.layer.biaohui) {
+      window.layer.biaohui = this.viewer.entities.add({'id': 'biaohui', name: 'biaohui'})
+    }
     this.layer = window.layer.biaohui
     if (Graph.lastGraph) {
       Graph.lastGraph.finish()
@@ -100,7 +105,8 @@ export default class Graph {
     window.viewer.entities.remove(ctlPoint)
   }
 
-  addShape (ent) {
+  addShape (properties) {
+    let ent = window.viewer.entities.add(new Cesium.Entity(properties))
     ent.parent = this.graph.shape
     ent.graphType = 'shp'
     ent.seq = Graph.seq
@@ -108,8 +114,8 @@ export default class Graph {
     ent.downLight = () => this.highLight(false)
     ent.finish = () => this.finish()
     ent.toEdit = () => this.toEdit()
-    window.viewer.entities.add(ent)
     console.log('add a shape : ', ent)
+    return ent
   }
 
   deleteShape (ent) {

@@ -6,7 +6,7 @@ export default class Polygon extends Graph {
 
   addHandler (ctlPoint, ctl) {
     if (ctl._children.length === 2) {
-      this.ent = new Cesium.Entity({
+      this.ent = this.addShape({
         id: 'arrow1_' + Graph.seq++,
         polygon: {
           hierarchy: new Cesium.CallbackProperty((time, result) => {
@@ -20,7 +20,6 @@ export default class Polygon extends Graph {
           outlineColor: Cesium.Color.fromCssColorString('#fd7f44')
         }
       })
-      this.addShape(this.ent)
     }
   }
   calcuteShape (points, time) {

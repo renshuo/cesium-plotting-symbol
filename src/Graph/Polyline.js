@@ -6,7 +6,7 @@ export default class Polyline extends Graph {
 
   addHandler (ctlPoint, ctl) {
     if (ctl._children.length === 1) {
-      this.ent = new Cesium.Entity({
+      this.ent = this.addShape({
         id: 'arrow1_' + Graph.seq++,
         polyline: {
           positions: new Cesium.CallbackProperty((time, result) => {
@@ -21,7 +21,6 @@ export default class Polyline extends Graph {
           outlineColor: Cesium.Color.fromCssColorString('#fd7f44')
         }
       })
-      this.addShape(this.ent)
     }
   }
 

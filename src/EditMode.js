@@ -153,11 +153,14 @@ export default class EditMode {
     viewer.canvas.style.cursor = 'auto'
     handler.setInputAction(movement => {
       let objs = viewer.scene.drillPick(movement.endPosition)
+      console.debug('Cesium.drillpick: ', objs)
       if (Cesium.defined(objs)) {
         if (this.hoveredEnt === undefined && objs.length > 0) {
+          // moved from empty to ent
           let obj = objs.reduce((a, cur) => {
             return cur.id.seq > a.id.seq ? cur : a
           }, objs[0])
+          console.debug(`moved to ent:`, obj)
           obj.id.highLight()
           viewer.canvas.style.cursor = 'pointer'
           this.hoveredEnt = obj
@@ -165,11 +168,18 @@ export default class EditMode {
           let obj = objs.reduce((a, cur) => {
             return cur.id.seq > a.id.seq ? cur : a
           }, objs[0])
-          this.hoveredEnt.id.downLight()
-          obj.id.highLight()
-          viewer.canvas.style.cursor = 'pointer'
-          this.hoveredEnt = obj
+          if (this.hoveredEnt === obj) {
+            // moved on same ent
+          } else {
+            // moved from ent1 to ent2. ent1 and ent2 maybe overlap
+            console.debug(`moved from ent1 to ent2: `, this.hoveredEnt, obj)
+            this.hoveredEnt.id.downLight()
+            obj.id.highLight()
+            viewer.canvas.style.cursor = 'pointer'
+            this.hoveredEnt = obj
+          }
         } else if (this.hoveredEnt !== undefined && objs.length === 0) {
+          console.debug(`moved out of ent: `, this.hoveredEnt)
           this.hoveredEnt.id.downLight()
           viewer.canvas.style.cursor = 'auto'
           this.hoveredEnt = undefined

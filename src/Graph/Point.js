@@ -13,8 +13,14 @@ export default class Point extends Graph {
         return this.calcuteShape(ctlPoint, time)
       }, false),
       point: {
-        pixelSize: 10,
-        color: Cesium.Color.fromCssColorString('#fd7f44'),
+        pixelSize: 12,
+        color: new Cesium.ColorMaterialProperty(new Cesium.CallbackProperty((time, result) => {
+          if (this.highLighted) {
+            return new Cesium.Color(0.98, 0.5, 0.265, 0.8).brighten(0.6, new Cesium.Color())
+          } else {
+            return new Cesium.Color(0.98, 0.5, 0.265, 0.8)
+          }
+        }, false)),
         heightReference: Cesium.HeightReference.CLAMP_TO_GROUND
       },
       ctl: ctlPoint
@@ -24,18 +30,8 @@ export default class Point extends Graph {
     return ctlPoint.position.getValue(time)
   }
 
-  highLight (enabled) {
-    if (enabled) {
-      this.ent.point.color.setValue(new Cesium.Color(0.98, 0.5, 0.265, 0.4).brighten(0.6, new Cesium.Color()))
-      this.ent.parent.parent.ctl.show = true
-    } else {
-      this.ent.point.color.setValue(new Cesium.Color(0.98, 0.5, 0.265, 0.2))
-      this.ent.parent.parent.ctl.show = false
-    }
-  }
-
   toEdit () {
-    this.highLight(true)
+    this.ent.parent.parent.ctl.show = true
     this.ent.position.setCallback((time, result) => {
       return this.calcuteShape(this.graph.ctl._children[0], time)
     }, false)
@@ -43,7 +39,7 @@ export default class Point extends Graph {
 
   finish () {
     if (this.ent) {
-      this.highLight(false)
+      this.ent.parent.parent.ctl.show = false
       this.ent.position.setCallback((time, result) => {
         return this.calcuteShape(this.graph.ctl._children[0], time)
       }, true)

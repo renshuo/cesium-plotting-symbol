@@ -24,6 +24,7 @@ export default class Graph {
    *      L children (graphType='shp')
    *  L graph = this
    */
+  highLighted
 
   constructor (id, viewer = window.viewer) {
     this.viewer = viewer
@@ -73,8 +74,8 @@ export default class Graph {
       position: newpos,
       graphType: 'ctl',
       point: {
-        pixelSize: 10,
-        color: Cesium.Color.fromBytes(255, 255, 255, 80),
+        pixelSize: 8,
+        color: Cesium.Color.fromBytes(255, 255, 255, 70),
         heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
         outlineWidth: 1,
         outlineColor: Cesium.Color.AQUA
@@ -138,7 +139,7 @@ export default class Graph {
    * @param {boolean} enable
    */
   highLight (enabled) {
-    console.log('unimplemented')
+    this.highLighted = enabled
   }
 
   /**

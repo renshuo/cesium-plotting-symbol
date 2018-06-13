@@ -42,8 +42,8 @@ export default class Circle extends Graph {
   }
 
   calcuteRadius (center, outer, time) {
-    console.debug('radius: ', center, outer)
-    return mu.distance(center.position.getValue(time), outer.position.getValue(time))
+    let distance = mu.distance(center.position.getValue(time), outer.position.getValue(time))
+    return distance === 0 ? 1 : distance // distance=0 make cesium ellipse cartesian convert error
   }
 
   toEdit () {

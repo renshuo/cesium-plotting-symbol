@@ -19,7 +19,8 @@ module.exports = {
       root: "Cesium"
     },
     lodash: "lodash",
-    '@turf/turf': '@turf/turf'
+    '@turf/turf': '@turf/turf',
+    'bezier-js': 'bezier-js'
   },
   output: {
     filename: 'index.js',

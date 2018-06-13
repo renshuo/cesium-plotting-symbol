@@ -1,5 +1,6 @@
 import Graph from '../Graph'
 import Cesium from 'cesium/Source/Cesium.js'
+import * as mu from '../mapUtil.js'
 
 export default class Point extends Graph {
   maxPointNum = 1
@@ -8,10 +9,6 @@ export default class Point extends Graph {
   addHandler (ctlPoint, ctl) {
     this.ent = this.addShape({
       id: 'point_' + Graph.seq++,
-      parent: this.ent,
-      position: new Cesium.CallbackProperty((time, result) => {
-        return this.calcuteShape(ctlPoint, time)
-      }, false),
       point: {
         pixelSize: 12,
         color: new Cesium.ColorMaterialProperty(new Cesium.CallbackProperty((time, result) => {
@@ -22,9 +19,9 @@ export default class Point extends Graph {
           }
         }, false)),
         heightReference: Cesium.HeightReference.CLAMP_TO_GROUND
-      },
-      ctl: ctlPoint
+      }
     })
+    this.ent.position = this.calcuteShape(this.graph.ctl._children[0], mu.julianDate())
   }
   calcuteShape (ctlPoint, time) {
     return ctlPoint.position.getValue(time)
@@ -32,7 +29,7 @@ export default class Point extends Graph {
 
   toEdit () {
     this.ent.parent.parent.ctl.show = true
-    this.ent.position.setCallback((time, result) => {
+    this.ent.position = new Cesium.CallbackProperty((time, result) => {
       return this.calcuteShape(this.graph.ctl._children[0], time)
     }, false)
   }
@@ -40,9 +37,7 @@ export default class Point extends Graph {
   finish () {
     if (this.ent) {
       this.ent.parent.parent.ctl.show = false
-      this.ent.position.setCallback((time, result) => {
-        return this.calcuteShape(this.graph.ctl._children[0], time)
-      }, true)
+      this.ent.position = this.calcuteShape(this.graph.ctl._children[0], mu.julianDate())
     }
   }
 }

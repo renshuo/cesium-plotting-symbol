@@ -2,7 +2,7 @@ import Graph from '../Graph'
 import Cesium from 'cesium/Source/Cesium.js'
 import * as mu from '../mapUtil.js'
 
-export default class Circle extends Graph {
+export default class Ellipse extends Graph {
   maxPointNum = 3
   ent
   

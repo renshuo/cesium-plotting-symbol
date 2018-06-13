@@ -1,9 +1,7 @@
 import Graph from '../Graph'
 import Cesium from 'cesium/Source/Cesium.js'
 import * as turf from '@turf/turf'
-import {
-  convertCartesian
-} from '../mapUtil'
+import * as mu from '../mapUtil'
 import Polygon from './Polygon'
 import _ from 'lodash'
 
@@ -34,7 +32,7 @@ export default class Arrow1 extends Polygon {
   calcuteShape (pos, time) {
     let posis = _.map(pos, ent => ent.position.getValue(time)) // pos.map(ent => ent.position.getValue(time))
     let turfPoints = posis.map(cartesian3 => {
-      let longLat = convertCartesian(cartesian3)
+      let longLat = mu.cartesian2lonlat(cartesian3)
       return turf.point(longLat)
     })
     if (turfPoints.length > 1) {

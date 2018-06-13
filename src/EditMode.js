@@ -188,7 +188,6 @@ export default class EditMode {
     viewer.canvas.style.cursor = 'auto'
     handler.setInputAction(movement => {
       let objs = viewer.scene.drillPick(movement.endPosition)
-      console.debug('Cesium.drillpick: ', objs)
       if (Cesium.defined(objs)) {
         if (this.hoveredEnt === undefined && objs.length > 0) {
           // moved from empty to ent

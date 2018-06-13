@@ -31,15 +31,20 @@ export default class Circle extends Graph {
           outlineColor: Cesium.Color.fromCssColorString('#fd7f44')
         }
       })
-      this.p1 = window.cursor
+      this.ent.ellipse.semiMajorAxis = new Cesium.CallbackProperty((time, result) => {
+        return this.calcuteRadius(this.center, window.cursor, time)
+      }, false)
+      this.ent.ellipse.semiMinorAxis = new Cesium.CallbackProperty((time, result) => {
+        return this.calcuteRadius(this.center, window.cursor, time)
+      }, false)
+    } else if (ctl._children.length === 2) {
+      this.p1 = ctlPoint
       this.ent.ellipse.semiMajorAxis = new Cesium.CallbackProperty((time, result) => {
         return this.calcuteMajor(this.center, this.p1, window.cursor, time)
       }, false)
       this.ent.ellipse.semiMinorAxis = new Cesium.CallbackProperty((time, result) => {
         return this.calcuteMinor(this.center, this.p1, window.cursor, time)
       }, false)
-    } else if (ctl._children.length === 2) {
-      this.p1 = ctlPoint
     } else if (ctl._children.length === 3) {
       this.p2 = ctlPoint
     }
@@ -58,7 +63,8 @@ export default class Circle extends Graph {
   }
 
   calcuteRadius (center, outer, time) {
-    return mu.distance(center.position.getValue(time), outer.position.getValue(time))
+    let distance = mu.distance(center.position.getValue(time), outer.position.getValue(time))
+    return distance === 0 ? 1 : distance // distance=0 make cesium ellipse cartesian convert error
   }
 
   toEdit () {

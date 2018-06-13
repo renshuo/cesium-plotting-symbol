@@ -1,6 +1,6 @@
 {
   "name": "cesium-plotting-symbol",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "cesiu plotting symbol",
   "main": "dist/index.js",
   "scripts": {
@@ -40,6 +40,7 @@
   },
   "dependencies": {
     "@turf/turf": "^5.1.6",
+    "bezier-js": "^2.2.5",
     "cesium": "^1.46.1",
     "lodash": "^4.17.10"
   }

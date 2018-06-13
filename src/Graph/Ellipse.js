@@ -3,11 +3,12 @@ import Cesium from 'cesium/Source/Cesium.js'
 import * as mu from '../mapUtil.js'
 
 export default class Circle extends Graph {
-  maxPointNum = 2
+  maxPointNum = 3
   ent
   
   center
-  outer
+  p1
+  p2
 
   radius
 
@@ -18,12 +19,6 @@ export default class Circle extends Graph {
         id: 'arrow1_' + Graph.seq++,
         position: this.center.position,
         ellipse: {
-          semiMajorAxis: new Cesium.CallbackProperty((time, result) => {
-            return this.calcuteRadius(this.center, window.cursor, time)
-          }, false),
-          semiMinorAxis: new Cesium.CallbackProperty((time, result) => {
-            return this.calcuteRadius(this.center, window.cursor, time)
-          }, false),
           material: new Cesium.ColorMaterialProperty(new Cesium.CallbackProperty((time, result) => {
             if (this.highLighted) {
               return new Cesium.Color(0.98, 0.5, 0.265, 0.4).brighten(0.6, new Cesium.Color())
@@ -36,13 +31,33 @@ export default class Circle extends Graph {
           outlineColor: Cesium.Color.fromCssColorString('#fd7f44')
         }
       })
+      this.p1 = window.cursor
+      this.ent.ellipse.semiMajorAxis = new Cesium.CallbackProperty((time, result) => {
+        return this.calcuteMajor(this.center, this.p1, window.cursor, time)
+      }, false)
+      this.ent.ellipse.semiMinorAxis = new Cesium.CallbackProperty((time, result) => {
+        return this.calcuteMinor(this.center, this.p1, window.cursor, time)
+      }, false)
     } else if (ctl._children.length === 2) {
-      this.outer = ctlPoint
+      this.p1 = ctlPoint
+    } else if (ctl._children.length === 3) {
+      this.p2 = ctlPoint
     }
   }
 
+  calcuteMajor (center, p1, p2, time) {
+    let d1 = mu.distance(center.position.getValue(time), p1.position.getValue(time))
+    let d2 = mu.distance(center.position.getValue(time), p2.position.getValue(time))
+    return d1 > d2 ? d1 : d2
+  }
+
+  calcuteMinor (center, p1, p2, time) {
+    let d1 = mu.distance(center.position.getValue(time), p1.position.getValue(time))
+    let d2 = mu.distance(center.position.getValue(time), p2.position.getValue(time))
+    return d1 < d2 ? d1 : d2
+  }
+
   calcuteRadius (center, outer, time) {
-    console.debug('radius: ', center, outer)
     return mu.distance(center.position.getValue(time), outer.position.getValue(time))
   }
 
@@ -52,10 +67,10 @@ export default class Circle extends Graph {
       return this.center.position.getValue(time)
     }, false)
     this.ent.ellipse.semiMajorAxis = new Cesium.CallbackProperty((time, result) => {
-      return this.calcuteRadius(this.center, this.outer, time)
+      return this.calcuteMajor(this.center, this.p1, this.p2, time)
     }, false)
     this.ent.ellipse.semiMinorAxis = new Cesium.CallbackProperty((time, result) => {
-      return this.calcuteRadius(this.center, this.outer, time)
+      return this.calcuteMinor(this.center, this.p1, this.p2, time)
     }, false)
   }
 
@@ -64,9 +79,8 @@ export default class Circle extends Graph {
       let time = mu.julianDate()
       this.ent.parent.parent.ctl.show = false
       this.ent.position = this.center.position.getValue(time)
-      let radius = this.calcuteRadius(this.center, this.outer, time)
-      this.ent.ellipse.semiMajorAxis = radius
-      this.ent.ellipse.semiMinorAxis = radius
+      this.ent.ellipse.semiMajorAxis = this.calcuteMajor(this.center, this.p1, this.p2, time)
+      this.ent.ellipse.semiMinorAxis = this.calcuteMinor(this.center, this.p1, this.p2, time)
     }
   }
 }

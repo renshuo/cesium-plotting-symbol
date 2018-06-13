@@ -1,5 +1,6 @@
 import Cesium from 'cesium/Source/Cesium.js'
 import Graph from '../Graph'
+import * as mu from '../mapUtil.js'
 
 export default class Polyline extends Graph {
   ent
@@ -9,9 +10,6 @@ export default class Polyline extends Graph {
       this.ent = this.addShape({
         id: 'arrow1_' + Graph.seq++,
         polyline: {
-          positions: new Cesium.CallbackProperty((time, result) => {
-            return this.calcuteShape(this.graph.ctl._children.concat(window.cursor), time)
-          }, false),
           width: 1,
           fill: true,
           material: new Cesium.ColorMaterialProperty(new Cesium.CallbackProperty((time, result) => {
@@ -27,6 +25,9 @@ export default class Polyline extends Graph {
           outlineColor: Cesium.Color.fromCssColorString('#fd7f44')
         }
       })
+      this.ent.polyline.positions = new Cesium.CallbackProperty((time, result) => {
+        return this.calcuteShape(this.graph.ctl._children.concat(window.cursor), time)
+      }, false)
     }
   }
 
@@ -36,7 +37,7 @@ export default class Polyline extends Graph {
 
   toEdit () {
     this.ent.parent.parent.ctl.show = true
-    this.ent.polyline.positions.setCallback((time, result) => {
+    this.ent.polyline.positions = new Cesium.CallbackProperty((time, result) => {
       return this.calcuteShape(this.graph.ctl._children, time)
     }, false)
   }
@@ -45,9 +46,7 @@ export default class Polyline extends Graph {
     console.debug('finish Polyline graph: ', this)
     if (this.ent) {
       this.ent.parent.parent.ctl.show = false
-      this.ent.polyline.positions.setCallback((time, result) => {
-        return this.calcuteShape(this.graph.ctl._children, time)
-      }, true)
+      this.ent.polyline.positions = this.calcuteShape(this.graph.ctl._children, mu.julianDate())
     }
   }
 }

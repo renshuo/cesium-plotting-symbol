@@ -13,7 +13,7 @@ function resolve (dir) {
 module.exports = {
   mode: 'development',
   entry: {
-    index: './src/test.jsx'
+    index: './dev/index.jsx'
   },
   output: {
     filename: 'test.js',
@@ -29,13 +29,13 @@ module.exports = {
         test: /\.js$/,
         loader: 'babel-loader',
         exclude: [resolve('node_modules')],
-        include: [resolve('src'), resolve('test')],
+        include: [resolve('src'), resolve('test'), resolve('dev')],
       },
       {
         test: /\.jsx$/,
         loader: 'babel-loader',
         exclude: [resolve('node_modules')],
-        include: [resolve('src'), resolve('test')],
+        include: [resolve('src'), resolve('test'), resolve('dev')],
       },
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,

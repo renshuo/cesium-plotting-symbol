@@ -3,6 +3,7 @@
     ["env", {
       "include": []
     }],
-    "stage-2"
+    "stage-2",
+    "react"
   ]
 }

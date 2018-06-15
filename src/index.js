@@ -10,6 +10,7 @@ import BezierSpline from './Graph/BezierSpline.js'
 import BezierN from './Graph/BezierN'
 import Bezier1 from './Graph/Bezier1.js'
 import Bezier2 from './Graph/Bezier2.js'
+import Boat from './Graph/Boat.js'
 
 import * as mapUtil from './mapUtil.js'
 
@@ -30,6 +31,7 @@ export default {
   BezierN,
   Bezier1,
   Bezier2,
+  Boat,
   start,
   mapUtil
 }

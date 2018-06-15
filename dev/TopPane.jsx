@@ -35,6 +35,9 @@ export default class TopPane extends React.Component {
       {name: '单箭头', func: () => gx.start(new gx.Arrow1()) },
       {name: '椭圆', func: () => gx.start(new gx.Ellipse()) },
       {name: '圆', func: () => gx.start(new gx.Circle()) },
+    ],
+    [
+      {name: '船', func: () => gx.start(new gx.Boat()) },
     ]
   ]
 

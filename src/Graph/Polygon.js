@@ -5,36 +5,50 @@ import * as mu from '../mapUtil.js'
 export default class Polygon extends Graph {
   ent
   
+  color = [ 0, 128, 255]
+  alpha = 0.80
+
+  constructor (id) {
+    super(id)
+    this.initShape()
+  }
+
+  initShape() {
+    this.ent = this.addShape({
+      id: 'arrow1_' + Graph.seq++,
+      polygon: {
+        fill: true,
+        material: new Cesium.ColorMaterialProperty(new Cesium.CallbackProperty((time, result) => {
+          if (this.highLighted) {
+            return Cesium.Color.fromBytes(...this.color, this.alpha*256).brighten(0.6, new Cesium.Color())
+          } else {
+            return Cesium.Color.fromBytes(...this.color, this.alpha*256)
+          }
+        }, false)),
+        height: 0,
+        outline: true,
+        outlineWidth: 1,
+        outlineColor: Cesium.Color.fromCssColorString('#fd7f44')
+      }
+    })
+    this.propEditor.addColor(this, 'color')
+    this.propEditor.add(this, 'alpha', 0, 1)
+  }
+
   addHandler (ctlPoint, ctl) {
     if (ctl._children.length === 2) {
-      this.ent = this.addShape({
-        id: 'arrow1_' + Graph.seq++,
-        polygon: {
-          fill: true,
-          material: new Cesium.ColorMaterialProperty(new Cesium.CallbackProperty((time, result) => {
-            if (this.highLighted) {
-              return new Cesium.Color(0.98, 0.5, 0.265, 0.8).brighten(0.6, new Cesium.Color())
-            } else {
-              return new Cesium.Color(0.98, 0.5, 0.265, 0.8)
-            }
-          }, false)),
-          height: 0,
-          outline: true,
-          outlineWidth: 1,
-          outlineColor: Cesium.Color.fromCssColorString('#fd7f44')
-        }
-      })
       this.ent.polygon.hierarchy = new Cesium.CallbackProperty((time, result) => {
         return this.calcuteShape(this.graph.ctl._children.concat(window.cursor), time)
       }, false)
     }
   }
+  
   calcuteShape (points, time) {
     return points.map(ent => ent.position.getValue(time))
   }
 
   toEdit () {
-    this.ent.parent.parent.ctl.show = true
+    super.toEdit()
     this.ent.polygon.hierarchy = new Cesium.CallbackProperty((time, result) => {
       return this.calcuteShape(this.graph.ctl._children, time)
     }, false)
@@ -42,7 +56,7 @@ export default class Polygon extends Graph {
 
   finish () {
     if (this.ent) {
-      this.ent.parent.parent.ctl.show = false
+      super.finish()
       this.ent.polygon.hierarchy = this.calcuteShape(this.graph.ctl._children, mu.julianDate())
     }
   }

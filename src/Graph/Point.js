@@ -6,29 +6,47 @@ export default class Point extends Graph {
   maxPointNum = 1
   ent
 
-  addHandler (ctlPoint, ctl) {
+  pixelSize = 12
+  color = [ 0, 128, 255]
+  alpha = 0.80
+
+  constructor (id) {
+    super(id)
+    this.initShape()
+  }
+
+  initShape() {
     this.ent = this.addShape({
       id: 'point_' + Graph.seq++,
       point: {
-        pixelSize: 12,
-        color: new Cesium.ColorMaterialProperty(new Cesium.CallbackProperty((time, result) => {
+        pixelSize: new Cesium.CallbackProperty((time, result) => this.pixelSize, false),
+        color: new Cesium.CallbackProperty((time, result) => {
           if (this.highLighted) {
-            return new Cesium.Color(0.98, 0.5, 0.265, 0.8).brighten(0.6, new Cesium.Color())
+            return Cesium.Color.fromBytes(...this.color, this.alpha*256).brighten(0.6, new Cesium.Color())
           } else {
-            return new Cesium.Color(0.98, 0.5, 0.265, 0.8)
+            return Cesium.Color.fromBytes(...this.color, this.alpha*256)
           }
-        }, false)),
+        }, false),
         heightReference: Cesium.HeightReference.CLAMP_TO_GROUND
       }
     })
-    this.ent.position = this.calcuteShape(this.graph.ctl._children[0], mu.julianDate())
+    this.propEditor.add(this, 'pixelSize', 1, 256)
+    this.propEditor.addColor(this, 'color')
+    this.propEditor.add(this, 'alpha', 0, 1)
   }
+
+  addHandler (ctlPoint, ctl) {
+    this.ent.position = new Cesium.CallbackProperty((time, result) => {
+      return this.calcuteShape(this.graph.ctl._children[0], time)
+    }, false)
+  }
+
   calcuteShape (ctlPoint, time) {
     return ctlPoint.position.getValue(time)
   }
 
   toEdit () {
-    this.ent.parent.parent.ctl.show = true
+    super.toEdit()
     this.ent.position = new Cesium.CallbackProperty((time, result) => {
       return this.calcuteShape(this.graph.ctl._children[0], time)
     }, false)
@@ -36,7 +54,7 @@ export default class Point extends Graph {
 
   finish () {
     if (this.ent) {
-      this.ent.parent.parent.ctl.show = false
+      super.finish()
       this.ent.position = this.calcuteShape(this.graph.ctl._children[0], mu.julianDate())
     }
   }

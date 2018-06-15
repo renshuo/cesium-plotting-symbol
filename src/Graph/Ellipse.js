@@ -68,7 +68,7 @@ export default class Ellipse extends Graph {
   }
 
   toEdit () {
-    this.ent.parent.parent.ctl.show = true
+    super.toEdit()
     this.ent.position = new Cesium.CallbackProperty((time, result) => {
       return this.center.position.getValue(time)
     }, false)
@@ -82,8 +82,8 @@ export default class Ellipse extends Graph {
 
   finish () {
     if (this.ent) {
+      super.finish()
       let time = mu.julianDate()
-      this.ent.parent.parent.ctl.show = false
       this.ent.position = this.center.position.getValue(time)
       this.ent.ellipse.semiMajorAxis = this.calcuteMajor(this.center, this.p1, this.p2, time)
       this.ent.ellipse.semiMinorAxis = this.calcuteMinor(this.center, this.p1, this.p2, time)

@@ -18,11 +18,11 @@ export default class MapView extends React.Component {
         baseLayerPicker: true, // 底图选择器
         navigationHelpButton: false, // navigation 帮助文档按钮
         geocoder: false, // 地址搜索按钮
-        animation: false, // 左下角的动画播放面板
-        timeline: false, // 下方时间线
+        animation: true, // 左下角的动画播放面板
+        timeline: true, // 下方时间线
         fullscreenButton: false,
         selectionIndicator: false, // 是否显示选中的item的光标
-        projectionPicker: false,
+        projectionPicker: true,
         infoBox: false // 是否显示右侧信息窗
         })
   }

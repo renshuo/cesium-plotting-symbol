@@ -35,7 +35,7 @@ export default class TopPane extends React.Component {
       {name: 'bezier2', func: () => gx.start(new gx.Bezier2()) },
       {name: 'bezierN', func: () => gx.start(new gx.BezierN()) },
       {name: '平滑线', func: () => gx.start(new gx.BezierSpline()) },
-      {name: '圆弧线', func: () => gx.start(new gx.LineArc()) },
+      {name: '圆弧线', func: () => gx.start(new gx.CircleArc()) },
     ],
     [
       {name: '点', func: () => gx.start(new gx.Point()) },

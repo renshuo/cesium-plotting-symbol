@@ -3,7 +3,7 @@ import Cesium from 'cesium/Source/Cesium.js'
 import * as mu from '../mapUtil.js'
 import * as turf from '@turf/turf'
 
-export default class LineArc extends Polyline {
+export default class CircleArc extends Polyline {
   maxPointNum = 3
 
   calcuteShape (points, time) {

@@ -76,3 +76,13 @@ export function distance (cart1, cart2) {
   let distance = turf.distance(from, to, options)
   return distance * 1000
 }
+
+export function cartesian2turfPoint(cartesian) {
+  let lonlat = this.cartesian2lonlat(cartesian)
+  return turf.point(lonlat)
+}
+
+export function turfGeometry2Cartesians(g) {
+  let geo = g.geometry.coordinates[0]
+  return geo.map((p) => lonlat2Cartesian(p))
+}

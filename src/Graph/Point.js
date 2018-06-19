@@ -27,7 +27,7 @@ export default class Point extends Graph {
       }
     })
     this.pixelSize = 12
-    this.color = [ 0, 128, 255]
+    this.color = [ 0, 255, 0]
     this.alpha = 0.80
     this.propEditor.add(this, 'pixelSize', 1, 256)
     this.propEditor.addColor(this, 'color')

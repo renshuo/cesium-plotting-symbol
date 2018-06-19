@@ -8,27 +8,6 @@ import _ from 'lodash'
 export default class Arrow1 extends Polygon {
   maxPointNum = 2
 
-  ent = null
-
-  addHandler (ctlPoint, ctl) {
-    if (ctl._children.length === 1) {
-      this.ent = this.addShape({
-        id: 'arrow1_' + Graph.seq++,
-        polygon: {
-          hierarchy: new Cesium.CallbackProperty((time, result) => {
-            return this.calcuteShape(this.graph.ctl._children.concat(window.cursor), time)
-          }, false),
-          fill: true,
-          material: new Cesium.Color(0.98, 0.5, 0.265, 0.2),
-          height: 0,
-          outline: true,
-          outlineWidth: 1,
-          outlineColor: Cesium.Color.fromCssColorString('#fd7f44')
-        }
-      })
-    }
-  }
-
   calcuteShape (pos, time) {
     let posis = _.map(pos, ent => ent.position.getValue(time)) // pos.map(ent => ent.position.getValue(time))
     let turfPoints = posis.map(cartesian3 => {

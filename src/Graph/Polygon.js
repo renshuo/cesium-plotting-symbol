@@ -5,7 +5,7 @@ import * as mu from '../mapUtil.js'
 export default class Polygon extends Graph {
   ent
   
-  color = [ 0, 128, 255]
+  color = [ 0, 255, 0]
   alpha = 0.80
 
   constructor (id) {

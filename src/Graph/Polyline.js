@@ -6,7 +6,7 @@ export default class Polyline extends Graph {
   ent
 
   width = 1
-  color = [ 0, 128, 255]
+  color = [ 0, 255, 0]
   alpha = 0.80
 
   constructor (id) {

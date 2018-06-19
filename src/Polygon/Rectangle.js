@@ -1,4 +1,3 @@
-import Graph from '../Graph'
 import Polygon from './Polygon.js'
 import * as mu from '../mapUtil.js'
 

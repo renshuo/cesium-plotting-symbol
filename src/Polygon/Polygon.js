@@ -1,11 +1,10 @@
 import Cesium from 'cesium/Source/Cesium.js'
-import Graph from '../Graph'
+import Graph from '../Graph.js'
 import * as mu from '../mapUtil.js'
 
-export default class Polyline extends Graph {
+export default class Polygon extends Graph {
   ent
-
-  width = 1
+  
   color = [ 0, 255, 0]
   alpha = 0.80
 
@@ -17,8 +16,7 @@ export default class Polyline extends Graph {
   initShape() {
     this.ent = this.addShape({
       id: 'arrow1_' + Graph.seq++,
-      polyline: {
-        width: new Cesium.CallbackProperty((time, result) => this.width, false),
+      polygon: {
         fill: true,
         material: new Cesium.ColorMaterialProperty(new Cesium.CallbackProperty((time, result) => {
           if (this.highLighted) {
@@ -34,25 +32,24 @@ export default class Polyline extends Graph {
       }
     })
     this.propEditor.addColor(this, 'color')
-    this.propEditor.add(this, 'width')
     this.propEditor.add(this, 'alpha', 0, 1)
   }
 
   addHandler (ctlPoint, ctl) {
     if (ctl._children.length === 1) {
-      this.ent.polyline.positions = new Cesium.CallbackProperty((time, result) => {
+      this.ent.polygon.hierarchy = new Cesium.CallbackProperty((time, result) => {
         return this.calcuteShape(this.graph.ctl._children.concat(window.cursor), time)
       }, false)
     }
   }
-
+  
   calcuteShape (points, time) {
     return points.map(ent => ent.position.getValue(time))
   }
 
   toEdit () {
     super.toEdit()
-    this.ent.polyline.positions = new Cesium.CallbackProperty((time, result) => {
+    this.ent.polygon.hierarchy = new Cesium.CallbackProperty((time, result) => {
       return this.calcuteShape(this.graph.ctl._children, time)
     }, false)
   }
@@ -60,7 +57,7 @@ export default class Polyline extends Graph {
   finish () {
     if (this.ent) {
       super.finish()
-      this.ent.polyline.positions = this.calcuteShape(this.graph.ctl._children, mu.julianDate())
+      this.ent.polygon.hierarchy = this.calcuteShape(this.graph.ctl._children, mu.julianDate())
     }
   }
 }

@@ -1,15 +1,15 @@
-import Graph from '../Graph'
+import Graph from '../Graph.js'
 import Cesium from 'cesium/Source/Cesium.js'
-import Point from './Point.js'
+import Point from '../Point/Point'
 import * as mu from '../mapUtil.js'
 
-export default class Boat extends Point {
+export default class Station extends Point {
 
   initShape() {
     this.ent = this.addShape({
-      id: 'boat_' + Graph.seq++,
+      id: 'vehicle_' + Graph.seq++,
       model: {
-        uri: '../../../static/model/boat.gltf',
+        uri: '../../../static/model/station.gltf',
         scale: new Cesium.CallbackProperty((time, result) => this.scale, false),
         color: new Cesium.CallbackProperty((time, result) => {
           if (this.highLighted) {
@@ -21,13 +21,13 @@ export default class Boat extends Point {
       }
     })
 
-    this.color = [ 0, 128, 255]
+    this.color = [ 128, 0, 255]
     this.alpha = 0.80
     this.propEditor.addColor(this, 'color')
     this.propEditor.add(this, 'alpha', 0, 1)
 
-    this.scale = 30
-    this.propEditor.add(this, 'scale', 0, 100)
+    this.scale = 2000
+    this.propEditor.add(this, 'scale', 0, 10000)
   }
 
 }

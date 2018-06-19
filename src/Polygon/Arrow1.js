@@ -1,8 +1,6 @@
-import Graph from '../Graph'
-import Cesium from 'cesium/Source/Cesium.js'
 import * as turf from '@turf/turf'
-import * as mu from '../mapUtil'
-import Polygon from './Polygon'
+import * as mu from '../mapUtil.js'
+import Polygon from './Polygon.js'
 import _ from 'lodash'
 
 export default class Arrow1 extends Polygon {
@@ -31,14 +29,7 @@ export default class Arrow1 extends Polygon {
       tgts.push(turf.destination(point2, 100, bearing - 170, options))
       tgts.push(turf.destination(point1, 50, bearing - 90, options))
 
-      return tgts.map(tgt => {
-        return Cesium.Cartesian3.fromDegrees(
-          tgt.geometry.coordinates[0],
-          tgt.geometry.coordinates[1],
-          0,
-          Cesium.Ellipsoid.WGS84
-        )
-      })
+      return tgts.map(tgt => mu.lonlat2Cartesian(turf.getCoord(tgt)))
     } else {
       return []
     }

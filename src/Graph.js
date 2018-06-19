@@ -142,6 +142,7 @@ export default class Graph {
    * 进入编辑模式
    */
   toEdit () {
+    this.highLighted = false
     this.ent.parent.parent.ctl.show = true
     this.ent.propEditor.domElement.hidden = false
   }

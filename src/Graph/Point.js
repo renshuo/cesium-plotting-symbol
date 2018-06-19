@@ -6,10 +6,6 @@ export default class Point extends Graph {
   maxPointNum = 1
   ent
 
-  pixelSize = 12
-  color = [ 0, 128, 255]
-  alpha = 0.80
-
   constructor (id) {
     super(id)
     this.initShape()
@@ -30,6 +26,9 @@ export default class Point extends Graph {
         heightReference: Cesium.HeightReference.CLAMP_TO_GROUND
       }
     })
+    this.pixelSize = 12
+    this.color = [ 0, 128, 255]
+    this.alpha = 0.80
     this.propEditor.add(this, 'pixelSize', 1, 256)
     this.propEditor.addColor(this, 'color')
     this.propEditor.add(this, 'alpha', 0, 1)

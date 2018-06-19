@@ -11,6 +11,7 @@ import BezierN from './Graph/BezierN'
 import Bezier1 from './Graph/Bezier1.js'
 import Bezier2 from './Graph/Bezier2.js'
 import Boat from './Graph/Boat.js'
+import Vehicle from './Graph/Vehicle.js'
 
 import * as mapUtil from './mapUtil.js'
 
@@ -32,6 +33,7 @@ export default {
   Bezier1,
   Bezier2,
   Boat,
+  Vehicle,
   start,
   mapUtil
 }

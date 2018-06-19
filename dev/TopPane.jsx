@@ -38,6 +38,7 @@ export default class TopPane extends React.Component {
     ],
     [
       {name: '船', func: () => gx.start(new gx.Boat()) },
+      {name: '车', func: () => gx.start(new gx.Vehicle()) },
     ]
   ]
 

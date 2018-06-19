@@ -23,20 +23,22 @@ export default class TopPane extends React.Component {
 
   funcs1 = [
     [
-      {name: '点', func: () => gx.start(new gx.Point()) },
       {name: '多边形', func: () => gx.start(new gx.Polygon()) },
-      {name: '直线', func: () => gx.start(new gx.Polyline()) },
-      {name: 'bezier1', func: () => gx.start(new gx.Bezier1()) },
-      {name: 'bezier2', func: () => gx.start(new gx.Bezier2()) },
-      {name: 'bezierN', func: () => gx.start(new gx.BezierN()) },
-      {name: '平滑线', func: () => gx.start(new gx.BezierSpline()) },
-    ],
-    [
+      {name: '矩形', func: () => gx.start(new gx.Rectangle()) },
       {name: '单箭头', func: () => gx.start(new gx.Arrow1()) },
       {name: '椭圆', func: () => gx.start(new gx.Ellipse()) },
       {name: '圆', func: () => gx.start(new gx.Circle()) },
     ],
     [
+      {name: '直线', func: () => gx.start(new gx.Polyline()) },
+      {name: 'bezier1', func: () => gx.start(new gx.Bezier1()) },
+      {name: 'bezier2', func: () => gx.start(new gx.Bezier2()) },
+      {name: 'bezierN', func: () => gx.start(new gx.BezierN()) },
+      {name: '平滑线', func: () => gx.start(new gx.BezierSpline()) },
+      {name: '圆弧线', func: () => gx.start(new gx.LineArc()) },
+    ],
+    [
+      {name: '点', func: () => gx.start(new gx.Point()) },
       {name: '船', func: () => gx.start(new gx.Boat()) },
       {name: '车', func: () => gx.start(new gx.Vehicle()) },
       {name: '地面站', func: () => gx.start(new gx.Station()) },

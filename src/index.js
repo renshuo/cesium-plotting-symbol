@@ -10,6 +10,9 @@ import BezierSpline from './Graph/BezierSpline.js'
 import BezierN from './Graph/BezierN'
 import Bezier1 from './Graph/Bezier1.js'
 import Bezier2 from './Graph/Bezier2.js'
+import LineArc from './Graph/LineArc.js'
+import Rectangle from './Graph/Rectangle.js'
+
 import Boat from './Graph/Boat.js'
 import Vehicle from './Graph/Vehicle.js'
 import Station from './Graph/Station.js'
@@ -34,6 +37,8 @@ export default {
   BezierN,
   Bezier1,
   Bezier2,
+  LineArc,
+  Rectangle,
   Boat,
   Vehicle,
   Satellite,

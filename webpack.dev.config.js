@@ -5,6 +5,7 @@ const baseWebpackConfig = require('./webpack.config.js')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const webpackHtml = require('html-webpack-plugin')
 const webpack = require('webpack');
+const VueLoaderPlugin = require('vue-loader/lib/plugin')
 
 function resolve (dir) {
   return path.join(__dirname, dir)
@@ -13,11 +14,16 @@ function resolve (dir) {
 module.exports = {
   mode: 'development',
   entry: {
-    index: './dev/index.jsx'
+    index: './dev/main.js'
   },
   output: {
     filename: 'test.js',
     path: path.resolve(__dirname, 'dist')
+  },
+  resolve: {
+    alias: {
+      'vue$': 'vue/dist/vue.esm.js'
+    }
   },
   module: {
     rules: [
@@ -34,6 +40,12 @@ module.exports = {
       {
         test: /\.jsx$/,
         loader: 'babel-loader',
+        exclude: [resolve('node_modules')],
+        include: [resolve('src'), resolve('test'), resolve('dev')],
+      },
+      {
+        test: /\.vue$/,
+        loader: 'vue-loader',
         exclude: [resolve('node_modules')],
         include: [resolve('src'), resolve('test'), resolve('dev')],
       },
@@ -61,8 +73,10 @@ module.exports = {
     ]
   },
   plugins: [
+    new VueLoaderPlugin(),
     new webpackHtml({
-      filename: 'index.html'
+      filename: 'index.html',
+      template: 'index.html',
     }),
     new webpack.NamedModulesPlugin(),
     new webpack.HotModuleReplacementPlugin(),

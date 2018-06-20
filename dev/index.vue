@@ -1,14 +1,17 @@
-import React from 'react'
+<template>
+  <div>
+    <div id="mapContainer"></div>
+    <top-pane />
+  </div>
+</template>
+
+<script>
 import Cesium from 'cesium/Source/Cesium.js'
 import 'cesium/Build/Cesium/Widgets/widgets.css'
 
-export default class MapView extends React.Component {
+import TopPane from './TopPane.vue'
 
-  constructor (props) {
-    super(props)
-  }
-
-  initMap () {
+function initMap () {
     window.CESIUM_BASE_URL = '/static/Cesium'
     Cesium.Camera.DEFAULT_VIEW_RECTANGLE = Cesium.Rectangle.fromDegrees(
         100, 30, 110, 40
@@ -27,11 +30,12 @@ export default class MapView extends React.Component {
         })
   }
 
-  componentDidMount () {
-    this.initMap()
-  }
-
-  render () {
-    return <div id="mapContainer"></div>
+export default {
+  components: {
+    TopPane
+  },
+  mounted () {
+    initMap()
   }
 }
+</script>

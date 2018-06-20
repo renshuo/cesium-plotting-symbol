@@ -1,6 +1,6 @@
 {
   "name": "cesium-plotting-symbol",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "description": "cesiu plotting symbol",
   "main": "dist/index.js",
   "scripts": {
@@ -27,7 +27,6 @@
     "babel-core": "^6.26.3",
     "babel-loader": "^7.1.4",
     "babel-preset-env": "^1.7.0",
-    "babel-preset-react": "^6.24.1",
     "babel-preset-stage-2": "^6.24.1",
     "copy-webpack-plugin": "^4.5.1",
     "css-loader": "^0.28.11",
@@ -39,6 +38,10 @@
     "jsx-loader": "^0.13.2",
     "style-loader": "^0.21.0",
     "url-loader": "^1.0.1",
+    "vue": "^2.5.16",
+    "vue-loader": "^15.2.4",
+    "vue-style-loader": "^4.1.0",
+    "vue-template-compiler": "^2.5.16",
     "webpack": "^4.11.1",
     "webpack-cli": "^3.0.1",
     "webpack-dev-server": "^3.1.4",
@@ -46,12 +49,10 @@
   },
   "dependencies": {
     "@turf/turf": "^5.1.6",
-    "antd": "^3.6.2",
     "bezier-js": "^2.2.5",
     "cesium": "^1.46.1",
     "dat.gui": "^0.7.2",
     "lodash": "^4.17.10",
-    "react": "^16.4.1",
-    "react-dom": "^16.4.1"
+    "vue-antd-ui": "^0.6.1"
   }
 }

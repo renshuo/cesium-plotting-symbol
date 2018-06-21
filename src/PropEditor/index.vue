@@ -2,14 +2,14 @@
   <div class="propeditor" id="app">
     <a-collapse :bordered="false" activeKey="1">
       <a-collapse-panel header="属性编辑" key="1">
-        <div v-for="(value, key) in prop" :key="key">
+        <div v-for="(value, key) in props" :key="key">
           <a-row>
             <a-col :span="6">{{value.title}}</a-col>
             <a-col :span="18">
               <component 
               :is="getCompByType(value.type)"
               v-bind="value"
-              v-model="value.value"
+              @input="(e) => value.value=e"
               :disabled="value.editable === false">
               </component>
             </a-col>
@@ -22,29 +22,38 @@
 
 <script>
 import ColorEditor from './ColorEditor.vue'
+import TextEditor from './TextEditor.vue'
+import NumberEditor from './NumberEditor.vue'
+import BooleanCheck from './BooleanCheck.vue'
 
 export default {
   name: 'PropEditor',
   components: {
-    ColorEditor
+    ColorEditor,
+    TextEditor,
+    NumberEditor,
+    BooleanCheck
   },
   data () {
     return {
-      prop: {}
+      props: {}
     }
+  },
+  computed: {
   },
   methods: {
     getCompByType (type) {
       switch (type) {
-        case 'number': return 'a-input-number'
-        case 'string': return 'a-input'
+        case 'number': return 'number-editor'
+        case 'string': return 'text-editor'
         case 'color': return 'color-editor'
+        case 'boolean': return 'boolean-check'
       }
     }
   },
   mounted () {
 	 window.addEventListener('ppe', (e) => {
-     this.$data.prop = e.props
+    this.$data.props = e.props
    })
   }
 }

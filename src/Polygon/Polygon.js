@@ -18,20 +18,23 @@ export default class Polygon extends Graph {
     this.props.alpha = {
       value: 0.8, title: '透明度', type: 'number', step: 0.05, max: 1, min: 0
     }
+    this.props.fill = {
+      value: true, title: 'fill', type: 'boolean'
+    }
   }
 
   initShape() {
     this.ent = this.addShape({
       id: 'arrow1_' + Graph.seq++,
       polygon: {
-        fill: true,
+        fill: new Cesium.CallbackProperty((time, result) => this.props.fill.value, false),
         material: new Cesium.ColorMaterialProperty(
           new Cesium.CallbackProperty((time, result) => {
             let c = Cesium.Color.fromCssColorString(this.props.color.value)
             return this.highLighted ? c.brighten(0.6, new Cesium.Color()) : c
           }, false)),
         height: 0,
-        outline: false
+        outline: true
       }
     })
   }

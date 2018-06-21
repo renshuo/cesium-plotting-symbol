@@ -24,7 +24,8 @@ module.exports = {
     },
     color: 'color',
     lodash: 'lodash',
-    'vue-antd-ui': 'vue-antd-ui'
+    'vue-antd-ui': 'vue-antd-ui',
+    'vue': 'vue'
   },
   output: {
     filename: 'index.js',

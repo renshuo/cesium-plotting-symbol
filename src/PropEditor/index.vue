@@ -63,9 +63,10 @@ export default {
 .propeditor {
   position: absolute;
   float: right;
-  top: 120px;
-  right: 12px;
-  width: 300px;
+  top: 100px;
+  right: 10px;
+  width: 20%;
+  max-width: 400px;
 }
 
 .editor {

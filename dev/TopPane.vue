@@ -1,8 +1,10 @@
 <template>
-  <div class="topbar">
-    <div v-for="(v, k, i) in funcs1" :key="i" >
-      <a-button ghost class="topbtn" v-for="c in v" :key="c.name" @click="c.func">{{c.name}}</a-button>
-      <br/>
+  <div>
+    <div class="topbar">
+      <div v-for="(v, k, i) in funcs1" :key="i" >
+        <a-button ghost class="topbtn" v-for="c in v" :key="c.name" @click="c.func">{{c.name}}</a-button>
+        <br/>
+      </div>
     </div>
   </div>
 </template>
@@ -11,8 +13,11 @@
 import gx from '../src/index.js'
 
 export default {
+  components: {
+  },
   data () {
     return {
+      message: '',
       funcs1: [
         [
           {name: '多边形', func: () => gx.start(new gx.Polygon()) },

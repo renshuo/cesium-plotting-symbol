@@ -51,8 +51,10 @@
     "@turf/turf": "^5.1.6",
     "bezier-js": "^2.2.5",
     "cesium": "^1.46.1",
-    "dat.gui": "^0.7.2",
+    "color": "^3.0.0",
     "lodash": "^4.17.10",
-    "vue-antd-ui": "^0.6.1"
+    "vue-antd-ui": "^0.6.1",
+    "vue-color": "^2.4.6",
+    "vuex": "^3.0.1"
   }
 }

@@ -19,6 +19,7 @@ import BezierN from './Polyline/BezierN.js'
 import BezierSpline from './Polyline/BezierSpline.js'
 import CircleArc from './Polyline/CircleArc.js'
 
+import PropEditor from './PropEditor/index.vue'
 
 import * as mapUtil from './mapUtil.js'
 
@@ -46,5 +47,6 @@ export default {
   Satellite,
   Station,
   start,
-  mapUtil
+  mapUtil,
+  PropEditor
 }

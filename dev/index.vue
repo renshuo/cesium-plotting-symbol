@@ -2,14 +2,15 @@
   <div>
     <div id="mapContainer"></div>
     <top-pane />
+    <prop-editor />
   </div>
 </template>
 
 <script>
 import Cesium from 'cesium/Source/Cesium.js'
 import 'cesium/Build/Cesium/Widgets/widgets.css'
-
 import TopPane from './TopPane.vue'
+import gx from '../src/index.js'
 
 function initMap () {
     window.CESIUM_BASE_URL = '/static/Cesium'
@@ -31,8 +32,15 @@ function initMap () {
   }
 
 export default {
+  name: 'dev',
+  data () {
+    return {
+      message: ''
+    }
+  },
   components: {
-    TopPane
+    TopPane,
+    'prop-editor': gx.PropEditor
   },
   mounted () {
     initMap()

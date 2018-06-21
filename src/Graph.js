@@ -1,6 +1,5 @@
 import * as mu from './mapUtil.js'
 import Cesium from 'cesium/Source/Cesium.js'
-import * as dat from 'dat.gui'
 
 export default class Graph {
   static seq = new Date().getTime()
@@ -14,8 +13,6 @@ export default class Graph {
    */
   maxPointNum = 9999
 
-  propEditor = new dat.GUI()
-
   graph
   /**
    * graph
@@ -24,9 +21,10 @@ export default class Graph {
    *  L shape (graphType='shapeRoot')
    *      L children (graphType='shp')
    *  L graph = this
-   *  L propEditor
    */
   highLighted
+
+  props = {}
 
   name = ''
   description = ''
@@ -44,8 +42,19 @@ export default class Graph {
     }
     Graph.lastGraph = this
     this.initRootEntity(id)
-    this.propEditor.add(this, 'name')
-    this.propEditor.add(this, 'description')
+    this.initProps()
+  }
+
+  initProps () {
+    this.props.name = {
+      value: '', title: '名称', type: 'string'
+    }
+    this.props.description = {
+      value: '', title: '描述', type: 'string'
+    },
+    this.props.type = {
+      value: this.constructor.name, title: '类型', type: 'string', editable: false
+    }
   }
 
   initRootEntity (id) {
@@ -102,8 +111,6 @@ export default class Graph {
     ent.downLight = () => this.highLight(false)
     ent.finish = () => this.finish()
     ent.toEdit = () => this.toEdit()
-    ent.propEditor = this.propEditor
-    window.x = ent.propEditor
     console.log('add a shape : ', ent)
     return ent
   }
@@ -144,13 +151,11 @@ export default class Graph {
   toEdit () {
     this.highLighted = false
     this.ent.parent.parent.ctl.show = true
-    this.ent.propEditor.domElement.hidden = false
   }
   /**
    * 图形绘制结束后调用
    */
   finish () {
-    this.ent.propEditor.domElement.hidden = true
     this.ent.parent.parent.ctl.show = false
   }
 }

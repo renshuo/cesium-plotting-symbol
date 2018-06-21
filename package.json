@@ -1,6 +1,6 @@
 {
   "name": "cesium-plotting-symbol",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "description": "cesiu plotting symbol",
   "main": "dist/index.js",
   "scripts": {

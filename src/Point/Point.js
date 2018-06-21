@@ -2,8 +2,6 @@ import Graph from '../Graph'
 import Cesium from 'cesium/Source/Cesium.js'
 import * as mu from '../mapUtil.js'
 
-import store from '../store/index.js'
-
 export default class Point extends Graph {
   maxPointNum = 1
   ent
@@ -38,7 +36,6 @@ export default class Point extends Graph {
         heightReference: Cesium.HeightReference.CLAMP_TO_GROUND
       }
     })
-    store.dispatch('selected', this.props)
   }
 
   addHandler (ctlPoint, ctl) {
@@ -53,7 +50,6 @@ export default class Point extends Graph {
 
   toEdit () {
     super.toEdit()
-    store.dispatch('selected', this.props)
     this.ent.position = new Cesium.CallbackProperty((time, result) => {
       return this.calcuteShape(this.graph.ctl._children[0], time)
     }, false)
@@ -61,8 +57,6 @@ export default class Point extends Graph {
 
   finish () {
     if (this.ent) {
-      console.log('finish', this.props)
-      store.dispatch('selected', {})
       super.finish()
       this.ent.position = this.calcuteShape(this.graph.ctl._children[0], mu.julianDate())
     }

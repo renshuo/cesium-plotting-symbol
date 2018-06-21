@@ -2,8 +2,6 @@ import Cesium from 'cesium/Source/Cesium.js'
 import Graph from '../Graph.js'
 import * as mu from '../mapUtil.js'
 
-import store from '../store/index.js'
-
 export default class Polyline extends Graph {
   ent
 
@@ -43,7 +41,6 @@ export default class Polyline extends Graph {
         outlineColor: Cesium.Color.fromCssColorString('#fd7f44')
       }
     })
-    store.dispatch('selected', this.props)
   }
 
   addHandler (ctlPoint, ctl) {
@@ -60,7 +57,6 @@ export default class Polyline extends Graph {
 
   toEdit () {
     super.toEdit()
-    store.dispatch('selected', this.props)
     this.ent.polyline.positions = new Cesium.CallbackProperty((time, result) => {
       return this.calcuteShape(this.graph.ctl._children, time)
     }, false)
@@ -69,7 +65,6 @@ export default class Polyline extends Graph {
   finish () {
     if (this.ent) {
       super.finish()
-      store.dispatch('selected', {})
       this.ent.polyline.positions = this.calcuteShape(this.graph.ctl._children, mu.julianDate())
     }
   }

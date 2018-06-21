@@ -2,8 +2,6 @@ import Cesium from 'cesium/Source/Cesium.js'
 import Graph from '../Graph.js'
 import * as mu from '../mapUtil.js'
 
-import store from '../store/index.js'
-
 export default class Polygon extends Graph {
   ent
 
@@ -36,7 +34,6 @@ export default class Polygon extends Graph {
         outline: false
       }
     })
-    store.dispatch('selected', this.props)
   }
 
   addHandler (ctlPoint, ctl) {
@@ -53,7 +50,6 @@ export default class Polygon extends Graph {
 
   toEdit () {
     super.toEdit()
-    store.dispatch('selected', this.props)
     this.ent.polygon.hierarchy = new Cesium.CallbackProperty((time, result) => {
       return this.calcuteShape(this.graph.ctl._children, time)
     }, false)
@@ -61,7 +57,6 @@ export default class Polygon extends Graph {
 
   finish () {
     if (this.ent) {
-      store.dispatch('selected', {})
       super.finish()
       this.ent.polygon.hierarchy = this.calcuteShape(this.graph.ctl._children, mu.julianDate())
     }

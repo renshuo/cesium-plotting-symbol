@@ -1,7 +1,5 @@
 'use strict'
 const path = require('path');
-const merge = require('webpack-merge')
-const baseWebpackConfig = require('./webpack.config.js')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const webpackHtml = require('html-webpack-plugin')
 const webpack = require('webpack');
@@ -33,12 +31,6 @@ module.exports = {
       },
       {
         test: /\.js$/,
-        loader: 'babel-loader',
-        exclude: [resolve('node_modules')],
-        include: [resolve('src'), resolve('test'), resolve('dev')],
-      },
-      {
-        test: /\.jsx$/,
         loader: 'babel-loader',
         exclude: [resolve('node_modules')],
         include: [resolve('src'), resolve('test'), resolve('dev')],

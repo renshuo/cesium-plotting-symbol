@@ -55,6 +55,16 @@ export default class Graph {
     this.props.type = {
       value: this.constructor.name, title: '类型', type: 'string', editable: false
     }
+    this.renewProperties(this.props)
+  }
+
+  renewProperties (props) {
+    // store.dispatch('selected', this.props)
+    console.log('props: ', props)
+    let ev = document.createEvent('HTMLEvents')
+    ev.initEvent('ppe', false, false)
+    ev.props = props
+    window.dispatchEvent(ev)
   }
 
   initRootEntity (id) {
@@ -149,6 +159,7 @@ export default class Graph {
    * 进入编辑模式
    */
   toEdit () {
+    this.renewProperties(this.props)
     this.highLighted = false
     this.ent.parent.parent.ctl.show = true
   }
@@ -156,6 +167,7 @@ export default class Graph {
    * 图形绘制结束后调用
    */
   finish () {
+    this.renewProperties({})
     this.ent.parent.parent.ctl.show = false
   }
 }

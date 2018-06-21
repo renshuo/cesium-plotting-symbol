@@ -1,3 +1,4 @@
+'use strict'
 const path = require('path');
 const webpack = require('webpack')
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
@@ -12,6 +13,8 @@ module.exports = {
     index: './src/index.js'
   },
   externals: {
+    '@turf/turf': '@turf/turf',
+    'bezier-js': 'bezier-js',
     "cesium/Source/Cesium.js": {
       commonjs: 'cesium/Source/Cesium.js',
       commonjs2: 'cesium/Source/Cesium.js',
@@ -19,15 +22,20 @@ module.exports = {
       umd: "cesium/Source/Cesium.js",
       root: "Cesium"
     },
-    lodash: "lodash",
-    '@turf/turf': '@turf/turf',
-    'bezier-js': 'bezier-js'
+    color: 'color',
+    lodash: 'lodash',
+    'vue-antd-ui': 'vue-antd-ui'
   },
   output: {
     filename: 'index.js',
     path: path.resolve(__dirname, 'dist'),
     library: 'cesium-plotting-symbol',
     libraryTarget: 'umd', //输出格式
+  },
+  resolve: {
+    alias: {
+      'vue$': 'vue/dist/vue.esm.js'
+    }
   },
   module: {
     rules: [

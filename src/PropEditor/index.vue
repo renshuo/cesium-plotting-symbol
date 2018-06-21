@@ -2,7 +2,7 @@
   <div class="propeditor" id="app">
     <a-collapse :bordered="false" activeKey="1">
       <a-collapse-panel header="属性编辑" key="1">
-        <div v-for="(value, key) in props" :key="key">
+        <div v-for="(value, key) in prop" :key="key">
           <a-row>
             <a-col :span="6">{{value.title}}</a-col>
             <a-col :span="18">
@@ -24,26 +24,16 @@
 import ColorEditor from './ColorEditor.vue'
 
 export default {
-  name: 'App',
+  name: 'PropEditor',
   components: {
     ColorEditor
   },
   data () {
     return {
+      prop: {}
     }
-  },
-  computed: {
-    props () {
-      return this.$store.getters.props
-    }
-  },
-  watch: {
-
   },
   methods: {
-    updateValue (name, value) {
-      this.$store.commit('updateValue', {name, value})
-    },
     getCompByType (type) {
       switch (type) {
         case 'number': return 'a-input-number'
@@ -52,7 +42,10 @@ export default {
       }
     }
   },
-  created () {
+  mounted () {
+	 window.addEventListener('ppe', (e) => {
+     this.$data.prop = e.props
+   })
   }
 }
 </script>
@@ -71,5 +64,3 @@ export default {
 }
 
 </style>
-
-ipoint

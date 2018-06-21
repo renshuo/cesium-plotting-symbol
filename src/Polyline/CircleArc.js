@@ -6,6 +6,11 @@ import * as turf from '@turf/turf'
 export default class CircleArc extends Polyline {
   maxPointNum = 3
 
+  constructor(){
+    super()
+    this.props.type.value = '圆弧线'
+  }
+
   calcuteShape (points, time) {
     if (points.length === 2) {
       return []

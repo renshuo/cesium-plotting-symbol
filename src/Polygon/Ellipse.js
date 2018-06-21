@@ -5,6 +5,11 @@ import * as turf from '@turf/turf'
 export default class Ellipse extends Polygon {
   maxPointNum = 3
 
+  constructor(){
+    super()
+    this.props.type.value = '椭圆'
+  }
+
   calcuteShape (points, time) {
     if (points.length < 2) {
       return []

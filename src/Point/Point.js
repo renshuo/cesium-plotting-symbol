@@ -9,6 +9,7 @@ export default class Point extends Graph {
   constructor (id) {
     super(id)
     this.initShape()
+    this.props.type.value = '点'
   }
 
   initProps () {

@@ -2,8 +2,12 @@ import Polygon from './Polygon.js'
 import * as mu from '../mapUtil.js'
 
 export default class Rectangle extends Polygon{
-  ent
   maxPointNum = 2
+
+  constructor(){
+    super()
+    this.props.type.value = '矩形'
+  }
 
   calcuteShape (points, time) {
     let ctls = points.map((p) => {

@@ -4,7 +4,11 @@ import * as turf from '@turf/turf'
 
 export default class Circle extends Polygon {
   maxPointNum = 2
-  ent
+  
+  constructor(){
+    super()
+    this.props.type.value = '圆'
+  }
 
   calcuteShape (points, time) {
     if (points.length === 1) {

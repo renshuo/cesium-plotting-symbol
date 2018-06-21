@@ -6,6 +6,11 @@ import _ from 'lodash'
 export default class Arrow1 extends Polygon {
   maxPointNum = 2
 
+  constructor(){
+    super()
+    this.props.type.value = '单箭头'
+  }
+
   calcuteShape (pos, time) {
     let posis = _.map(pos, ent => ent.position.getValue(time)) // pos.map(ent => ent.position.getValue(time))
     let turfPoints = posis.map(cartesian3 => {

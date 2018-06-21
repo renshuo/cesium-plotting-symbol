@@ -5,6 +5,11 @@ import * as mu from '../mapUtil.js'
 
 export default class Satellite extends Point {
 
+  constructor (id) {
+    super(id)
+    this.props.type.value = '卫星'
+  }
+
   initProps () {
     super.initProps()
     this.props.pixelSize = {}

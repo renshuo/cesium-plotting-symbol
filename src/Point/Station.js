@@ -5,6 +5,11 @@ import * as mu from '../mapUtil.js'
 
 export default class Station extends Point {
 
+  constructor (id) {
+    super(id)
+    this.props.type.value = '地面站'
+  }
+
   initProps () {
     super.initProps()
     this.props.pixelSize = {}

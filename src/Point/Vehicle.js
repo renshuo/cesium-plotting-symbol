@@ -5,6 +5,11 @@ import * as mu from '../mapUtil.js'
 
 export default class Vehicle extends Point {
 
+  constructor (id) {
+    super(id)
+    this.props.type.value = '车'
+  }
+
   initProps () {
     super.initProps()
     this.props.pixelSize = {}

@@ -11,6 +11,7 @@ export default class BezierN extends Polyline {
     if (maxPoint) {
       this.maxPointNum = maxPoint
     }
+    this.props.type.value = 'n阶bezier曲线'
   }
 
   calcuteShape (points, time) {

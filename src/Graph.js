@@ -22,6 +22,8 @@ export default class Graph {
    *      L children (graphType='shp')
    *  L graph = this
    */
+  ent
+
   highLighted
 
   props = {}
@@ -46,15 +48,19 @@ export default class Graph {
   }
 
   initProps () {
-    this.props.name = {
-      value: '', title: '名称', type: 'string'
-    }
-    this.props.description = {
-      value: '', title: '描述', type: 'string'
-    },
-    this.props.type = {
-      value: this.constructor.name, title: '类型', type: 'string', editable: false
-    }
+    Object.assign(this.props,
+      {
+        name: {
+          value: '', title: '名称', type: 'string'
+        },
+        description: {
+          value: '', title: '描述', type: 'string'
+        },
+        type: {
+          value: '', title: '类型', type: 'string', editable: false
+        },
+      }
+    )
     this.renewProperties(this.props)
   }
 

@@ -3,26 +3,29 @@ import Graph from '../Graph.js'
 import * as mu from '../mapUtil.js'
 
 export default class Polyline extends Graph {
-  ent
 
   constructor (id) {
     super(id)
     this.initShape()
+    this.props.type.value = '折线'
   }
 
   initProps () {
     super.initProps()
-    this.props.width =  {
-      value: 1, title: '线宽', type: 'number', min: 1, max: 256
-    }
-    this.props.color = {
-      value: '#00ff00', title: '颜色', type: 'color'
-    }
-    this.props.alpha = {
-      value: 0.8, title: '透明度', type: 'number', step: 0.05, max: 1, min: 0
-    }
+    Object.assign(this.props, super.props,
+      {
+        width: {
+          value: 1, title: '线宽', type: 'number', min: 1, max: 256
+        },
+        color: {
+          value: '#00ff00', title: '颜色', type: 'color'
+        },
+        alpha: {
+          value: 0.8, title: '透明度', type: 'number', step: 0.05, max: 1, min: 0
+        }
+      }
+    )
   }
-
 
   initShape() {
     this.ent = this.addShape({

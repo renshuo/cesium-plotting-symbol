@@ -4,6 +4,8 @@ import * as mu from '../mapUtil.js'
 
 export default class Polygon extends Graph {
 
+  minPointNum = 3
+  
   constructor (id) {
     super(id)
     this.initShape()

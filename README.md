@@ -70,6 +70,9 @@ cps.deleteAllGraph()
 #### 查看模式
 #### 创建模式
 #### 选择模式
+'a': 创建点
+'b': 创建折线
+'c': 创建多边形
 #### 编辑模式
 'delete', 'ctrl+d': 删除当前正在编辑的图形
 'ctrl+shift+d', 'shift+delete': 清除所有图形

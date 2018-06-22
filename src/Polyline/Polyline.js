@@ -4,6 +4,8 @@ import * as mu from '../mapUtil.js'
 
 export default class Polyline extends Graph {
 
+  minPointNum = 2
+
   constructor (id) {
     super(id)
     this.initShape()

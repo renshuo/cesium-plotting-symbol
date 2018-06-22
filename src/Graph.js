@@ -11,7 +11,8 @@ export default class Graph {
    * set max ctl point number
    * when ctlPoints.length >= maxPointNum call this.finish()
    */
-  maxPointNum = 9999
+  maxPointNum = Infinity
+  minPointNum = 1
 
   graph
   /**
@@ -101,8 +102,26 @@ export default class Graph {
     })
   }
 
-  isFinished () {
+  /**
+   * 对于maxPointNum为指定值的图形，返回是否已达到最大ctl数量
+   * 比如rectange只需要2个点即可结束绘制
+   */
+  ishaveMaxCtls () {
     return this.graph.ctl._children.length >= this.maxPointNum
+  }
+
+  /**
+   * 返回当前ctl数量是否可以绘制图形
+   * 无限max点的图形比较min值，比如，polygon至少需要3个点，polyline至少需要2个点... 
+   * 对于限定ctl数量的图形，ctlnum >= max 返回true
+   */
+  isCtlNumValid () {
+    let ctlnum = this.graph.ctl._children.length
+    if (this.maxPointNum === Infinity){
+      return ctlnum > this.minPointNum
+    } else {
+      return ctlnum >= this.maxPointNum
+    }
   }
 
 

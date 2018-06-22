@@ -4,7 +4,6 @@ import * as mu from '../mapUtil.js'
 
 export default class Point extends Graph {
   maxPointNum = 1
-  ent
 
   constructor (id) {
     super(id)

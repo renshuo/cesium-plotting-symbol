@@ -1,6 +1,7 @@
 import Cesium from 'cesium/Source/Cesium.js'
 import * as mu from './mapUtil.js'
 import kb from 'keyboardjs'
+import gx from './index.js'
 
 export default class EditMode {
 
@@ -25,34 +26,12 @@ export default class EditMode {
     this.handler = undefined
   }
 
-  /** 键盘初始化 */
-
   static initKeyboard () {
-    kb.withContext(EditMode.MODE_VIEW, () => {
-      kb.bind('1', (e) => console.log('view: ', e, this))
-    })
-
-    kb.withContext(EditMode.MODE_CREATE, () => {
-      kb.bind('1', (e) => console.log('create: ', e, this))
-    })
-    
-    kb.withContext(EditMode.MODE_SELECT, () => {
-      kb.bind('1', (e) => console.log('select: ', e, this))
-    })
-
-    kb.withContext(EditMode.MODE_EDIT, () => {
-      kb.bind('1', (e) => console.log('edit: ', e, this))
-      kb.bind(['delete', 'ctrl+d'], function(e) {
-        EditMode.getInstance().deleteGraph()
-      })
-      kb.bind(['ctrl+shift+d', 'shift+delete'], function(e) {
-        new Graph().deleteAllGraph()
-      })
-    })
-
-    kb.withContext(EditMode.MODE_CTLEDIT, () => {
-      kb.bind('1', (e) => console.log('ctledit: ', e, this))
-    })
+    this.getInstance().initKeyboardView()
+    this.getInstance().initKeyboardCreate()
+    this.getInstance().initKeyboardSelect()
+    this.getInstance().initKeyboardEdit()
+    this.getInstance().initKeyboardCtledit()
   }
 
   static MODE_VIEW = 'view'
@@ -136,44 +115,55 @@ export default class EditMode {
     viewer.canvas.style.cursor = 'auto'
   }
 
+  initKeyboardView () {
+    kb.withContext(EditMode.MODE_VIEW, () => {
+      kb.bind('1', (e) => console.log('view: ', e, this))
+    })
+  }
+
+  createGraph
   createMode (graphObj, viewer = window.viewer) {
     this.mode = EditMode.MODE_CREATE
+    this.createGraph = graphObj
     console.log(`into ${this.mode} mode`)
+
     kb.setContext(this.mode)
-    let handler = EditMode.getHandler()
-    // viewer.defaultInput.cleanHandler()
-
     viewer.canvas.style.cursor = 'crosshair'
+    this.initCreateCursor()
 
-    let finishCreate = (graphObj) => {
-      viewer.entities.remove(window.cursor)
-      graphObj.finish()
-      this.nextMode(EditMode.ACT_FINISH)
-    }
-
-    handler.setInputAction(move => {
+    EditMode.getHandler().setInputAction(move => {
       window.cursorScreenPos = mu.screen2lonlat(move.endPosition)
       window.cursorPos = mu.lonlat2Cartesian(window.cursorScreenPos)
     }, Cesium.ScreenSpaceEventType.MOUSE_MOVE)
 
-    handler.setInputAction(event => {
-      this.addCtlPoint(event, graphObj)
-      if (graphObj.isFinished()) {
-        finishCreate(graphObj)
+    EditMode.getHandler().setInputAction(event => {
+      this.addCtlPoint(event)
+      if (this.createGraph.ishaveMaxCtls()) {
+        viewer.entities.remove(window.cursor)
+        this.createGraph.finish()
+        this.nextMode(EditMode.ACT_FINISH)
       }
     }, Cesium.ScreenSpaceEventType.LEFT_CLICK)
 
-    handler.setInputAction(event => {
-      graphObj.deleteLastPoint()
+    EditMode.getHandler().setInputAction(event => {
+      this.createGraph.deleteLastPoint()
     }, Cesium.ScreenSpaceEventType.MIDDLE_CLICK)
 
-    handler.setInputAction(event => {
-      finishCreate(graphObj)
+    EditMode.getHandler().setInputAction(event => {
+      viewer.entities.remove(window.cursor)
+      if (this.createGraph.isCtlNumValid()) {
+        this.createGraph.finish()
+      } else {
+        this.createGraph.deleteGraph()
+      }
+      this.nextMode(EditMode.ACT_FINISH)
     }, Cesium.ScreenSpaceEventType.RIGHT_CLICK)
+  }
 
+  initCreateCursor (viewer = window.viewer) {
     window.cursor = viewer.entities.add({
       id: 'cursor',
-      parent: graphObj.layer.rootEnt,
+      parent: this.createGraph.layer.rootEnt,
       position: new Cesium.CallbackProperty((time, result) => {
         return window.cursorPos === null
           ? null
@@ -201,15 +191,21 @@ export default class EditMode {
     })
   }
 
-  addCtlPoint (event, graphObj, viewer = window.viewer) {
+  initKeyboardCreate () {
+    kb.withContext(EditMode.MODE_CREATE, () => {
+      kb.bind('1', (e) => console.log('create: ', e, this))
+    })
+  }
+
+  addCtlPoint (event, viewer = window.viewer) {
     let newpos = mu.screen2Cartesian(event.position)
     let p = mu.cartesian2lonlat(newpos)
     let text = 'Lon: ' + p[0].toPrecision(5) + '\u00B0' +
            '\nLat: ' + p[1].toPrecision(5) + '\u00B0'
 
     let ctlPoint = viewer.entities.add({
-      id: graphObj.graph.id + '_ctlpoint_' + EditMode.seq++,
-      parent: graphObj.graph.ctl,
+      id: this.createGraph.graph.id + '_ctlpoint_' + EditMode.seq++,
+      parent: this.createGraph.graph.ctl,
       position: newpos,
       graphType: 'ctl',
       point: {
@@ -242,7 +238,7 @@ export default class EditMode {
       }, false)
     }
     console.log('added a point: ', ctlPoint)
-    graphObj.addHandler(ctlPoint, graphObj.graph.ctl)
+    this.createGraph.addHandler(ctlPoint, this.createGraph.graph.ctl)
   }
 
 
@@ -308,7 +304,21 @@ export default class EditMode {
       this.nextMode(EditMode.ACT_FINISH)
     }, Cesium.ScreenSpaceEventType.RIGHT_CLICK)
   }
-
+  
+  initKeyboardSelect () {
+    kb.withContext(EditMode.MODE_SELECT, () => {
+      kb.bind('1', (e) => console.log('select: ', e, this))
+      kb.bind('a', (e) => {
+        this.nextMode(EditMode.ACT_CREATE, new gx.Point())
+      })
+      kb.bind('b', (e) => {
+        this.nextMode(EditMode.ACT_CREATE, new gx.Polyline())
+      })
+      kb.bind('c', (e) => {
+        this.nextMode(EditMode.ACT_CREATE, new gx.Polygon())
+      })
+    })
+  }
 
   currentEditEnt
   editMode (ent, viewer = window.viewer) {
@@ -346,6 +356,18 @@ export default class EditMode {
     }, Cesium.ScreenSpaceEventType.RIGHT_CLICK)
   }
 
+  initKeyboardEdit () {
+    kb.withContext(EditMode.MODE_EDIT, () => {
+      kb.bind('1', (e) => console.log('edit: ', e, this))
+      kb.bind(['delete', 'ctrl+d'], function(e) {
+        EditMode.getInstance().deleteGraph()
+      })
+      kb.bind(['ctrl+shift+d', 'shift+delete'], function(e) {
+        new Graph().deleteAllGraph()
+      })
+    })
+  }
+
   deleteGraph () {
     if (this.currentEditEnt) {
       let graph = this.currentEditEnt.parent.parent.graph
@@ -380,5 +402,11 @@ export default class EditMode {
       this.pickedctl.finish()
       this.nextMode(EditMode.ACT_FINISH, this.currentEditEnt)
     }, Cesium.ScreenSpaceEventType.RIGHT_CLICK)
+  }
+
+  initKeyboardCtledit () {
+    kb.withContext(EditMode.MODE_CTLEDIT, () => {
+      kb.bind('1', (e) => console.log('ctledit: ', e, this))
+    })
   }
 }

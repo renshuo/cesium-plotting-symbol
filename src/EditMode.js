@@ -234,9 +234,12 @@ export default class EditMode {
     }, Cesium.ScreenSpaceEventType.RIGHT_CLICK)
   }
 
+  currentEditEnt
+
   editMode (ent, viewer = window.viewer) {
     this.mode = EditMode.MODE_EDIT
-    console.log(`into ${this.mode} mode`)
+    this.currentEditEnt = ent
+    console.log(`into ${this.mode} mode: `, this.currentEditEnt)
     let handler = EditMode.getHandler()
     viewer.canvas.style.cursor = 'crosshair'
     ent.toEdit()
@@ -263,6 +266,7 @@ export default class EditMode {
 
     handler.setInputAction(event => {
       this.unpick()
+      this.currentEditEnt = undefined
       ent.finish()
       this.nextMode(EditMode.ACT_FINISH)
     }, Cesium.ScreenSpaceEventType.RIGHT_CLICK)
@@ -284,6 +288,15 @@ export default class EditMode {
       this.pickedctl.position = Cesium.Cartesian3.clone(window.cursorPos)
       this.pickedctl.label.text.setCallback(this.pickedctl.label.text._callback, true)
       this.pickedctl = undefined
+    }
+  }
+
+  deleteGraph () {
+    if (this.currentEditEnt) {
+      let graph = this.currentEditEnt.parent.parent.graph
+      graph.deleteGraph()
+    } else {
+      console.log('no graph selected.')
     }
   }
 }

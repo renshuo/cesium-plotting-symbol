@@ -40,6 +40,10 @@ export default {
           {name: '车', func: () => gx.start(new gx.Vehicle()) },
           {name: '地面站', func: () => gx.start(new gx.Station()) },
           {name: '卫星', func: () => gx.start(new gx.Satellite()) },
+        ],
+        [
+          {name: '删除', func: () => gx.deleteGraph() },
+          {name: '清空', func: () => gx.deleteAllGraph() },
         ]
       ]
     }

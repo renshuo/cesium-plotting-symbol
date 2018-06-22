@@ -1,4 +1,5 @@
 import EditMode from './EditMode'
+import Graph from './Graph'
 
 import Point from './Point/Point.js'
 import Boat from './Point/Boat.js'
@@ -28,6 +29,15 @@ function start (obj) {
   EditMode.getInstance().nextMode(EditMode.ACT_CREATE, obj)
   return obj
 }
+
+function deleteGraph () {
+  EditMode.getInstance().deleteGraph()
+}
+
+function deleteAllGraph () {
+  new Graph().deleteAllGraph()
+}
+
 export default {
   EditMode,
   Point,
@@ -47,6 +57,8 @@ export default {
   Satellite,
   Station,
   start,
+  deleteGraph,
+  deleteAllGraph,
   mapUtil,
   PropEditor
 }

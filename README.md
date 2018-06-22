@@ -27,7 +27,6 @@ npm install cesium-plotting-symbol --save
 ```javascript
 import cps from 'cesium-plotting-symbol'
 ```
-
 ## 属性编辑窗
 ```html
 <prop-editor />
@@ -54,6 +53,17 @@ graph.getCtlPositions() // 返回图形的所有控制点的坐标，
             return cps.mapUtil.convertCartesian(po)
           }))
 ```
+
+## 删除，清除图形
+```javascript
+cps.deleteGraph()
+```
+删除当前选中的图形
+
+```javascript
+cps.deleteAllGraph()
+```
+删除所有图形
 
 一个栗子（VUE）：
 ```html

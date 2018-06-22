@@ -77,7 +77,7 @@ export default class Graph {
     console.log('this layer: ', this.layer)
     this.graph = this.viewer.entities.add({
       id: id === undefined ? this.layer.name + '_graph_' + Graph.seq++ : id,
-      parent: this.layer.rootEnt
+      parent: this.layer
     })
     this.graph.ctl = this.viewer.entities.add({
       id: this.graph.id + '__ctl',
@@ -94,10 +94,37 @@ export default class Graph {
     this.graph.graph = this
   }
 
-
+  getCtlPositions () {
+    let dt = Cesium.JulianDate.fromDate(new Date())
+    return this.graph.ctl._children.map((ent) => {
+      return ent.position.getValue(dt)
+    })
+  }
 
   isFinished () {
     return this.graph.ctl._children.length >= this.maxPointNum
+  }
+
+
+  /* ############# delete ############# */
+
+  deleteGraph () {
+    console.log('delete this graph: ', this)
+    this.deleteEntities([this.graph])
+  }
+
+  deleteEntities (ents) {
+    ents.forEach((ent) => {
+      if (ent._children.length > 0) {
+        this.deleteEntities(ent._children)
+      }
+      this.viewer.entities.remove(ent)
+    })
+  }
+
+  deleteAllGraph () {
+    console.log('clean all graph.')
+    this.deleteEntities(this.layer._children)
   }
   /**
    * delete last point,
@@ -138,12 +165,7 @@ export default class Graph {
     window.viewer.entities.remove(ent)
   }
 
-  getCtlPositions () {
-    let dt = Cesium.JulianDate.fromDate(new Date())
-    return this.graph.ctl._children.map((ent) => {
-      return ent.position.getValue(dt)
-    })
-  }
+  /* ############## spliter ############## */
 
   /**
    * 在ctlPoint增加之后被调用

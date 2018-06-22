@@ -33,13 +33,13 @@ export default class Polyline extends Graph {
     this.ent = this.addShape({
       id: 'arrow1_' + Graph.seq++,
       polyline: {
-        width: new Cesium.CallbackProperty((time, result) => this.props.width.value, false),
+        width: new Cesium.CallbackProperty((time, result) => this.props.width.value, true),
         fill: true,
         material: new Cesium.ColorMaterialProperty(
           new Cesium.CallbackProperty((time, result) => {
             let c = Cesium.Color.fromCssColorString(this.props.color.value)
             return this.highLighted ? c.brighten(0.6, new Cesium.Color()) : c
-          }, false)),
+          }, true)),
         height: 0,
         outline: true,
         outlineWidth: 1,

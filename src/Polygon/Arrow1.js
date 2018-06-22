@@ -5,14 +5,18 @@ import _ from 'lodash'
 
 export default class Arrow1 extends Polygon {
   maxPointNum = 2
+  minPointNum = 2
 
   constructor(){
     super()
     this.props.type.value = '单箭头'
   }
 
-  calcuteShape (pos, time) {
-    let posis = _.map(pos, ent => ent.position.getValue(time)) // pos.map(ent => ent.position.getValue(time))
+  calcuteShape (points, time) {
+    if (points.length < this.minPointNum) {
+      return []
+    }
+    let posis = _.map(points, ent => ent.position.getValue(time)) // pos.map(ent => ent.position.getValue(time))
     let turfPoints = posis.map(cartesian3 => {
       let longLat = mu.cartesian2lonlat(cartesian3)
       return turf.point(longLat)

@@ -4,6 +4,7 @@ import * as turf from '@turf/turf'
 
 export default class Circle extends Polygon {
   maxPointNum = 2
+  minPointNum = 2
   
   constructor(){
     super()
@@ -11,7 +12,7 @@ export default class Circle extends Polygon {
   }
 
   calcuteShape (points, time) {
-    if (points.length === 1) {
+    if (points.length < this.minPointNum) {
       return []
     }
     let ctls = points.map((p) => {

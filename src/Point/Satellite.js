@@ -17,8 +17,11 @@ export default class Satellite extends Model {
     }    
   }
 
-  calcuteShape (ctlPoint, time) {
-    let cart = ctlPoint.position.getValue(time)
+  calcuteShape (points, time) {
+    if (points.length < this.minPointNum) {
+      return []
+    }
+    let cart = points[0].position.getValue(time)
     let lonlat = mu.cartesian2lonlat(cart)
     return mu.lonlat2Cartesian(lonlat, this.props.height.value)
   }

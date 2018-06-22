@@ -5,6 +5,7 @@ import * as turf from '@turf/turf'
 
 export default class CircleArc extends Polyline {
   maxPointNum = 3
+  minPointNum = 3
 
   constructor(){
     super()
@@ -12,7 +13,7 @@ export default class CircleArc extends Polyline {
   }
 
   calcuteShape (points, time) {
-    if (points.length === 2) {
+    if (points.length < this.minPointNum) {
       return []
     }
     let ctls = points.map((p) => {

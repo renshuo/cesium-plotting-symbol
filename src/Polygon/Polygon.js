@@ -29,12 +29,12 @@ export default class Polygon extends Graph {
     this.ent = this.addShape({
       id: 'arrow1_' + Graph.seq++,
       polygon: {
-        fill: new Cesium.CallbackProperty((time, result) => this.props.fill.value, false),
+        fill: new Cesium.CallbackProperty((time, result) => this.props.fill.value, true),
         material: new Cesium.ColorMaterialProperty(
           new Cesium.CallbackProperty((time, result) => {
             let c = Cesium.Color.fromCssColorString(this.props.color.value)
             return this.highLighted ? c.brighten(0.6, new Cesium.Color()) : c
-          }, false)),
+          }, true)),
         height: 0,
         outline: true
       }
@@ -50,6 +50,9 @@ export default class Polygon extends Graph {
   }
   
   calcuteShape (points, time) {
+    if (points.length < this.minPointNum) {
+      return []
+    }
     return points.map(ent => ent.position.getValue(time))
   }
 

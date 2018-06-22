@@ -15,6 +15,9 @@ export default class BezierN extends Polyline {
   }
 
   calcuteShape (points, time) {
+    if (points.length < this.minPointNum) {
+      return []
+    }
     if (points.length < 2) {
       return points.map((p) => p.position.getValue(time))
     } else {

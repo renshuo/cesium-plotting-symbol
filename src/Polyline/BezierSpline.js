@@ -11,6 +11,9 @@ export default class BezierSpline extends Polyline {
   }
 
   calcuteShape (points, time) {
+    if (points.length < this.minPointNum) {
+      return []
+    }
     let linestr = points.map((p) => mu.cartesian2lonlat(p.position.getValue(time)))
     let line = turf.lineString(linestr)
     let curved = turf.bezierSpline(line)

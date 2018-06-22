@@ -10,6 +10,9 @@ export default class Rectangle extends Polygon{
   }
 
   calcuteShape (points, time) {
+    if (points.length < this.minPointNum) {
+      return []
+    }
     let ctls = points.map((p) => {
       return mu.cartesian2lonlat(p.position.getValue(time))
     })

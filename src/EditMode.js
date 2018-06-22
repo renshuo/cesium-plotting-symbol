@@ -57,6 +57,11 @@ export default class EditMode {
           case EditMode.ACT_START:
             this.selectMode()
             break
+          case EditMode.ACT_CREATE:
+            /** 原本设计有启动绘图面板，即 MODE_VIEW + ACT_START，然后才可进入create模式
+             * 如果没有绘图面板开启功能，则ACT_CREATE直接进入创建模式 */
+            this.createMode(...args)
+            break
         }
         break
       case EditMode.MODE_SELECT:
@@ -73,6 +78,7 @@ export default class EditMode {
         }
         break
       case EditMode.MODE_CREATE:
+        this.finishCurrentCreate()
         switch (action) {
           case EditMode.ACT_FINISH:
             this.selectMode()
@@ -80,6 +86,7 @@ export default class EditMode {
           case EditMode.ACT_CREATE:
             this.createMode(...args)
             break
+          default:
         }
         break
       case EditMode.MODE_EDIT:
@@ -139,8 +146,6 @@ export default class EditMode {
     EditMode.getHandler().setInputAction(event => {
       this.addCtlPoint(event)
       if (this.createGraph.ishaveMaxCtls()) {
-        viewer.entities.remove(window.cursor)
-        this.createGraph.finish()
         this.nextMode(EditMode.ACT_FINISH)
       }
     }, Cesium.ScreenSpaceEventType.LEFT_CLICK)
@@ -150,14 +155,24 @@ export default class EditMode {
     }, Cesium.ScreenSpaceEventType.MIDDLE_CLICK)
 
     EditMode.getHandler().setInputAction(event => {
-      viewer.entities.remove(window.cursor)
+      this.nextMode(EditMode.ACT_FINISH)
+    }, Cesium.ScreenSpaceEventType.RIGHT_CLICK)
+  }
+
+  /**
+   * 完成当前绘图，如果图形能够绘制出来，则绘制，否则删除不成形的图形
+   */
+  finishCurrentCreate () {
+    console.log('finsih create: ', this.createGraph)
+    viewer.entities.remove(window.cursor)
+    if (this.createGraph) {
       if (this.createGraph.isCtlNumValid()) {
         this.createGraph.finish()
       } else {
+        console.log('delete graph by invalid ctlNums')
         this.createGraph.deleteGraph()
       }
-      this.nextMode(EditMode.ACT_FINISH)
-    }, Cesium.ScreenSpaceEventType.RIGHT_CLICK)
+    }
   }
 
   initCreateCursor (viewer = window.viewer) {

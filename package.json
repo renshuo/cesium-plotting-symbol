@@ -1,6 +1,6 @@
 {
   "name": "cesium-plotting-symbol",
-  "version": "0.0.20",
+  "version": "0.0.21",
   "description": "cesiu plotting symbol",
   "main": "dist/index.js",
   "scripts": {
@@ -52,6 +52,7 @@
     "bezier-js": "^2.2.5",
     "cesium": "^1.46.1",
     "color": "^3.0.0",
+    "keyboardjs": "^2.4.1",
     "lodash": "^4.17.10",
     "vue-antd-ui": "^0.6.1",
     "vue-color": "^2.4.6"

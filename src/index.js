@@ -24,6 +24,8 @@ import PropEditor from './PropEditor/index.vue'
 
 import * as mapUtil from './mapUtil.js'
 
+EditMode.getInstance()
+
 function start (obj) {
   EditMode.getInstance().nextMode(EditMode.ACT_START)
   EditMode.getInstance().nextMode(EditMode.ACT_CREATE, obj)

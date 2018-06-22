@@ -65,7 +65,18 @@ cps.deleteAllGraph()
 ```
 删除所有图形
 
-一个栗子（VUE）：
+
+## 快捷键
+#### 查看模式
+#### 创建模式
+#### 选择模式
+#### 编辑模式
+'delete', 'ctrl+d': 删除当前正在编辑的图形
+'ctrl+shift+d', 'shift+delete': 清除所有图形
+#### 控制点编辑模式
+
+
+## 一个栗子（VUE）：
 ```html
 <template>
       <button @click="drawPoint"></button>

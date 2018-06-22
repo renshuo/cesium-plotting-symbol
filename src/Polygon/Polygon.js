@@ -34,7 +34,7 @@ export default class Polygon extends Graph {
           new Cesium.CallbackProperty((time, result) => {
             let c = Cesium.Color.fromCssColorString(this.props.color.value)
             return this.highLighted ? c.brighten(0.6, new Cesium.Color()) : c
-          }, true)),
+          }, false)),
         height: 0,
         outline: true
       }

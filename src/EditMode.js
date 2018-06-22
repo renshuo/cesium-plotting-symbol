@@ -64,7 +64,8 @@ export default class EditMode {
             break
         }
         break
-      case EditMode.MODE_SELECT:
+      case EditMode.MODE_SELECT: {
+        this.finishCurrentSelect()
         switch (action) {
           case EditMode.ACT_CREATE:
             this.createMode(...args)
@@ -75,9 +76,10 @@ export default class EditMode {
           case EditMode.ACT_FINISH:
             this.viewMode()
             break
+          }
         }
         break
-      case EditMode.MODE_CREATE:
+      case EditMode.MODE_CREATE: {
         this.finishCurrentCreate()
         switch (action) {
           case EditMode.ACT_FINISH:
@@ -86,10 +88,11 @@ export default class EditMode {
           case EditMode.ACT_CREATE:
             this.createMode(...args)
             break
-          default:
+          }
         }
         break
-      case EditMode.MODE_EDIT:
+      case EditMode.MODE_EDIT: {
+        this.finishCurrentEdit()
         switch (action) {
           case EditMode.ACT_FINISH:
             this.selectMode()
@@ -100,9 +103,11 @@ export default class EditMode {
           case EditMode.ACT_PICKUP:
             this.ctlEditMode(...args)
             break
+          }
         }
         break
-      case EditMode.MODE_CTLEDIT:
+      case EditMode.MODE_CTLEDIT: {
+        this.finishCurrentCtledit()
         switch (action) {
         case EditMode.ACT_FINISH:
           this.editMode(...args)
@@ -111,6 +116,7 @@ export default class EditMode {
           this.createMode(...args)
           break
         }
+      }
     }
   }
 
@@ -304,20 +310,22 @@ export default class EditMode {
     }, Cesium.ScreenSpaceEventType.MOUSE_MOVE)
 
     EditMode.getHandler().setInputAction(event => {
-      if (this.hoveredEnt !== undefined) {
+      if (this.hoveredEnt) {
         let selectedEnt = this.hoveredEnt.id
-        this.hoveredEnt = undefined
         this.nextMode(EditMode.ACT_SELECT, selectedEnt)
       }
     }, Cesium.ScreenSpaceEventType.LEFT_CLICK)
 
     EditMode.getHandler().setInputAction(event => {
-      if (this.hoveredEnt) {
-        this.hoveredEnt.id.downLight()
-        this.hoveredEnt = undefined
-      }
       this.nextMode(EditMode.ACT_FINISH)
     }, Cesium.ScreenSpaceEventType.RIGHT_CLICK)
+  }
+
+  finishCurrentSelect () {
+    if (this.hoveredEnt) {
+      this.hoveredEnt.id.downLight()
+      this.hoveredEnt = undefined
+    }
   }
   
   initKeyboardSelect () {
@@ -343,7 +351,7 @@ export default class EditMode {
 
     kb.setContext(this.mode)
     viewer.canvas.style.cursor = 'crosshair'
-    ent.toEdit()
+    this.currentEditEnt.toEdit()
 
     EditMode.getHandler().setInputAction(move => {
       window.cursorPos = mu.screen2Cartesian(move.endPosition)
@@ -357,18 +365,21 @@ export default class EditMode {
             st.id.parent.parent === ent.parent.parent
         })
         if (ctl.length > 0) {
-          this.nextMode(EditMode.ACT_PICKUP, ctl[0].id)
+          this.nextMode(EditMode.ACT_PICKUP, ctl[0].id, this.currentEditEnt)
         }
       }
     }, Cesium.ScreenSpaceEventType.LEFT_CLICK)
   
     EditMode.getHandler().setInputAction(event => {
-      if (this.currentEditEnt) {
-        this.currentEditEnt.finish()
-        this.currentEditEnt = undefined
-      }
       this.nextMode(EditMode.ACT_FINISH)
     }, Cesium.ScreenSpaceEventType.RIGHT_CLICK)
+  }
+
+  finishCurrentEdit() {
+    if (this.currentEditEnt) {
+      this.currentEditEnt.finish()
+      this.currentEditEnt = undefined
+    }
   }
 
   initKeyboardEdit () {
@@ -395,13 +406,15 @@ export default class EditMode {
   }
 
   pickedctl
-  ctlEditMode (ent, viewer = window.viewer) {
+  ctlEditMode (picked, edited, viewer = window.viewer) {
     this.mode = EditMode.MODE_CTLEDIT
-    this.pickedctl = ent
-    console.log(`into ${this.mode} mode: `, this.pickedctl)
+    this.pickedctl = picked
+    this.currentEditEnt = edited
+    console.log(`into ${this.mode} mode: `, this.pickedctl, this.currentEditEnt)
     
     kb.setContext(this.mode)
     viewer.canvas.style.cursor = 'crosshair'
+    this.currentEditEnt.toEdit()
     this.pickedctl.pickup()
 
     EditMode.getHandler().setInputAction(move => {
@@ -417,6 +430,13 @@ export default class EditMode {
       this.pickedctl.finish()
       this.nextMode(EditMode.ACT_FINISH, this.currentEditEnt)
     }, Cesium.ScreenSpaceEventType.RIGHT_CLICK)
+  }
+
+  finishCurrentCtledit () {
+    if (this.pickedctl) {
+      this.pickedctl.finish()
+      this.pickedctl = undefined
+    }
   }
 
   initKeyboardCtledit () {

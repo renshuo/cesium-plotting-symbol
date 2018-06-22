@@ -302,7 +302,7 @@ export default class EditMode {
 
     EditMode.getHandler().setInputAction(event => {
       if (this.hoveredEnt) {
-        this.hoveredEnt.downLight()
+        this.hoveredEnt.id.downLight()
         this.hoveredEnt = undefined
       }
       this.nextMode(EditMode.ACT_FINISH)

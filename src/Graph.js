@@ -118,7 +118,7 @@ export default class Graph {
   isCtlNumValid () {
     let ctlnum = this.graph.ctl._children.length
     if (this.maxPointNum === Infinity){
-      return ctlnum > this.minPointNum
+      return ctlnum >= this.minPointNum
     } else {
       return ctlnum >= this.maxPointNum
     }

@@ -129,22 +129,9 @@ export default class Graph {
 
   deleteGraph () {
     console.log('delete this graph: ', this)
-    this.deleteEntities([this.graph])
+    mu.deleteEnts([this.graph])
   }
 
-  deleteEntities (ents) {
-    ents.forEach((ent) => {
-      if (ent._children.length > 0) {
-        this.deleteEntities(ent._children)
-      }
-      this.viewer.entities.remove(ent)
-    })
-  }
-
-  deleteAllGraph () {
-    console.log('clean all graph.')
-    this.deleteEntities(this.layer._children)
-  }
   /**
    * delete last point,
    */

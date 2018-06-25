@@ -36,7 +36,7 @@ function deleteGraph () {
 }
 
 function deleteAllGraph () {
-  new Graph().deleteAllGraph()
+  EditMode.getInstance().deleteAllGraph()
 }
 
 export default {

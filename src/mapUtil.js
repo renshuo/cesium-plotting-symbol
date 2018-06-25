@@ -86,3 +86,12 @@ export function turfGeometry2Cartesians(g) {
   let geo = g.geometry.coordinates[0]
   return geo.map((p) => lonlat2Cartesian(p))
 }
+
+export function deleteEnts (ents, viewer= window.viewer) {
+  ents.forEach((ent) => {
+    if (ent._children.length > 0) {
+      deleteEnts(ent._children)
+    }
+    viewer.entities.remove(ent)
+  })
+}

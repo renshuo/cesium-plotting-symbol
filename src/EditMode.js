@@ -405,6 +405,10 @@ export default class EditMode {
     }
   }
 
+  deleteAllGraph () {
+    mu.deleteEnts(window.layer.biaohui._children)
+  }
+
   pickedctl
   ctlEditMode (picked, edited, viewer = window.viewer) {
     this.mode = EditMode.MODE_CTLEDIT

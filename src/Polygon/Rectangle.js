@@ -3,6 +3,7 @@ import * as mu from '../mapUtil.js'
 
 export default class Rectangle extends Polygon{
   maxPointNum = 2
+  minPointNum = 2
 
   constructor(){
     super()

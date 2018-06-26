@@ -40,6 +40,7 @@ function deleteAllGraph () {
 }
 
 export default {
+  Graph,
   EditMode,
   Point,
   Polyline,

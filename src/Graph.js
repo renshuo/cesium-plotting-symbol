@@ -23,7 +23,6 @@ export default class Graph {
    *      L children (graphType='shp')
    *  L graph = this
    */
-  ent
 
   highLighted
 
@@ -97,8 +96,8 @@ export default class Graph {
 
   getCtlPositions () {
     let dt = Cesium.JulianDate.fromDate(new Date())
-    return this.graph.ctl._children.map((ent) => {
-      return ent.position.getValue(dt)
+    return this.graph.ctl._children.map((cp) => {
+      return cp.position.getValue(dt)
     })
   }
 
@@ -152,6 +151,13 @@ export default class Graph {
   }
 
   addShape (properties) {
+    if (!properties.id) {
+      if (properties.id_prefix) {
+        properties.id = properties.id_prefix + Graph.seq++
+      } else {
+        properties.id = 'shp_' + Graph.seq++
+      }
+    }
     let ent = window.viewer.entities.add(new Cesium.Entity(properties))
     ent.parent = this.graph.shape
     ent.graphType = 'shp'
@@ -195,13 +201,13 @@ export default class Graph {
   toEdit () {
     this.renewProperties(this.props)
     this.highLighted = false
-    this.ent.parent.parent.ctl.show = true
+    this.graph.ctl.show = true
   }
   /**
    * 图形绘制结束后调用
    */
   finish () {
     this.renewProperties({})
-    this.ent.parent.parent.ctl.show = false
+    this.graph.ctl.show = false
   }
 }

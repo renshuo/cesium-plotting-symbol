@@ -120,9 +120,17 @@ export default class EditMode {
     }
   }
 
+  showPorpEditor (isShow) {
+    let ev = document.createEvent('HTMLEvents')
+    ev.initEvent('ppe-show', false, false)
+    ev.props = {show: isShow}
+    window.dispatchEvent(ev)
+  }
+
   viewMode (viewer = window.viewer) {
     this.mode = EditMode.MODE_VIEW
     kb.setContext(this.mode)
+    this.showPorpEditor(false)
     console.log(`into ${this.mode} mode`)
     EditMode.destroyHandler()
     viewer.canvas.style.cursor = 'auto'
@@ -138,6 +146,7 @@ export default class EditMode {
   createMode (graphObj, viewer = window.viewer) {
     this.mode = EditMode.MODE_CREATE
     this.createGraph = graphObj
+    this.showPorpEditor(true)
     console.log(`into ${this.mode} mode`)
 
     kb.setContext(this.mode)
@@ -267,6 +276,7 @@ export default class EditMode {
   selectMode (viewer = window.viewer) {
     this.mode = EditMode.MODE_SELECT
     this.hoveredEnt = undefined
+    this.showPorpEditor(false)
     console.log(`into ${this.mode} mode`)
     
     kb.setContext(this.mode)
@@ -347,6 +357,7 @@ export default class EditMode {
   editMode (ent, viewer = window.viewer) {
     this.mode = EditMode.MODE_EDIT
     this.currentEditEnt = ent
+    this.showPorpEditor(true)
     console.log(`into ${this.mode} mode: `, this.currentEditEnt)
 
     kb.setContext(this.mode)

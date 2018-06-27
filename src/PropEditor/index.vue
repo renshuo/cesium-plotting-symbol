@@ -1,5 +1,5 @@
 <template>
-  <div class="propeditor" id="app">
+  <div class="propeditor" id="app" :hidden="!isShow">
     <a-collapse :bordered="false" activeKey="1">
       <a-collapse-panel header="属性编辑" key="1">
         <div v-for="(value, key) in props" :key="key">
@@ -25,6 +25,7 @@ import ColorEditor from './ColorEditor.vue'
 import TextEditor from './TextEditor.vue'
 import NumberEditor from './NumberEditor.vue'
 import BooleanCheck from './BooleanCheck.vue'
+import EditMode from '../EditMode.js'
 
 export default {
   name: 'PropEditor',
@@ -36,10 +37,9 @@ export default {
   },
   data () {
     return {
-      props: {}
+      props: {},
+      isShow: false
     }
-  },
-  computed: {
   },
   methods: {
     getCompByType (type) {
@@ -54,6 +54,9 @@ export default {
   mounted () {
 	 window.addEventListener('ppe', (e) => {
     this.$data.props = e.props
+   })
+   window.addEventListener('ppe-show', (e) => {
+     this.$data.isShow = e.props.show
    })
   }
 }

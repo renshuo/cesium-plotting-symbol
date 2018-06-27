@@ -22,7 +22,6 @@ module.exports = {
       umd: "cesium/Source/Cesium.js",
       root: "Cesium"
     },
-    color: 'color',
     lodash: 'lodash',
     'vue-antd-ui': 'vue-antd-ui',
     'vue': 'vue'

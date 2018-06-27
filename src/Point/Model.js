@@ -28,7 +28,7 @@ export default class Boat extends Point {
         uri: new Cesium.CallbackProperty((time, result) => '../../../static/model/' + this.props.uri.value, true),
         scale: new Cesium.CallbackProperty((time, result) => this.props.scale.value, true),
         color: new Cesium.CallbackProperty((time, result) => {
-          let c = Cesium.Color.fromCssColorString(this.props.color.value)
+          let c = Cesium.Color.fromCssColorString(this.props.color.value).withAlpha(this.props.alpha.value)
           return this.highLighted ? c.brighten(0.6, new Cesium.Color()) : c
         }, false),
       }

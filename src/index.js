@@ -1,6 +1,9 @@
 import EditMode from './EditMode'
 import Graph from './Graph'
 
+import Image from './Image/Image.js'
+import RedFlag from './Image/RedFlag.js'
+
 import Point from './Point/Point.js'
 import Boat from './Point/Boat.js'
 import Satellite from './Point/Satellite.js'
@@ -42,6 +45,8 @@ function deleteAllGraph () {
 export default {
   Graph,
   EditMode,
+  Image,
+  RedFlag,
   Point,
   Polyline,
   Polygon,

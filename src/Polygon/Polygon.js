@@ -18,7 +18,7 @@ export default class Polygon extends Graph {
       value: '#00ff00', title: '颜色', type: 'color'
     }
     this.props.alpha = {
-      value: 0.8, title: '透明度', type: 'number', step: 0.05, max: 1, min: 0
+      value: 0.6, title: '透明度', type: 'number', step: 0.05, max: 1, min: 0
     }
     this.props.fill = {
       value: true, title: 'fill', type: 'boolean'
@@ -27,12 +27,11 @@ export default class Polygon extends Graph {
 
   initShape() {
     this.ent = this.addShape({
-      id: 'arrow1_' + Graph.seq++,
       polygon: {
         fill: new Cesium.CallbackProperty((time, result) => this.props.fill.value, true),
         material: new Cesium.ColorMaterialProperty(
           new Cesium.CallbackProperty((time, result) => {
-            let c = Cesium.Color.fromCssColorString(this.props.color.value)
+            let c = Cesium.Color.fromCssColorString(this.props.color.value).withAlpha(this.props.alpha.value)
             return this.highLighted ? c.brighten(0.6, new Cesium.Color()) : c
           }, false)),
         height: 0,

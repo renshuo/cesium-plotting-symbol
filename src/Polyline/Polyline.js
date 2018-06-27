@@ -37,7 +37,7 @@ export default class Polyline extends Graph {
         fill: true,
         material: new Cesium.ColorMaterialProperty(
           new Cesium.CallbackProperty((time, result) => {
-            let c = Cesium.Color.fromCssColorString(this.props.color.value)
+            let c = Cesium.Color.fromCssColorString(this.props.color.value).withAlpha(this.props.alpha.value)
             return this.highLighted ? c.brighten(0.6, new Cesium.Color()) : c
           }, false)),
         height: 0,

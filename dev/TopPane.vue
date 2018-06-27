@@ -42,6 +42,10 @@ export default {
           {name: '卫星', func: () => gx.start(new gx.Satellite()) },
         ],
         [
+          {name: '图', func: () => gx.start(new gx.Image()) },
+          {name: '红旗', func: () => gx.start(new gx.RedFlag()) },
+        ],
+        [
           {name: '删除', func: () => gx.deleteGraph() },
           {name: '清空', func: () => gx.deleteAllGraph() },
         ]

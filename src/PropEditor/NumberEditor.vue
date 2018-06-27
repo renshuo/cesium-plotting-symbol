@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a-input-number v-model="xvalue" @change="updateValue"></a-input-number>
+    <a-input-number :min="min" :max="max" :step="step" v-model="xvalue" @change="updateValue"></a-input-number>
   </div>
 </template>
 
@@ -9,7 +9,10 @@
 export default {
   name: 'colorEditor',
   props: {
-    value: {}
+    value: {},
+    min: {},
+    max: {},
+    step: {},
   },
   data () {
     return {

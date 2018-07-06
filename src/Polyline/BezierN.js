@@ -6,12 +6,11 @@ import _ from 'lodash'
 
 export default class BezierN extends Polyline {
 
-  constructor(maxPoint) {
-    super()
-    if (maxPoint) {
-      this.maxPointNum = maxPoint
-    }
-    this.props.type.value = 'n阶bezier曲线'
+  constructor(prop) {
+    super({
+      type: 'n阶bezier曲线',
+      ...prop
+    })
   }
 
   calcuteShape (points, time) {

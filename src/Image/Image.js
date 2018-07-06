@@ -3,18 +3,22 @@ import Rectangle from '../Polygon/Rectangle'
 import Cesium from 'cesium/Source/Cesium.js'
 
 export default class Image extends Rectangle {
-  constructor () {
-    super()
+  
+  constructor (p) {
+    super({
+      type: '图',
+      color: '#fff',
+      alpha: 1,
+      image: 'th1.jpg',
+      ...p
+    })
     this.initShape()
-    this.props.type.value = '图'
   }
 
-  initProps () {
-    super.initProps()
-    this.props.color.value='#ffffff'
-    this.props.alpha.value = 1
+  initProps (p) {
+    super.initProps(p)
     this.props.image = {
-      value: 'i1.png', title: 'fill', type: 'string'
+      value: p.image, title: 'fill', type: 'string'
     }
   }
 

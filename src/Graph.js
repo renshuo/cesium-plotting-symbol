@@ -31,7 +31,7 @@ export default class Graph {
   name = ''
   description = ''
 
-  constructor (id, viewer = window.viewer) {
+  constructor (properties, viewer = window.viewer) {
     this.viewer = viewer
     if (!window.layer) {
       window.layer = {biaohui: this.viewer.entities.add({'id': 'biaohui', name: 'biaohui'})}
@@ -43,21 +43,21 @@ export default class Graph {
       Graph.lastGraph.finish()
     }
     Graph.lastGraph = this
-    this.initRootEntity(id)
-    this.initProps()
+    this.initRootEntity()
+    this.initProps(properties)
   }
 
-  initProps () {
+  initProps (properties) {
     Object.assign(this.props,
       {
         name: {
-          value: '', title: '名称', type: 'string'
+          value: properties.name, title: '名称', type: 'string'
         },
         description: {
-          value: '', title: '描述', type: 'string'
+          value: properties.description, title: '描述', type: 'string'
         },
         type: {
-          value: '', title: '类型', type: 'string', editable: false
+          value: properties.type || 'invalid', title: '类型', type: 'string', editable: false
         },
       }
     )
@@ -73,10 +73,10 @@ export default class Graph {
     window.dispatchEvent(ev)
   }
 
-  initRootEntity (id) {
+  initRootEntity () {
     console.log('this layer: ', this.layer)
     this.graph = this.viewer.entities.add({
-      id: id === undefined ? this.layer.name + '_graph_' + Graph.seq++ : id,
+      id: this.layer.name + '_graph_' + Graph.seq++,
       parent: this.layer
     })
     this.graph.ctl = this.viewer.entities.add({

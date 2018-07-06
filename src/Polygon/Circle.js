@@ -6,9 +6,8 @@ export default class Circle extends Polygon {
   maxPointNum = 2
   minPointNum = 2
   
-  constructor(){
-    super()
-    this.props.type.value = '圆'
+  constructor(p){
+    super({type: '圆', ...p})
   }
 
   calcuteShape (points, time) {

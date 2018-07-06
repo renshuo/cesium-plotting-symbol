@@ -6,22 +6,27 @@ export default class Point extends Graph {
   maxPointNum = 1
   minPointNum = 1
 
-  constructor (id) {
-    super(id)
+  constructor (p) {
+    super({
+      type: '点',
+      pixelSize: 12,
+      color: '#00FF00',
+      alpha: 0.8,
+      ...p
+    })
     this.initShape()
-    this.props.type.value = '点'
   }
 
-  initProps () {
-    super.initProps()
+  initProps (p) {
+    super.initProps(p)
     this.props.pixelSize =  {
-      value: 12, title: '大小', type: 'number', min: 1, max: 256
+      value: p.pixelSize, title: '大小', type: 'number', min: 1, max: 256
     }
     this.props.color = {
-      value: '#00ff00', title: '颜色', type: 'color'
+      value: p.color, title: '颜色', type: 'color'
     }
     this.props.alpha = {
-      value: 0.8, title: '透明度', type: 'number', step: 0.05, max: 1, min: 0
+      value: p.alpha, title: '透明度', type: 'number', step: 0.05, max: 1, min: 0
     }
   }
 

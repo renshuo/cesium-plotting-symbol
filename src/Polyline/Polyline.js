@@ -6,24 +6,30 @@ export default class Polyline extends Graph {
 
   minPointNum = 2
 
-  constructor (id) {
-    super(id)
+  constructor (prop) {
+    super({
+      type: '折线',
+      width: 1,
+      color: '#00FF00',
+      alpha: 0.8,
+      fill: true,
+      ...prop
+    })
     this.initShape()
-    this.props.type.value = '折线'
   }
 
-  initProps () {
-    super.initProps()
-    Object.assign(this.props, super.props,
+  initProps (p) {
+    super.initProps(p)
+    Object.assign(this.props,
       {
         width: {
-          value: 1, title: '线宽', type: 'number', min: 1, max: 256
+          value: p.width, title: '线宽', type: 'number', min: 1, max: 256
         },
         color: {
-          value: '#00ff00', title: '颜色', type: 'color'
+          value: p.color, title: '颜色', type: 'color'
         },
         alpha: {
-          value: 0.8, title: '透明度', type: 'number', step: 0.05, max: 1, min: 0
+          value: p.alpha, title: '透明度', type: 'number', step: 0.05, max: 1, min: 0
         }
       }
     )

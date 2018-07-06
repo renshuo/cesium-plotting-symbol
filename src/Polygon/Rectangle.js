@@ -5,9 +5,8 @@ export default class Rectangle extends Polygon{
   maxPointNum = 2
   minPointNum = 2
 
-  constructor(){
-    super()
-    this.props.type.value = '矩形'
+  constructor(p){
+    super({type: '矩形', ...p})
   }
 
   calcuteShape (points, time) {

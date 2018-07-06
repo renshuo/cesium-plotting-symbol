@@ -8,8 +8,10 @@ import BezierN from './BezierN.js'
 export default class Bezier1 extends BezierN {
   maxPointNum = 3
 
-  constructor(){
-    super()
-    this.props.type.value = '2阶bezier曲线'
+  constructor(p){
+    super({
+      type: '2阶bezier曲线',
+      ...p
+    })
   }
 }

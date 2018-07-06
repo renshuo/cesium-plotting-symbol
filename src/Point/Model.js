@@ -2,22 +2,26 @@ import Graph from '../Graph.js'
 import Cesium from 'cesium/Source/Cesium.js'
 import Point from '../Point/Point.js'
 
-export default class Boat extends Point {
+export default class Model extends Point {
 
-  constructor (id) {
-    super(id)
-    this.props.type.value = '3D模型'
-    this.props.color.value = '#ffffff'
+  constructor (p) {
+    super({
+      type: '3D模型',
+      color: '#ffffff',
+      scale: 30,
+      uri: 'boat.gltf',
+      ...p
+    })
   }
 
-  initProps () {
-    super.initProps()
+  initProps (p) {
+    super.initProps(p)
     this.props.pixelSize = {}
     this.props.scale = {
-      value: 30, title: '缩放', type: 'number', min: 10, max: 100
+      value: p.scale, title: '缩放', type: 'number', min: 10, max: 100
     }
     this.props.uri = {
-      value: 'boat.gltf', title: '模型', type: 'string'
+      value: p.uri, title: '模型', type: 'string'
     }
   }
 

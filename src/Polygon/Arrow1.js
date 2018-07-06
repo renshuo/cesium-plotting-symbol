@@ -7,9 +7,8 @@ export default class Arrow1 extends Polygon {
   maxPointNum = 2
   minPointNum = 2
 
-  constructor(){
-    super()
-    this.props.type.value = '单箭头'
+  constructor(p){
+    super({type: '单箭头', ...p})
   }
 
   calcuteShape (points, time) {

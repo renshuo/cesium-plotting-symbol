@@ -159,7 +159,9 @@ export default class EditMode {
     }, Cesium.ScreenSpaceEventType.MOUSE_MOVE)
 
     EditMode.getHandler().setInputAction(event => {
-      this.addCtlPoint(event)
+      let newpos = mu.screen2Cartesian(event.position)
+      let p = mu.cartesian2lonlat(newpos)
+      this.createGraph.addCtlPoint({lon: p[0], lat: p[1]})
       if (this.createGraph.ishaveMaxCtls()) {
         this.nextMode(EditMode.ACT_FINISH)
       }
@@ -227,49 +229,7 @@ export default class EditMode {
     })
   }
 
-  addCtlPoint (event, viewer = window.viewer) {
-    let newpos = mu.screen2Cartesian(event.position)
-    let p = mu.cartesian2lonlat(newpos)
-    let text = 'Lon: ' + p[0].toPrecision(5) + '\u00B0' +
-           '\nLat: ' + p[1].toPrecision(5) + '\u00B0'
-
-    let ctlPoint = viewer.entities.add({
-      id: this.createGraph.graph.id + '_ctlpoint_' + EditMode.seq++,
-      parent: this.createGraph.graph.ctl,
-      position: newpos,
-      graphType: 'ctl',
-      point: {
-        pixelSize: 8,
-        color: Cesium.Color.fromBytes(255, 255, 255, 70),
-        heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-        outlineWidth: 1,
-        outlineColor: Cesium.Color.AQUA
-      },
-      label: {
-        text: text,
-        font : '14px monospace',
-        horizontalOrigin : Cesium.HorizontalOrigin.LEFT,
-        verticalOrigin : Cesium.VerticalOrigin.TOP,
-        pixelOffset : new Cesium.Cartesian2(15, 0)
-      }
-    })
-    ctlPoint.finish = () => {
-      ctlPoint.label.text = ctlPoint.label.text.getValue(mu.julianDate())
-      ctlPoint.position = ctlPoint.position.getValue(mu.julianDate())
-    }
-    ctlPoint.pickup = () => {
-      ctlPoint.label.text = new Cesium.CallbackProperty((time, result) => {
-        let p = mu.cartesian2lonlat(ctlPoint.position.getValue(time))
-        return 'Lon: ' + p[0].toPrecision(5) + '\u00B0' +
-               '\nLat: ' + p[1].toPrecision(5) + '\u00B0'
-      }, false)
-      ctlPoint.position = new Cesium.CallbackProperty((time, result) => {
-        return window.cursorPos.clone()
-      }, false)
-    }
-    console.log('added a point: ', ctlPoint)
-    this.createGraph.addHandler(ctlPoint, this.createGraph.graph.ctl)
-  }
+  
 
 
   hoveredEnt

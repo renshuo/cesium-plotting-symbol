@@ -31,6 +31,15 @@ export function lonlat2Cartesian(lonlat, height = 0) {
   )
 }
 
+export function lonlathei2Cartesian(lonlathei) {
+  return Cesium.Cartesian3.fromDegrees(
+    lonlathei.lon,
+    lonlathei.lat,
+    lonlathei.hei || 0,
+    Cesium.Ellipsoid.WGS84
+  )
+}
+
 export function cartesian2lonlat(cartesian, viewer = window.viewer) {
   let ellipsoid = viewer.scene.globe.ellipsoid
   var cartographic = ellipsoid.cartesianToCartographic(cartesian)

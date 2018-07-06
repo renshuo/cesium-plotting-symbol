@@ -34,6 +34,12 @@ function start (obj) {
   return obj
 }
 
+function create (obj) {
+  EditMode.getInstance().nextMode(EditMode.ACT_FINISH, obj)
+  obj.finish()
+  return obj
+}
+
 function deleteGraph () {
   EditMode.getInstance().deleteGraph()
 }
@@ -64,6 +70,7 @@ export default {
   Satellite,
   Station,
   start,
+  create,
   deleteGraph,
   deleteAllGraph,
   mapUtil,

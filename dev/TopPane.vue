@@ -48,6 +48,24 @@ export default {
         [
           {name: '删除', func: () => gx.deleteGraph() },
           {name: '清空', func: () => gx.deleteAllGraph() },
+          {name: '自动', func: () => {
+              gx.create(new gx.Point({color: '#f00', ctls: [[98, 37]]}))
+              gx.create(new gx.Point({color: '#f50', ctls: [{lon: 98, lat: 39}]}))
+              gx.create(new gx.Point({color: '#f80', ctls: [{lon: 100, lat: 39}]}))
+              gx.create(new gx.Point({color: '#fc0', ctls: [[100, 37]]}))
+              gx.create(new gx.Polygon({color: '#f08', ctls: [
+                {lon: 102, lat: 40},
+                [110, 43, 10000],
+                {lon: 110, lat: 43},
+                {lon: 102, lat: 46, hei: 10000},
+              ]}))
+              gx.create(new gx.Polyline({color: '#0ff', ctls: [
+                {lon: 112, lat: 40, hei: 0},
+                {lon: 120, lat: 43, hei: 10000},
+                {lon: 112, lat: 46},
+              ]}))
+            }
+          },
         ]
       ]
     }

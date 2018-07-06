@@ -45,6 +45,8 @@ export default class Graph {
     Graph.lastGraph = this
     this.initRootEntity()
     this.initProps(properties)
+    this.initShape()
+    this.initCtls(properties)
   }
 
   initProps (properties) {
@@ -62,6 +64,27 @@ export default class Graph {
       }
     )
     this.renewProperties(this.props)
+  }
+
+  initCtls (properties) {
+    if (properties.ctls) {
+      properties.ctls.forEach(pos => {
+        let p = {}
+        if (pos instanceof Array) {
+          if (pos.length === 2) {
+            p = {lon: pos[0], lat: pos[1]}
+          } else if (pos.length === 3) {
+            p = {lon: pos[0], lat: pos[1], hei: pos[2]}
+          } else {
+            console.log('invalid pos array length: ', pos)
+          }
+        } else {
+          p = pos
+        }
+        console.log('pos: ', p)
+        this.addCtlPoint(p)
+      })
+    }
   }
 
   renewProperties (props) {
@@ -94,11 +117,55 @@ export default class Graph {
     this.graph.graph = this
   }
 
+  initShape () {
+    console.log('should overide by sub class.')
+  }
+
   getCtlPositions () {
     let dt = Cesium.JulianDate.fromDate(new Date())
     return this.graph.ctl._children.map((cp) => {
       return cp.position.getValue(dt)
     })
+  }
+
+  addCtlPoint (pos, viewer = window.viewer) {
+    let ctlPoint = viewer.entities.add({
+      id: this.graph.id + '_ctlpoint_' + Graph.seq++,
+      parent: this.graph.ctl,
+      position: mu.lonlathei2Cartesian(pos),
+      graphType: 'ctl',
+      point: {
+        pixelSize: 8,
+        color: Cesium.Color.fromBytes(255, 255, 255, 70),
+        outlineWidth: 1,
+        outlineColor: Cesium.Color.AQUA
+      },
+      label: {
+        text: 'Lon: ' + pos.lon.toPrecision(5) + '\u00B0' +
+        '\nLat: ' + pos.lat.toPrecision(5) + '\u00B0',
+        font : '14px monospace',
+        horizontalOrigin : Cesium.HorizontalOrigin.LEFT,
+        verticalOrigin : Cesium.VerticalOrigin.TOP,
+        pixelOffset : new Cesium.Cartesian2(15, 0)
+      }
+    })
+    ctlPoint.finish = () => {
+      ctlPoint.label.text = ctlPoint.label.text.getValue(mu.julianDate())
+      ctlPoint.position = ctlPoint.position.getValue(mu.julianDate())
+    }
+    ctlPoint.pickup = () => {
+      ctlPoint.label.text = new Cesium.CallbackProperty((time, result) => {
+        let p = mu.cartesian2lonlat(ctlPoint.position.getValue(time))
+        return 'Lon: ' + p[0].toPrecision(5) + '\u00B0' +
+               '\nLat: ' + p[1].toPrecision(5) + '\u00B0'
+      }, false)
+      ctlPoint.position = new Cesium.CallbackProperty((time, result) => {
+        return window.cursorPos.clone()
+      }, false)
+    }
+    console.log('added a point: ', ctlPoint)
+    this.addHandler(ctlPoint, this.graph.ctl)
+    return ctlPoint
   }
 
   /**

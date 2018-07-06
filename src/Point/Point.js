@@ -14,7 +14,6 @@ export default class Point extends Graph {
       alpha: 0.8,
       ...p
     })
-    this.initShape()
   }
 
   initProps (p) {

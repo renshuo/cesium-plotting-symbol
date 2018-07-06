@@ -15,7 +15,6 @@ export default class Polyline extends Graph {
       fill: true,
       ...prop
     })
-    this.initShape()
   }
 
   initProps (p) {

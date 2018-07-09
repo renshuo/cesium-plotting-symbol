@@ -1,5 +1,6 @@
 import EditMode from './EditMode'
 import Graph from './Graph'
+import GraphManager from './GraphManager.js'
 
 import Image from './Image/Image.js'
 import RedFlag from './Image/RedFlag.js'
@@ -31,12 +32,14 @@ EditMode.getInstance()
 
 function start (obj) {
   EditMode.getInstance().nextMode(EditMode.ACT_CREATE, obj)
+  GraphManager.getInstance().add(obj)
   return obj
 }
 
 function create (obj) {
   EditMode.getInstance().nextMode(EditMode.ACT_FINISH, obj)
   obj.finish()
+  GraphManager.getInstance().add(obj)
   return obj
 }
 
@@ -51,6 +54,7 @@ function deleteAllGraph () {
 export default {
   Graph,
   EditMode,
+  GraphManager,
   Image,
   RedFlag,
   Point,

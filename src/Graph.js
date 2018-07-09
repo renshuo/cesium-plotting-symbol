@@ -1,5 +1,6 @@
 import * as mu from './mapUtil.js'
 import Cesium from 'cesium/Source/Cesium.js'
+import _ from 'lodash'
 
 export default class Graph {
   static seq = new Date().getTime()
@@ -121,6 +122,24 @@ export default class Graph {
     console.log('should overide by sub class.')
   }
 
+  /**
+   * 返回当前Graph的属性，以及控制点数据
+   */
+  getProperties () {
+    let p = {}
+    _.forIn(this.props, (v, k) => {
+      p[k] = v.value
+    })
+    p.ctls = this.getCtlPositions().map(c3 => {
+      let lonlat = mu.cartesian2lonlat(c3)
+      return {lon: lonlat[0], lat: lonlat[1]}
+    })
+    return p
+  }
+
+  /**
+   * 返回当前graph的所有控制点坐标（cartesian3）
+   */
   getCtlPositions () {
     let dt = Cesium.JulianDate.fromDate(new Date())
     return this.graph.ctl._children.map((cp) => {

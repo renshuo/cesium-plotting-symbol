@@ -1,6 +1,6 @@
-import EditMode from './EditMode'
+import _ from 'lodash'
+import em from './EditMode'
 import Graph from './Graph'
-import GraphManager from './GraphManager.js'
 
 import Image from './Image/Image.js'
 import RedFlag from './Image/RedFlag.js'
@@ -25,36 +25,70 @@ import BezierSpline from './Polyline/BezierSpline.js'
 import CircleArc from './Polyline/CircleArc.js'
 
 import PropEditor from './PropEditor/index.vue'
-
 import * as mapUtil from './mapUtil.js'
 
-EditMode.getInstance()
+class GraphManager {
 
-function start (obj) {
-  EditMode.getInstance().nextMode(EditMode.ACT_CREATE, obj)
-  GraphManager.getInstance().add(obj)
-  return obj
+  start (json) {
+    let obj = json instanceof Graph ? json : this.createObj(json)
+    em.create(obj)
+  }
+
+  draw (json) {
+    let obj = json instanceof Graph ? json : this.createObj(json)
+    em.draw(obj)
+  }
+
+  delete () {
+    em.deleteGraph()
+  }
+
+  deleteAll () {
+     em.clean()
+  }
+
+  save () {
+    return em.save()
+  }
+
+  load (jsons) {
+    em.load(jsons.map(json => this.createObj(json)))
+  }
+
+  createObj (json) {
+    console.log('createObj from json: ', json.obj)
+    switch (json.obj) {
+      case 'RedFlag': return new RedFlag(json)
+      case 'Image': return new Image(json)
+  
+      case 'Point': return new Point(json)
+      case 'Boat': return new Boat(json)
+      case 'Satellite': return new Satellite(json)
+      case 'Station': return new Station(json)
+      case 'Vehicle': return new Vehicle(json)
+  
+      case 'Polygon': return new Polygon(json)
+      case 'Arrow1': return new Arrow1(json)
+      case 'Circle': return new Circle(json)
+      case 'Ellipse': return new Ellipse(json)
+      case 'Rectangle': return new Rectangle(json)
+  
+      case 'Polyline': return new Polyline(json)
+      case 'Bezier1': return new Bezier1(json)
+      case 'Bezier2': return new Bezier2(json)
+      case 'BezierN': return new BezierN(json)
+      case 'BezierSpline': return new BezierSpline(json)
+      case 'CircleArc': return new CircleArc(json)
+      default:
+        console.log('invalid type')
+        return undefined
+    }
+  }
 }
 
-function create (obj) {
-  EditMode.getInstance().nextMode(EditMode.ACT_FINISH, obj)
-  obj.finish()
-  GraphManager.getInstance().add(obj)
-  return obj
-}
-
-function deleteGraph () {
-  EditMode.getInstance().deleteGraph()
-}
-
-function deleteAllGraph () {
-  EditMode.getInstance().deleteAllGraph()
-}
-
-export default {
+const gm = new GraphManager()
+Object.assign(gm, {
   Graph,
-  EditMode,
-  GraphManager,
   Image,
   RedFlag,
   Point,
@@ -73,10 +107,9 @@ export default {
   Vehicle,
   Satellite,
   Station,
-  start,
-  create,
-  deleteGraph,
-  deleteAllGraph,
+
   mapUtil,
-  PropEditor
-}
+  PropEditor,
+})
+
+export default gm

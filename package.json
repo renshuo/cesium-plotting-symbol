@@ -56,7 +56,6 @@
     "keyboardjs": "^2.4.1",
     "lodash": "^4.17.10",
     "vue-antd-ui": "^0.6.1",
-    "vue-color": "^2.4.6",
-    "vue-upload-component": "^2.8.9"
+    "vue-color": "^2.4.6"
   }
 }

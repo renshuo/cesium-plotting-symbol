@@ -5,31 +5,31 @@
         <a-button ghost class="topbtn" v-for="c in v" :key="c.name" @click="c.func">{{c.name}}</a-button>
         <br/>
       </div>
+      <input ref="input" class="topbtn " type="file" id="file" value="加载本地json" ></input>
     </div>
-    <file-upload />
+    
   </div>
 </template>
 
 <script>
 import gx from '../src/index.js'
 import fs from 'file-saver'
-import FileUpload from 'vue-upload-component/src'
 
 export default {
   components: {
-    FileUpload
   },
   data () {
     return {
+      files: [],
       message: '',
       graphList: [],
       funcs1: [
         [
-          {name: '多边形', func: () => gx.start(new gx.Polygon({color: '#0000FF'})) },
-          {name: '矩形', func: () => gx.start(new gx.Rectangle({color: '#0000FF'})) },
-          {name: '单箭头', func: () => gx.start(new gx.Arrow1({color: '#0000FF'})) },
-          {name: '椭圆', func: () => gx.start(new gx.Ellipse({color: '#0000FF'})) },
-          {name: '圆', func: () => gx.start(new gx.Circle({color: '#0000FF'})) },
+          {name: '多边形', func: () => gx.start({obj: 'Polygon', color: '#00F'}) },
+          {name: '矩形', func: () => gx.start({obj: 'Rectangle', color: '#00F'}) },
+          {name: '单箭头', func: () => gx.start({obj: 'Arrow1', color: '#00F'}) },
+          {name: '椭圆', func: () => gx.start({obj: 'Ellipse', color: '#00F'}) },
+          {name: '圆', func: () => gx.start({obj: 'Circle', color: '#00F'}) },
         ],
         [
           {name: '直线', func: () => gx.start(new gx.Polyline({color: '#f00'})) },
@@ -51,8 +51,8 @@ export default {
           {name: '红旗', func: () => gx.start(new gx.RedFlag({color: '#ff0'})) },
         ],
         [
-          {name: '删除', func: () => gx.deleteGraph() },
-          {name: '清空', func: () => gx.deleteAllGraph() },
+          {name: '删除', func: () => gx.delete() },
+          {name: '清空', func: () => gx.deleteAll() },
           {name: '自动', func: this.createByJson }
         ], [
           {name: '保存', func: this.saveGraphs },
@@ -63,33 +63,38 @@ export default {
   },
   methods: {
     createByJson () {
-      gx.create(new gx.Point({color: '#f00', ctls: [[98, 37]]}))
-      gx.create(new gx.Point({color: '#f50', ctls: [{lon: 98, lat: 39}]}))
-      gx.create(new gx.Point({color: '#f80', ctls: [{lon: 100, lat: 39}]}))
-      gx.create(new gx.Point({color: '#fc0', ctls: [[100, 37]]}))
-      gx.create(new gx.Polygon({color: '#f08', ctls: [
+      gx.draw({obj: 'Point', color: '#f00', ctls: [[98, 37]]})
+      gx.draw({obj: 'Point', color: '#f50', ctls: [{lon: 98, lat: 39}]})
+      gx.draw({obj: 'Point', color: '#f80', ctls: [{lon: 100, lat: 39}]})
+      gx.draw({obj: 'Point', color: '#fc0', ctls: [[100, 37]]})
+      gx.draw(new gx.Polygon({color: '#f08', ctls: [
         {lon: 102, lat: 40},
         [110, 43, 10000],
         {lon: 110, lat: 43},
         {lon: 102, lat: 46, hei: 10000},
       ]}))
-      gx.create(new gx.Polyline({color: '#0ff', ctls: [
+      gx.draw(new gx.Polyline({color: '#0ff', ctls: [
         {lon: 112, lat: 40, hei: 0},
         {lon: 120, lat: 43, hei: 10000},
         {lon: 112, lat: 46},
       ]}))
     },
-    loadGraphs () {
-
+    loadGraphs (file) {
+      let reader = new FileReader()
+      reader.readAsText(this.$refs.input.files[0])
+      reader.onload = f => {
+        let graphs = JSON.parse(f.target.result)
+        gx.load(graphs)
+      }
     },
     saveGraphs () {
-      let data = gx.GraphManager.getInstance().getAll().map(g => {
-        return g.getProperties()
-      })
+      let data = gx.save()
       console.log('currentGraphs: ', data)
       let blob = new Blob([JSON.stringify(data)], {type: "text/plain;charset=utf-8"})
       fs.saveAs(blob, "graphs.json")
     }
+  },
+  mounted () {
   }
 }
 </script>

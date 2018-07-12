@@ -126,7 +126,9 @@ export default class Graph {
    * 返回当前Graph的属性，以及控制点数据
    */
   getProperties () {
-    let p = {}
+    let p = {
+      obj: this.constructor.name
+    }
     _.forIn(this.props, (v, k) => {
       p[k] = v.value
     })

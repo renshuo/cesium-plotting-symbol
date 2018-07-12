@@ -40,7 +40,7 @@ class GraphManager {
   }
 
   delete () {
-    em.deleteGraph()
+    em.deleteSelectGraph()
   }
 
   deleteAll () {

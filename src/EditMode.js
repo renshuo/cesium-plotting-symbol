@@ -46,8 +46,6 @@ export class EditMode {
 
   static seq = new Date().getTime()
 
-  mode = this.MODE_VIEW
-
   create(obj) {
     this.nextMode(this.ACT_CREATE, obj)
     this.graphList.push(obj)
@@ -62,7 +60,7 @@ export class EditMode {
   }
 
   clean () {
-    this.deleteAllGraph()
+    mu.deleteEnts(window.layer.biaohui._children)
     this.graphList = []
   }
 
@@ -75,6 +73,7 @@ export class EditMode {
     objs.forEach(graph => this.draw(graph))
   }
 
+  mode = this.MODE_VIEW
   nextMode (action, ...args) {
     console.log(`mode changed from '${this.mode}' by action '${action}'`)
     switch (this.mode) {
@@ -327,14 +326,8 @@ export class EditMode {
   initKeyboardSelect () {
     kb.withContext(this.MODE_SELECT, () => {
       kb.bind('1', (e) => console.log('select: ', e, this))
-      kb.bind('a', (e) => {
-        this.nextMode(this.ACT_CREATE, new gx.Point())
-      })
-      kb.bind('b', (e) => {
-        this.nextMode(this.ACT_CREATE, new gx.Polyline())
-      })
-      kb.bind('c', (e) => {
-        this.nextMode(this.ACT_CREATE, new gx.Polygon())
+      kb.bind(['ctrl+shift+d', 'shift+delete'], e => {
+        this.deleteAllGraph()
       })
     })
   }
@@ -382,16 +375,13 @@ export class EditMode {
   initKeyboardEdit () {
     kb.withContext(this.MODE_EDIT, () => {
       kb.bind('1', (e) => console.log('edit: ', e, this))
-      kb.bind(['delete', 'ctrl+d'], function(e) {
-        this.deleteGraph()
-      })
-      kb.bind(['ctrl+shift+d', 'shift+delete'], function(e) {
-        new Graph().deleteAllGraph()
+      kb.bind(['delete', 'ctrl+d'], e => {
+        this.deleteSelectGraph()
       })
     })
   }
 
-  deleteGraph () {
+  deleteSelectGraph () {
     if (this.currentEditEnt) {
       let graph = this.currentEditEnt.parent.parent.graph
       this.currentEditEnt = undefined
@@ -403,10 +393,6 @@ export class EditMode {
       console.log('no graph selected.')
       return undefined
     }
-  }
-
-  deleteAllGraph () {
-    mu.deleteEnts(window.layer.biaohui._children)
   }
 
   pickedctl

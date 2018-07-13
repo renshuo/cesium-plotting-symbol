@@ -47,6 +47,10 @@ class GraphManager {
      em.clean()
   }
 
+  clean () {
+    em.clean()
+  }
+
   save () {
     return em.save()
   }

@@ -60,7 +60,9 @@ export class EditMode {
   }
 
   clean () {
-    mu.deleteEnts(window.layer.biaohui._children)
+    if (window.layer && window.layer.biaohui && window.layer.biaohui._children) {
+      mu.deleteEnts(window.layer.biaohui._children)
+    }
     this.graphList = []
   }
 

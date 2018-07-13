@@ -70,7 +70,7 @@ export class EditMode {
   }
 
   load (objs) {
-    objs.forEach(graph => this.draw(graph))
+    return objs.map(graph => this.draw(graph))
   }
 
   mode = this.MODE_VIEW

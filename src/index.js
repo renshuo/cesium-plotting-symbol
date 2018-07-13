@@ -31,16 +31,16 @@ class GraphManager {
 
   start (json) {
     let obj = json instanceof Graph ? json : this.createObj(json)
-    em.create(obj)
+    return em.create(obj)
   }
 
   draw (json) {
     let obj = json instanceof Graph ? json : this.createObj(json)
-    em.draw(obj)
+    return em.draw(obj)
   }
 
   delete () {
-    em.deleteSelectGraph()
+    return em.deleteSelectGraph()
   }
 
   deleteAll () {
@@ -52,7 +52,7 @@ class GraphManager {
   }
 
   load (jsons) {
-    em.load(jsons.map(json => this.createObj(json)))
+    return em.load(jsons.map(json => this.createObj(json)))
   }
 
   createObj (json) {

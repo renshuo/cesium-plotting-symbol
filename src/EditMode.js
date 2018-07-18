@@ -58,6 +58,12 @@ export class EditMode {
     this.graphList.push(obj)
     return obj
   }
+  
+  deleteGraph (graph) {
+    graph.deleteGraph()
+    _.remove(this.graphList, graph)
+    return graph
+  }
 
   clean () {
     if (window.layer && window.layer.biaohui && window.layer.biaohui._children) {

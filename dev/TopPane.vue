@@ -52,6 +52,7 @@ export default {
         ],
         [
           {name: '删除', func: () => gx.delete() },
+          {name: '删除2', func: this.testDelete },
           {name: '清空', func: () => gx.deleteAll() },
           {name: '自动', func: this.createByJson }
         ], [
@@ -63,10 +64,10 @@ export default {
   },
   methods: {
     createByJson () {
-      gx.draw({obj: 'Point', color: '#f00', ctls: [[98, 37]]})
-      gx.draw({obj: 'Point', color: '#f50', ctls: [{lon: 98, lat: 39}]})
-      gx.draw({obj: 'Point', color: '#f80', ctls: [{lon: 100, lat: 39}]})
-      gx.draw({obj: 'Point', color: '#fc0', ctls: [[100, 37]]})
+      this.graphList.push(gx.draw({obj: 'Point', color: '#f00', ctls: [[98, 37]]}))
+      this.graphList.push(gx.draw({obj: 'Point', color: '#f50', ctls: [{lon: 98, lat: 39}]}))
+      this.graphList.push(gx.draw({obj: 'Point', color: '#f80', ctls: [{lon: 100, lat: 39}]}))
+      this.graphList.push(gx.draw({obj: 'Point', color: '#fc0', ctls: [[100, 37]]}))
       gx.draw(new gx.Polygon({color: '#f08', ctls: [
         {lon: 102, lat: 40},
         [110, 43, 10000],
@@ -86,6 +87,11 @@ export default {
         let graphs = JSON.parse(f.target.result)
         gx.load(graphs)
       }
+    },
+    testDelete () {
+      this.graphList.forEach(graph => {
+        gx.delete(graph)
+      })
     },
     saveGraphs () {
       let data = gx.save()

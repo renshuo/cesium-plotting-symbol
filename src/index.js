@@ -39,8 +39,12 @@ class GraphManager {
     return em.draw(obj)
   }
 
-  delete () {
-    return em.deleteSelectGraph()
+  delete (graph) {
+    if (graph) {
+      return em.deleteGraph(graph)
+    } else {
+      return em.deleteSelectGraph()
+    }
   }
 
   deleteAll () {

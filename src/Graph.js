@@ -53,6 +53,9 @@ export default class Graph {
   initProps (properties) {
     Object.assign(this.props,
       {
+        id: {
+          value: properties.id, title: '编号', type: 'string', editable: false
+        },
         name: {
           value: properties.name, title: '名称', type: 'string'
         },

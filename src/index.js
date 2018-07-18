@@ -38,6 +38,14 @@ class GraphManager {
     let obj = json instanceof Graph ? json : this.createObj(json)
     return em.draw(obj)
   }
+  
+  findById(id) {
+    return em.findById(id)
+  }
+
+  findByType(type) {
+    return em.findByType(type)
+  }
 
   delete (graph) {
     if (graph) {

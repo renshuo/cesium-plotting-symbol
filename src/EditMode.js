@@ -58,6 +58,14 @@ export class EditMode {
     this.graphList.push(obj)
     return obj
   }
+
+  findById(id) {
+    return _.find(this.graphList, (graph) => graph.props.id.value === id)
+  }
+
+  findByType(type) {
+    return _.find(this.graphList, (graph) => graph.props.type.value === type)
+  }
   
   deleteGraph (graph) {
     graph.deleteGraph()

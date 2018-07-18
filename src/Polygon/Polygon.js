@@ -25,7 +25,16 @@ export default class Polygon extends Graph {
       value: p.alpha, title: '透明度', type: 'number', step: 0.05, max: 1, min: 0
     }
     this.props.fill = {
-      value: p.fill, title: 'fill', type: 'boolean'
+      value: p.fill, title: '填充', type: 'boolean'
+    }
+    this.props.outline = {
+      value: true, title: '边框', type: 'boolean'
+    }
+    this.props.outlineColor = {
+      value: '#000', title: '边框颜色', type: 'color'
+    },
+    this.props.outlineWidth = {
+      value: 2, title: '边框宽度', type: 'number', step: 1, min: 1, max: 100
     }
   }
 
@@ -38,7 +47,12 @@ export default class Polygon extends Graph {
             let c = Cesium.Color.fromCssColorString(this.props.color.value).withAlpha(this.props.alpha.value)
             return this.highLighted ? c.brighten(0.6, new Cesium.Color()) : c
           }, false)),
-        outline: true
+        outline: new Cesium.CallbackProperty((time, result) => this.props.outline.value, false),
+        outlineColor: new Cesium.CallbackProperty((time, result) => {
+          return Cesium.Color.fromCssColorString(this.props.outlineColor.value).withAlpha(this.props.alpha.value)
+        }, false),
+        height: 0,
+        outlineWidth: new Cesium.CallbackProperty((time, result) => this.props.outlineWidth.value, false)
       }
     })
   }

@@ -3,6 +3,7 @@
     <a-checkbox
         :checked="xvalue"
         @change="updateValue"
+        :disabled="disabled"
       >
     </a-checkbox>
   </div>
@@ -13,7 +14,11 @@
 export default {
   name: 'colorEditor',
   props: {
-    value: {}
+    value: {},
+    disabled: {
+      default: false,
+      type: Boolean
+    }
   },
   data () {
     return {

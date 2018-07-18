@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a-input v-model="xvalue" @change="updateValue"></a-input>
+    <a-input v-model="xvalue" @change="updateValue" :disabled="disabled"></a-input>
   </div>
 </template>
 
@@ -9,7 +9,11 @@
 export default {
   name: 'colorEditor',
   props: {
-    value: {}
+    value: {},
+    disabled: {
+      default: false,
+      type: Boolean
+    }
   },
   data () {
     return {

@@ -18,8 +18,8 @@ export default class Image extends Rectangle {
   initProps (p) {
     super.initProps(p)
     this.props.image = {
-      value: p.image, title: 'fill', type: 'string'
-    }
+      value: p.image, title: '图形', type: 'string'
+    }    
   }
 
   initShape() {
@@ -27,15 +27,19 @@ export default class Image extends Rectangle {
       polygon: {
         fill: new Cesium.CallbackProperty((time, result) => this.props.fill.value, true),
         material: new Cesium.ImageMaterialProperty({
-          image: new Cesium.CallbackProperty((time, result) => '../../../static/img/' + this.props.image.value, false),
+          image: new Cesium.CallbackProperty((time, result) => '../../../static/img/' + this.props.image.value, true),
           color: new Cesium.CallbackProperty((time, result) => {
             let c = Cesium.Color.fromCssColorString(this.props.color.value).withAlpha(this.props.alpha.value)
             return this.highLighted ? c.brighten(0.6, new Cesium.Color()) : c
-          }, false),
+          }, true),
           transparent: true
         }),
+        outline: new Cesium.CallbackProperty((time, result) => this.props.outline.value, true),
+        outlineColor: new Cesium.CallbackProperty((time, result) => {
+          return Cesium.Color.fromCssColorString(this.props.outlineColor.value).withAlpha(this.props.alpha.value)
+        }, true),
         height: 0,
-        outline: false,
+        outlineWidth: new Cesium.CallbackProperty((time, result) => this.props.outlineWidth.value, true)
       }
     })
   }

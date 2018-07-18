@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a-input-number :min="min" :max="max" :step="step" v-model="xvalue" @change="updateValue"></a-input-number>
+    <a-input-number :min="min" :max="max" :step="step" v-model="xvalue" @change="updateValue" :disabled="disabled"></a-input-number>
   </div>
 </template>
 
@@ -13,6 +13,10 @@ export default {
     min: {},
     max: {},
     step: {},
+    disabled: {
+      default: false,
+      type: Boolean
+    }
   },
   data () {
     return {

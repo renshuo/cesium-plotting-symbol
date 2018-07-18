@@ -1,11 +1,13 @@
 <template>
   <div>
     <a-input @click="togglePicker" v-model="colors.hex" 
-    :style="{backgroundColor: colors.hex, color: textColor}"></a-input>
+    :style="{backgroundColor: colors.hex, color: textColor}" :disabled="disabled"></a-input>
     <div :bordered=false :hidden="!isShowPicker" class="colorpane">
-            <photoshop-picker v-model="colors" 
-            @input="updateValue"
-      @ok="updateColor" @cancel="cancleColor"/>
+      <photoshop-picker
+        v-model="colors" 
+        @input="updateValue"
+        @ok="updateColor"
+        @cancel="cancleColor"/>
     </div>
   </div>
 </template>
@@ -20,7 +22,12 @@ export default {
     'photoshop-picker': vc.Sketch
   },
   props: {
-    value: {}
+    value: {},
+    disabled: {
+      default: false,
+      type: Boolean
+    }
+
   },
   data () {
     return {

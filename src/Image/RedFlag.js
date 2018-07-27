@@ -8,6 +8,5 @@ export default class RedFlag extends Image {
       image: 'redflag1.png',
       ...p
     })
-    this.initShape()
   }
 }

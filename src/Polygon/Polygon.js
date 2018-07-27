@@ -12,30 +12,23 @@ export default class Polygon extends Graph {
       color: '#00FF00',
       alpha: 0.8,
       fill: true,
+      outline: true,
+      outlineColor: '#000',
+      outlineWidth: 2,
       ...prop
     })
   }
 
-  initProps (p) {
-    super.initProps(p)
-    this.props.color = {
-      value: p.color, title: '颜色', type: 'color'
-    }
-    this.props.alpha = {
-      value: p.alpha, title: '透明度', type: 'number', step: 0.05, max: 1, min: 0
-    }
-    this.props.fill = {
-      value: p.fill, title: '填充', type: 'boolean'
-    }
-    this.props.outline = {
-      value: true, title: '边框', type: 'boolean'
-    }
-    this.props.outlineColor = {
-      value: '#000', title: '边框颜色', type: 'color'
-    },
-    this.props.outlineWidth = {
-      value: 2, title: '边框宽度', type: 'number', step: 1, min: 1, max: 100
-    }
+  initProps (defs) {
+    super.initProps([
+      {name: 'color', title: '颜色', type: 'color'},
+      {name: 'alpha', title: '透明度', type: 'number', step: 0.05, max: 1, min: 0},
+      {name: 'fill', title: '填充', type: 'boolean'},
+      {name: 'outline', title: '边框', type: 'boolean'},
+      {name: 'outlineColor', title: '边框颜色', type: 'color'},
+      {name: 'outlineWidth', title: '边框宽度', type: 'number', step: 1, min: 1, max: 100},
+      ...defs
+    ])
   }
 
   initShape() {

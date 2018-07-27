@@ -27,6 +27,7 @@ export default class Graph {
 
   highLighted
 
+  properties = {}
   props = {}
 
   name = ''
@@ -34,6 +35,7 @@ export default class Graph {
 
   constructor (properties, viewer = window.viewer) {
     this.viewer = viewer
+    this.properties = properties
     if (!window.layer) {
       window.layer = {biaohui: this.viewer.entities.add({'id': 'biaohui', name: 'biaohui'})}
     } else if (!window.layer.biaohui) {
@@ -45,29 +47,41 @@ export default class Graph {
     }
     Graph.lastGraph = this
     this.initRootEntity()
-    this.initProps(properties)
+    this.initProps({})
+    this.renewProperties(this.props)
     this.initShape()
     this.initCtls(properties)
   }
 
-  initProps (properties) {
+  initProps (p) {
     Object.assign(this.props,
       {
         id: {
-          value: properties.id, title: '编号', type: 'string', editable: false
+          value: p.id, title: '编号', type: 'string', editable: false
         },
         name: {
-          value: properties.name, title: '名称', type: 'string'
+          value: p.name, title: '名称', type: 'string'
         },
         description: {
-          value: properties.description, title: '描述', type: 'string'
+          value: p.description, title: '描述', type: 'string'
         },
         type: {
-          value: properties.type || 'invalid', title: '类型', type: 'string', editable: false
+          value: p.type || 'invalid', title: '类型', type: 'string', editable: false
         },
       }
     )
-    this.renewProperties(this.props)
+  }
+  initProps (defs) {
+    [
+      {name: 'id', title: '编号', type: 'string', editable: false},
+      {name: 'name', title: '名称', type: 'string'},
+      {name: 'description', title: '描述', type: 'string'},
+      {name: 'type', title: '类型', type: 'string', editable: false},
+      ...defs
+    ].forEach(prop => {
+      prop.value = this.properties[prop.name]
+      this.props[prop.name] = prop
+    })
   }
 
   initCtls (properties) {

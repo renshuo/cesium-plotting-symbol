@@ -13,11 +13,11 @@ export default class Satellite extends Model {
     })
   }
 
-  initProps (p) {
-    super.initProps(p)
-    this.props.height = {
-      value: p.height, title: '高度', type: 'number', min: 1, max: 30000000, unit: '米'
-    }    
+  initProps (defs) {
+    super.initProps([
+      {name: 'color', title: '高度', type: 'number', min: 1, max: 30000000, unit: '米'},
+      ...defs
+    ])
   }
 
   calcuteShape (points, time) {

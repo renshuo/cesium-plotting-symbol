@@ -10,16 +10,16 @@ export default class Image extends Rectangle {
       color: '#fff',
       alpha: 1,
       image: 'th1.jpg',
+      outline: false,
       ...p
     })
-    this.initShape()
   }
 
-  initProps (p) {
-    super.initProps(p)
-    this.props.image = {
-      value: p.image, title: '图形', type: 'string'
-    }    
+  initProps (defs) {
+    super.initProps([
+      {name: 'image', title: '图形', type: 'string'},
+      ...defs
+    ])
   }
 
   initShape() {

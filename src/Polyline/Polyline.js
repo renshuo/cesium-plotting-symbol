@@ -17,23 +17,15 @@ export default class Polyline extends Graph {
     })
   }
 
-  initProps (p) {
-    super.initProps(p)
-    Object.assign(this.props,
-      {
-        width: {
-          value: p.width, title: '线宽', type: 'number', min: 1, max: 256
-        },
-        color: {
-          value: p.color, title: '颜色', type: 'color'
-        },
-        alpha: {
-          value: p.alpha, title: '透明度', type: 'number', step: 0.05, max: 1, min: 0
-        }
-      }
-    )
+  initProps (defs) {
+    super.initProps([
+      {name: 'color', title: '颜色', type: 'color'},
+      {name: 'alpha', title: '透明度', type: 'number', step: 0.05, max: 1, min: 0},
+      {name: 'width', title: '线宽', type: 'number', min: 1, max: 256},
+      ...defs
+    ])
   }
-
+  
   initShape() {
     this.ent = this.addShape({
       id: 'arrow1_' + Graph.seq++,

@@ -14,15 +14,14 @@ export default class Model extends Point {
     })
   }
 
-  initProps (p) {
-    super.initProps(p)
-    this.props.pixelSize = {}
-    this.props.scale = {
-      value: p.scale, title: '缩放', type: 'number', min: 10, max: 100
-    }
-    this.props.uri = {
-      value: p.uri, title: '模型', type: 'string'
-    }
+  initProps (defs) {
+    super.initProps([
+      {name: 'color', title: '颜色', type: 'color'},
+      {name: 'alpha', title: '透明度', type: 'number', step: 0.05, max: 1, min: 0},
+      {name: 'scale', title: '缩放', type: 'number', min: 10, max: 100},
+      {name: 'uri', title: '模型', type: 'string'},
+      ...defs
+    ])
   }
 
   initShape() {

@@ -30,6 +30,14 @@ import * as mapUtil from './mapUtil.js'
 class GraphManager {
 
   start (json) {
+    if (json) {
+      return this.create(json)
+    } else {
+      em.start()
+    }
+  }
+
+  create (json) {
     let obj = json instanceof Graph ? json : this.createObj(json)
     return em.create(obj)
   }

@@ -46,6 +46,9 @@ export class EditMode {
 
   static seq = new Date().getTime()
 
+  start () {
+    this.nextMode(this.ACT_START)
+  }
   create(obj) {
     this.nextMode(this.ACT_CREATE, obj)
     this.graphList.push(obj)

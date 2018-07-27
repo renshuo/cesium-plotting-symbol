@@ -3,24 +3,24 @@
 
 ## 支持图形
 1. [点类型](https://github.com/renshuo/cesium-plotting-symbol/tree/master/src/Point)
-  1. 点
-  2. 3D模型
+    1. 点
+    2. 3D模型
 2. [线](https://github.com/renshuo/cesium-plotting-symbol/tree/master/src/Polyline)
-  1. 2阶bezier曲线
-  2. 3阶bezier曲线
-  3. N阶bezier曲线
-  4. bezier平滑线
-  5. 圆弧线
-  6. 折线
+    1. 2阶bezier曲线
+    2. 3阶bezier曲线
+    3. N阶bezier曲线
+    4. bezier平滑线
+    5. 圆弧线
+    6. 折线
 3. [多边形](https://github.com/renshuo/cesium-plotting-symbol/tree/master/src/Polygon)
-  1. 多边形
-  2. 矩形
-  3. 椭圆
-  4. 圆形
+    1. 多边形
+    2. 矩形
+    3. 椭圆
+    4. 圆形
 4. 其他
-  1. 单箭头
-5. 贴图类(https://github.com/renshuo/cesium-plotting-symbol/tree/master/src/Image)
-  3. 红旗
+    1. 单箭头
+5. [贴图类](https://github.com/renshuo/cesium-plotting-symbol/tree/master/src/Image)
+    3. 红旗
 
 ## 安装
 ```bash
@@ -33,13 +33,13 @@ import cps from 'cesium-plotting-symbol'
 ```
 ## 属性编辑窗
 ```html
-<prop-editor />
+<prop-editor /> <!-- 在html template 中插入prop-editor组件 -->
 ```
 
 ```javascript
 export default {
   components: {
-    'prop-editor': cps.PropEditor
+    'prop-editor': cps.PropEditor // 在vue中注册cps.PropEditor
   }
 }
 ```
@@ -141,4 +141,4 @@ export default {
     }
   }
 ```
-具体见(https://github.com/renshuo/cesium-plotting-symbol/tree/master/dev/TopPane.vue)
+具体栗子见(https://github.com/renshuo/cesium-plotting-symbol/tree/master/dev/TopPane.vue)

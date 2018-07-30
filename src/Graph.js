@@ -35,7 +35,10 @@ export default class Graph {
 
   constructor (properties, viewer = window.viewer) {
     this.viewer = viewer
-    this.properties = properties
+    this.properties = {
+      level: 0,
+      ...properties
+    }
     if (!window.layer) {
       window.layer = {biaohui: this.viewer.entities.add({'id': 'biaohui', name: 'biaohui'})}
     } else if (!window.layer.biaohui) {
@@ -53,29 +56,12 @@ export default class Graph {
     this.initCtls(properties)
   }
 
-  initProps (p) {
-    Object.assign(this.props,
-      {
-        id: {
-          value: p.id, title: '编号', type: 'string', editable: false
-        },
-        name: {
-          value: p.name, title: '名称', type: 'string'
-        },
-        description: {
-          value: p.description, title: '描述', type: 'string'
-        },
-        type: {
-          value: p.type || 'invalid', title: '类型', type: 'string', editable: false
-        },
-      }
-    )
-  }
   initProps (defs) {
     [
       {name: 'id', title: '编号', type: 'string', editable: false},
       {name: 'name', title: '名称', type: 'string'},
       {name: 'description', title: '描述', type: 'string'},
+      {name: 'level', title: '层', type: 'number'},
       {name: 'type', title: '类型', type: 'string', editable: false},
       ...defs
     ].forEach(prop => {
@@ -271,6 +257,9 @@ export default class Graph {
     ent.downLight = () => this.highLight(false)
     ent.finish = () => this.finish()
     ent.toEdit = () => this.toEdit()
+    ent.level = new Cesium.CallbackProperty((time, result) => {
+      return this.props.level.value
+    }, true)
     console.log('add a shape : ', ent)
     return ent
   }

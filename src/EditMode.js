@@ -127,7 +127,7 @@ export class EditMode {
         this.finishCurrentCreate()
         switch (action) {
           case this.ACT_FINISH:
-            this.selectMode()
+            this.editMode(...args)
             break
           case this.ACT_CREATE:
             this.createMode(...args)
@@ -207,7 +207,7 @@ export class EditMode {
       let p = mu.cartesian2lonlat(newpos)
       this.createGraph.addCtlPoint({lon: p[0], lat: p[1]})
       if (this.createGraph.ishaveMaxCtls()) {
-        this.nextMode(this.ACT_FINISH)
+        this.nextMode(this.ACT_FINISH, this.createGraph)
       }
     }, Cesium.ScreenSpaceEventType.LEFT_CLICK)
 
@@ -216,7 +216,7 @@ export class EditMode {
     }, Cesium.ScreenSpaceEventType.MIDDLE_CLICK)
 
     this.getHandler().setInputAction(event => {
-      this.nextMode(this.ACT_FINISH)
+      this.nextMode(this.ACT_FINISH, this.createGraph)
     }, Cesium.ScreenSpaceEventType.RIGHT_CLICK)
   }
 
@@ -292,7 +292,7 @@ export class EditMode {
         if (this.hoveredEnt === undefined && objs.length > 0) {
           // moved from empty to ent
           let obj = objs.reduce((a, cur) => {
-            return cur.id.seq > a.id.seq ? cur : a
+            return cur.id.level.getValue() > a.id.level.getValue() ? cur : a
           }, objs[0])
           console.debug(`moved to ent:`, obj)
           obj.id.highLight()
@@ -300,7 +300,7 @@ export class EditMode {
           this.hoveredEnt = obj
         } else if (this.hoveredEnt !== undefined && objs.length > 0) {
           let obj = objs.reduce((a, cur) => {
-            return cur.id.seq > a.id.seq ? cur : a
+            return cur.id.level.getValue() > a.id.level.getValue() ? cur : a
           }, objs[0])
           if (this.hoveredEnt === obj) {
             // moved on same ent

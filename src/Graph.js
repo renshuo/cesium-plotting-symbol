@@ -61,7 +61,7 @@ export default class Graph {
       {name: 'id', title: '编号', type: 'string', editable: false},
       {name: 'name', title: '名称', type: 'string'},
       {name: 'description', title: '描述', type: 'string'},
-      {name: 'level', title: '层', type: 'number'},
+      {name: 'level', title: '层', type: 'number', min: -10, max: 10, step: 1},
       {name: 'type', title: '类型', type: 'string', editable: false},
       ...defs
     ].forEach(prop => {

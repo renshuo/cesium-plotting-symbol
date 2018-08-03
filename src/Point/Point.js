@@ -6,14 +6,14 @@ export default class Point extends Graph {
   maxPointNum = 1
   minPointNum = 1
 
-  constructor (p) {
+  constructor (p, viewer) {
     super({
       type: '点',
       pixelSize: 12,
       color: '#00FF00',
       alpha: 0.8,
       ...p
-    })
+    }, viewer)
   }
 
   initProps (defs) {

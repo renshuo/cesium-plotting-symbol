@@ -5,8 +5,8 @@ import * as turf from '@turf/turf'
 
 export default class BezierSpline extends Polyline {
   
-  constructor(prop){
-    super({type: '平滑bezier曲线', ...prop})
+  constructor(prop, viewer){
+    super({type: '平滑bezier曲线', ...prop}, viewer)
   }
 
   calcuteShape (points, time) {

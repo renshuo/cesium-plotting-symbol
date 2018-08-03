@@ -1,6 +1,4 @@
-import _ from 'lodash'
-import em from './EditMode'
-import Graph from './Graph'
+import EditMode from './EditMode'
 
 import Image from './Image/Image.js'
 import RedFlag from './Image/RedFlag.js'
@@ -24,116 +22,108 @@ import BezierN from './Polyline/BezierN.js'
 import BezierSpline from './Polyline/BezierSpline.js'
 import CircleArc from './Polyline/CircleArc.js'
 
-import PropEditor from './PropEditor/index.vue'
+import pe from './PropEditor/index.vue'
 import * as mapUtil from './mapUtil.js'
 
-class GraphManager {
-
-  start (json) {
-    if (json) {
-      return this.create(json)
-    } else {
-      em.start()
-    }
+export const mu = mapUtil
+export const PropEditor = pe
+export default class GraphManager {
+ 
+  em
+  constructor (viewer, propEditor) {
+    this.viewer = viewer
+    this.em = new EditMode(viewer, propEditor)
   }
 
+  /**
+   * into select mode
+   */
+  start () {
+    this.em.start()
+  }
+
+  destroyHandler () {
+    this.em.destroyHandler()
+  }
+
+  /**
+   * begin draw a graph
+   * @param {graph param} json 
+   */
   create (json) {
-    let obj = json instanceof Graph ? json : this.createObj(json)
-    return em.create(obj)
+    let obj = this.createObj(json)
+    return this.em.create(obj)
   }
 
+  /**
+   * draw a graph with ctls.
+   * finish to edit mode.
+   * @param {graph param with ctls} json 
+   */
   draw (json) {
-    let obj = json instanceof Graph ? json : this.createObj(json)
-    return em.draw(obj)
+    let obj = this.createObj(json)
+    return this.em.draw(obj)
   }
   
   findById(id) {
-    return em.findById(id)
+    return this.em.findById(id)
   }
 
   findByType(type) {
-    return em.findByType(type)
+    return this.em.findByType(type)
   }
 
   delete (graph) {
-    if (graph) {
-      return em.deleteGraph(graph)
-    } else {
-      return em.deleteSelectGraph()
-    }
+    return this.em.deleteGraph(graph)
+  }
+
+  deleteSelectGraph () {
+    return this.em.deleteSelectGraph()
   }
 
   deleteAll () {
-     em.clean()
+    this.em.clean()
   }
 
   clean () {
-    em.clean()
+    this.em.clean()
   }
 
   save () {
-    return em.save()
+    return this.em.save()
   }
 
   load (jsons) {
-    return em.load(jsons.map(json => this.createObj(json)))
+    return this.em.load(jsons.map(json => this.createObj(json)))
   }
 
   createObj (json) {
     console.log('createObj from json: ', json.obj)
     switch (json.obj) {
-      case 'RedFlag': return new RedFlag(json)
-      case 'Image': return new Image(json)
+      case 'RedFlag': return new RedFlag(json, this.viewer)
+      case 'Image': return new Image(json, this.viewer)
   
-      case 'Point': return new Point(json)
-      case 'Boat': return new Boat(json)
-      case 'Satellite': return new Satellite(json)
-      case 'Station': return new Station(json)
-      case 'Vehicle': return new Vehicle(json)
+      case 'Point': return new Point(json, this.viewer)
+      case 'Boat': return new Boat(json, this.viewer)
+      case 'Satellite': return new Satellite(json, this.viewer)
+      case 'Station': return new Station(json, this.viewer)
+      case 'Vehicle': return new Vehicle(json, this.viewer)
   
-      case 'Polygon': return new Polygon(json)
-      case 'Arrow1': return new Arrow1(json)
-      case 'Circle': return new Circle(json)
-      case 'Ellipse': return new Ellipse(json)
-      case 'Rectangle': return new Rectangle(json)
+      case 'Polygon': return new Polygon(json, this.viewer)
+      case 'Arrow1': return new Arrow1(json, this.viewer)
+      case 'Circle': return new Circle(json, this.viewer)
+      case 'Ellipse': return new Ellipse(json, this.viewer)
+      case 'Rectangle': return new Rectangle(json, this.viewer)
   
-      case 'Polyline': return new Polyline(json)
-      case 'Bezier1': return new Bezier1(json)
-      case 'Bezier2': return new Bezier2(json)
-      case 'BezierN': return new BezierN(json)
-      case 'BezierSpline': return new BezierSpline(json)
-      case 'CircleArc': return new CircleArc(json)
+      case 'Polyline': return new Polyline(json, this.viewer)
+      case 'Bezier1': return new Bezier1(json, this.viewer)
+      case 'Bezier2': return new Bezier2(json, this.viewer)
+      case 'BezierN': return new BezierN(json, this.viewer)
+      case 'BezierSpline': return new BezierSpline(json, this.viewer)
+      case 'CircleArc': return new CircleArc(json, this.viewer)
       default:
         console.log('invalid type')
         return undefined
     }
   }
 }
-
-const gm = new GraphManager()
-Object.assign(gm, {
-  Graph,
-  Image,
-  RedFlag,
-  Point,
-  Polyline,
-  Polygon,
-  Arrow1,
-  Circle,
-  Ellipse,
-  BezierSpline,
-  BezierN,
-  Bezier1,
-  Bezier2,
-  CircleArc,
-  Rectangle,
-  Boat,
-  Vehicle,
-  Satellite,
-  Station,
-
-  mapUtil,
-  PropEditor,
-})
-
-export default gm

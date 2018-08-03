@@ -1,14 +1,15 @@
 import Cesium from 'cesium/Source/Cesium.js'
 import * as turf from '@turf/turf'
 
+
 /**
  * 转换屏幕坐标（来自于鼠标的各种event）为地理坐标
  * @param {screen position from mouse} screenPos 
  */
-export function screen2lonlat (screenPos, viewer = window.viewer) {
+export function screen2lonlat (screenPos, viewer) {
+  if (!viewer) throw 'null viewer'
   // 通过指定的椭球或者地图对应的坐标系，将鼠标的二维坐标转换为对应椭球体三维坐标
-  let ellipsoid = viewer.scene.globe.ellipsoid
-  let cartesian = viewer.camera.pickEllipsoid(screenPos, ellipsoid)
+  let cartesian = viewer.camera.pickEllipsoid(screenPos)
   if (cartesian) {
     return cartesian2lonlat(cartesian)
   } else {
@@ -16,6 +17,8 @@ export function screen2lonlat (screenPos, viewer = window.viewer) {
     return [0, 0]
   }
 }
+
+
 
 /**
  * 转换地理坐标到cesium cartesian
@@ -40,8 +43,8 @@ export function lonlathei2Cartesian(lonlathei) {
   )
 }
 
-export function cartesian2lonlat(cartesian, viewer = window.viewer) {
-  let ellipsoid = viewer.scene.globe.ellipsoid
+export function cartesian2lonlat(cartesian) {
+  let ellipsoid = Cesium.Ellipsoid.WGS84
   var cartographic = ellipsoid.cartesianToCartographic(cartesian)
   let longitudeString = Cesium.Math.toDegrees(cartographic.longitude)
   let latitudeString = Cesium.Math.toDegrees(cartographic.latitude)
@@ -49,9 +52,9 @@ export function cartesian2lonlat(cartesian, viewer = window.viewer) {
 }
 
 
-export function screen2Cartesian (screenPos, height = 0) {
-  let degrees = screen2lonlat(screenPos)
-  return lonlat2Cartesian(degrees)
+export function screen2Cartesian (screenPos, height = 0, viewer) {
+  let degrees = screen2lonlat(screenPos, viewer)
+  return lonlat2Cartesian(degrees, height)
 }
 
 /**
@@ -91,10 +94,10 @@ export function turfGeometry2Cartesians(g) {
   return geo.map((p) => lonlat2Cartesian(p))
 }
 
-export function deleteEnts (ents, viewer= window.viewer) {
+export function deleteEnts (ents, viewer) {
   ents.forEach((ent) => {
     if (ent._children.length > 0) {
-      deleteEnts(ent._children)
+      deleteEnts(ent._children, viewer)
     }
     viewer.entities.remove(ent)
   })

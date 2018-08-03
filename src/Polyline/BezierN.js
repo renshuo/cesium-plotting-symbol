@@ -6,11 +6,11 @@ import _ from 'lodash'
 
 export default class BezierN extends Polyline {
 
-  constructor(prop) {
+  constructor(prop, viewer) {
     super({
       type: 'n阶bezier曲线',
       ...prop
-    })
+    }, viewer)
   }
 
   calcuteShape (points, time) {

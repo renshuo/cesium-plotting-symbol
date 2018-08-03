@@ -2,7 +2,7 @@
   <div class="propeditor" id="app" :hidden="!isShow">
     <a-collapse :bordered="false" activeKey="1">
       <a-collapse-panel header="属性编辑" key="1">
-        <div v-for="(value, key) in props" :key="key">
+        <div v-for="(value, key) in prop" :key="key">
           <a-row>
             <a-col :span="6">{{value.title}}</a-col>
             <a-col :span="18">
@@ -37,7 +37,7 @@ export default {
   },
   data () {
     return {
-      props: {},
+      prop: {},
       isShow: false
     }
   },
@@ -49,15 +49,19 @@ export default {
         case 'color': return 'color-editor'
         case 'boolean': return 'boolean-check'
       }
+    },
+    show (isShow, props) {
+      this.isShow = isShow
+      if (isShow) {
+        this.$data.prop = {}
+        // 这里如果不将props置空，直接更新props
+        // 会导致vue复用之前的组件，导致编辑界面的组件不更新
+        // 所以用timeout异步更新props
+        setTimeout(() => {
+          this.$data.prop = props
+        }, 1)
+      }
     }
-  },
-  mounted () {
-	 window.addEventListener('ppe', (e) => {
-    this.$data.props = e.props
-   })
-   window.addEventListener('ppe-show', (e) => {
-     this.$data.isShow = e.props.show
-   })
   }
 }
 </script>

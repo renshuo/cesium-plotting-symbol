@@ -7,18 +7,24 @@ export class EditMode {
 
   graphList = []
 
-  constructor() {
+  viewer
+  propEditor
+  constructor(viewer, pe) {
+    console.log('new editmode: ', this, this.viewer)
+    this.viewer = viewer
+    this.propEditor = pe
     this.initKeyboard()
-    window.editMode = this
   }
 
   /** handler单例 */
-  getHandler (viewer = window.viewer) {
+  getHandler () {
     if (!this.handler || this.handler.isDestroyed()) {
-      this.handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas)
+      this.handler = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas)
     }
     return this.handler
   }
+
+
   destroyHandler () {
     this.handler.destroy()
     this.handler = undefined
@@ -71,16 +77,19 @@ export class EditMode {
   }
   
   deleteGraph (graph) {
-    graph.deleteGraph()
-    _.remove(this.graphList, graph)
-    return graph
+    if (graph) {
+      graph.deleteGraph()
+      _.remove(this.graphList, graph)
+      return graph
+    } else {
+      return this.deleteSelectGraph()
+    }
   }
 
   clean () {
-    if (window.layer && window.layer.biaohui && window.layer.biaohui._children) {
-      mu.deleteEnts(window.layer.biaohui._children)
-    }
-    this.graphList = []
+    this.graphList.forEach(graph => {
+      this.deleteGraph(graph)
+    })
   }
 
   save () {
@@ -164,20 +173,13 @@ export class EditMode {
     }
   }
 
-  showPorpEditor (isShow) {
-    let ev = document.createEvent('HTMLEvents')
-    ev.initEvent('ppe-show', false, false)
-    ev.props = {show: isShow}
-    window.dispatchEvent(ev)
-  }
-
-  viewMode (viewer = window.viewer) {
+  viewMode () {
     this.mode = this.MODE_VIEW
     kb.setContext(this.mode)
-    this.showPorpEditor(false)
+    this.propEditor.show(false)
     console.log(`into ${this.mode} mode`)
     this.destroyHandler()
-    viewer.canvas.style.cursor = 'auto'
+    this.setCursor(this.CURSOR_auto)
   }
 
   initKeyboardView () {
@@ -187,24 +189,24 @@ export class EditMode {
   }
 
   createGraph
-  createMode (graphObj, viewer = window.viewer) {
+  createMode (graphObj) {
     this.mode = this.MODE_CREATE
     this.createGraph = graphObj
-    this.showPorpEditor(true)
+    this.propEditor.show(true, this.createGraph.props)
     console.log(`into ${this.mode} mode`)
 
     kb.setContext(this.mode)
-    viewer.canvas.style.cursor = 'crosshair'
+    this.setCursor(this.CURSOR_crosshair)
     this.initCreateCursor()
 
     this.getHandler().setInputAction(move => {
-      window.cursorScreenPos = mu.screen2lonlat(move.endPosition)
+      window.cursorScreenPos = mu.screen2lonlat(move.endPosition, this.viewer)
       window.cursorPos = mu.lonlat2Cartesian(window.cursorScreenPos)
     }, Cesium.ScreenSpaceEventType.MOUSE_MOVE)
 
     this.getHandler().setInputAction(event => {
-      let newpos = mu.screen2Cartesian(event.position)
-      let p = mu.cartesian2lonlat(newpos)
+      let newpos = mu.screen2Cartesian(event.position, 0, this.viewer)
+      let p = mu.cartesian2lonlat(newpos, this.viewer)
       this.createGraph.addCtlPoint({lon: p[0], lat: p[1]})
       if (this.createGraph.ishaveMaxCtls()) {
         this.nextMode(this.ACT_FINISH, this.createGraph)
@@ -225,7 +227,7 @@ export class EditMode {
    */
   finishCurrentCreate () {
     console.log('finsih create: ', this.createGraph)
-    viewer.entities.remove(window.cursor)
+    this.viewer.entities.remove(window.cursor)
     if (this.createGraph) {
       if (this.createGraph.isCtlNumValid()) {
         this.createGraph.finish()
@@ -236,8 +238,8 @@ export class EditMode {
     }
   }
 
-  initCreateCursor (viewer = window.viewer) {
-    window.cursor = viewer.entities.add({
+  initCreateCursor () {
+    window.cursor = this.viewer.entities.add({
       id: 'cursor',
       parent: this.createGraph.layer.rootEnt,
       position: new Cesium.CallbackProperty((time, result) => {
@@ -277,17 +279,17 @@ export class EditMode {
 
 
   hoveredEnt
-  selectMode (viewer = window.viewer) {
+  selectMode () {
     this.mode = this.MODE_SELECT
     this.hoveredEnt = undefined
-    this.showPorpEditor(false)
+    this.propEditor.show(false)
     console.log(`into ${this.mode} mode`)
     
     kb.setContext(this.mode)
-    viewer.canvas.style.cursor = 'auto'
+    this.setCursor(this.CURSOR_auto)
 
     this.getHandler().setInputAction(movement => {
-      let objs = viewer.scene.drillPick(movement.endPosition)
+      let objs = this.viewer.scene.drillPick(movement.endPosition)
       if (Cesium.defined(objs)) {
         if (this.hoveredEnt === undefined && objs.length > 0) {
           // moved from empty to ent
@@ -296,7 +298,7 @@ export class EditMode {
           }, objs[0])
           console.debug(`moved to ent:`, obj)
           obj.id.highLight()
-          viewer.canvas.style.cursor = 'pointer'
+          this.setCursor(this.CURSOR_pointer)
           this.hoveredEnt = obj
         } else if (this.hoveredEnt !== undefined && objs.length > 0) {
           let obj = objs.reduce((a, cur) => {
@@ -309,13 +311,13 @@ export class EditMode {
             console.debug(`moved from ent1 to ent2: `, this.hoveredEnt, obj)
             this.hoveredEnt.id.downLight()
             obj.id.highLight()
-            viewer.canvas.style.cursor = 'pointer'
+            this.setCursor(this.CURSOR_pointer)
             this.hoveredEnt = obj
           }
         } else if (this.hoveredEnt !== undefined && objs.length === 0) {
           console.debug(`moved out of ent: `, this.hoveredEnt)
           this.hoveredEnt.id.downLight()
-          viewer.canvas.style.cursor = 'auto'
+          this.setCursor(this.CURSOR_auto)
           this.hoveredEnt = undefined
         } else {
           // nothing for this.hoveredEnt is null and objs is empty
@@ -352,22 +354,22 @@ export class EditMode {
   }
 
   currentEditEnt
-  editMode (ent, viewer = window.viewer) {
+  editMode (ent) {
     this.mode = this.MODE_EDIT
     this.currentEditEnt = ent
-    this.showPorpEditor(true)
+    this.propEditor.show(true, this.currentEditEnt.props)
     console.log(`into ${this.mode} mode: `, this.currentEditEnt)
 
     kb.setContext(this.mode)
-    viewer.canvas.style.cursor = 'crosshair'
+    this.setCursor(this.CURSOR_crosshair)
     this.currentEditEnt.toEdit()
 
     this.getHandler().setInputAction(move => {
-      window.cursorPos = mu.screen2Cartesian(move.endPosition)
+      window.cursorPos = mu.screen2Cartesian(move.endPosition, 0, this.viewer)
     }, Cesium.ScreenSpaceEventType.MOUSE_MOVE)
   
     this.getHandler().setInputAction(event => {
-      let objs = viewer.scene.drillPick(event.position)
+      let objs = this.viewer.scene.drillPick(event.position)
       if (Cesium.defined(objs)) {
         let ctl = objs.filter((st) => {
           return st.id.graphType === 'ctl' &&
@@ -415,19 +417,19 @@ export class EditMode {
   }
 
   pickedctl
-  ctlEditMode (picked, edited, viewer = window.viewer) {
+  ctlEditMode (picked, edited) {
     this.mode = this.MODE_CTLEDIT
     this.pickedctl = picked
     this.currentEditEnt = edited
     console.log(`into ${this.mode} mode: `, this.pickedctl, this.currentEditEnt)
     
     kb.setContext(this.mode)
-    viewer.canvas.style.cursor = 'crosshair'
+    this.setCursor(this.CURSOR_crosshair)
     this.currentEditEnt.toEdit()
     this.pickedctl.pickup()
 
     this.getHandler().setInputAction(move => {
-      window.cursorPos = mu.screen2Cartesian(move.endPosition)
+      window.cursorPos = mu.screen2Cartesian(move.endPosition, 0, this.viewer)
     }, Cesium.ScreenSpaceEventType.MOUSE_MOVE)
 
     this.getHandler().setInputAction(event => {
@@ -453,8 +455,12 @@ export class EditMode {
       kb.bind('1', (e) => console.log('ctledit: ', e, this))
     })
   }
+
+  CURSOR_auto = 'auto'
+  CURSOR_crosshair = 'crosshair'
+  CURSOR_pointer = 'pointer'
+  setCursor (cursor) {
+    this.viewer.canvas.style.cursor = cursor
+  }
 }
-
-export const em = new EditMode()
-
-export default em
+export default EditMode

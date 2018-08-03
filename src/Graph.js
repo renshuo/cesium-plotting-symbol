@@ -6,6 +6,7 @@ export default class Graph {
   static seq = new Date().getTime()
   static lastGraph
   viewer
+  entitityCollection
   layer
 
   /**
@@ -30,11 +31,9 @@ export default class Graph {
   properties = {}
   props = {}
 
-  name = ''
-  description = ''
-
   constructor (properties, viewer = window.viewer) {
     this.viewer = viewer
+    this.entitityCollection = viewer.entities
     this.properties = {
       level: 0,
       ...properties
@@ -51,7 +50,6 @@ export default class Graph {
     Graph.lastGraph = this
     this.initRootEntity()
     this.initProps({})
-    this.renewProperties(this.props)
     this.initShape()
     this.initCtls(properties)
   }
@@ -89,15 +87,6 @@ export default class Graph {
         this.addCtlPoint(p)
       })
     }
-  }
-
-  renewProperties (props) {
-    // store.dispatch('selected', this.props)
-    console.log('props: ', props)
-    let ev = document.createEvent('HTMLEvents')
-    ev.initEvent('ppe', false, false)
-    ev.props = props
-    window.dispatchEvent(ev)
   }
 
   initRootEntity () {
@@ -152,11 +141,12 @@ export default class Graph {
     })
   }
 
-  addCtlPoint (pos, viewer = window.viewer) {
-    let ctlPoint = viewer.entities.add({
+  addCtl (cartesian3) {
+    let pos = mu.cartesian2lonlat(cartesian3)
+    let ctlPoint = this.viewer.entities.add({
       id: this.graph.id + '_ctlpoint_' + Graph.seq++,
       parent: this.graph.ctl,
-      position: mu.lonlathei2Cartesian(pos),
+      position: cartesian3,
       graphType: 'ctl',
       point: {
         pixelSize: 8,
@@ -165,8 +155,8 @@ export default class Graph {
         outlineColor: Cesium.Color.AQUA
       },
       label: {
-        text: 'Lon: ' + pos.lon.toPrecision(5) + '\u00B0' +
-        '\nLat: ' + pos.lat.toPrecision(5) + '\u00B0',
+        text: 'Lon: ' + pos[0].toPrecision(5) + '\u00B0' +
+        '\nLat: ' + pos[1].toPrecision(5) + '\u00B0',
         font : '14px monospace',
         horizontalOrigin : Cesium.HorizontalOrigin.LEFT,
         verticalOrigin : Cesium.VerticalOrigin.TOP,
@@ -174,8 +164,8 @@ export default class Graph {
       }
     })
     ctlPoint.finish = () => {
-      ctlPoint.label.text = ctlPoint.label.text.getValue(mu.julianDate())
-      ctlPoint.position = ctlPoint.position.getValue(mu.julianDate())
+      ctlPoint.label.text = ctlPoint.label.text.getValue(Cesium.JulianDate.fromDate(new Date()))
+      ctlPoint.position = ctlPoint.position.getValue(Cesium.JulianDate.fromDate(new Date()))
     }
     ctlPoint.pickup = () => {
       ctlPoint.label.text = new Cesium.CallbackProperty((time, result) => {
@@ -190,6 +180,11 @@ export default class Graph {
     console.log('added a point: ', ctlPoint)
     this.addHandler(ctlPoint, this.graph.ctl)
     return ctlPoint
+  }
+
+  addCtlPoint (pos) {
+    let c3 = mu.lonlathei2Cartesian(pos)
+    this.addCtl(c3)
   }
 
   /**
@@ -219,7 +214,7 @@ export default class Graph {
 
   deleteGraph () {
     console.log('delete this graph: ', this)
-    mu.deleteEnts([this.graph])
+    mu.deleteEnts([this.graph], this.viewer)
   }
 
   /**
@@ -238,7 +233,7 @@ export default class Graph {
   deleteCtlPoint (ctlPoint) {
     let seq = this.graph.ctl._children.indexOf(ctlPoint)
     this.graph.ctl._children.splice(seq, 1)
-    window.viewer.entities.remove(ctlPoint)
+    this.viewer.entities.remove(ctlPoint)
   }
 
   addShape (properties) {
@@ -249,14 +244,16 @@ export default class Graph {
         properties.id = 'shp_' + Graph.seq++
       }
     }
-    let ent = window.viewer.entities.add(new Cesium.Entity(properties))
+    let ent = this.viewer.entities.add(new Cesium.Entity(properties))
     ent.parent = this.graph.shape
     ent.graphType = 'shp'
+    ent.obj = this
     ent.seq = Graph.seq
     ent.highLight = () => this.highLight(true)
     ent.downLight = () => this.highLight(false)
     ent.finish = () => this.finish()
     ent.toEdit = () => this.toEdit()
+    ent.props = this.props
     ent.level = new Cesium.CallbackProperty((time, result) => {
       return this.props.level.value
     }, true)
@@ -268,7 +265,7 @@ export default class Graph {
     console.log('delete shap entity.')
     let seq = this.graph.shape._children.indexOf(ent)
     this.graph.shape._children.splice(seq, 1)
-    window.viewer.entities.remove(ent)
+    this.viewer.entities.remove(ent)
   }
 
   /* ############## spliter ############## */
@@ -293,7 +290,6 @@ export default class Graph {
    * 进入编辑模式
    */
   toEdit () {
-    this.renewProperties(this.props)
     this.highLighted = false
     this.graph.ctl.show = true
   }
@@ -301,7 +297,6 @@ export default class Graph {
    * 图形绘制结束后调用
    */
   finish () {
-    this.renewProperties({})
     this.graph.ctl.show = false
   }
 }

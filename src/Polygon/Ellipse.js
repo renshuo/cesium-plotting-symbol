@@ -8,8 +8,8 @@ export default class Ellipse extends Polygon {
   minPointNum = 2 // 2个点的椭圆即退化为圆
 
 
-  constructor(p){
-    super({type: '椭圆', ...p})
+  constructor(p, viewer){
+    super({type: '椭圆', ...p}, viewer)
   }
 
   calcuteShape (points, time) {

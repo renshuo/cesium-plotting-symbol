@@ -241,7 +241,6 @@ export class EditMode {
   initCreateCursor () {
     window.cursor = this.viewer.entities.add({
       id: 'cursor',
-      parent: this.createGraph.layer.rootEnt,
       position: new Cesium.CallbackProperty((time, result) => {
         return window.cursorPos === null
           ? null
@@ -404,9 +403,9 @@ export class EditMode {
 
   deleteSelectGraph () {
     if (this.currentEditEnt) {
-      let graph = this.currentEditEnt.parent.parent.graph
+      let graph = this.currentEditEnt.obj
+      this.currentEditEnt.delete()
       this.currentEditEnt = undefined
-      graph.deleteGraph()
       _.remove(this.graphList, graph)
       this.nextMode(this.ACT_FINISH)
       return graph

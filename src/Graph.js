@@ -23,7 +23,6 @@ export default class Graph {
    *      L children (graphType='ctl')
    *  L shape (graphType='shapeRoot')
    *      L children (graphType='shp')
-   *  L graph = this
    */
 
   highLighted
@@ -107,7 +106,6 @@ export default class Graph {
       graphType: 'shapeRoot',
       show: true
     })
-    this.graph.graph = this
   }
 
   initShape () {
@@ -254,8 +252,9 @@ export default class Graph {
     ent.finish = () => this.finish()
     ent.toEdit = () => this.toEdit()
     ent.props = this.props
+    ent.delete = () => this.deleteGraph()
     ent.level = new Cesium.CallbackProperty((time, result) => {
-      return this.props.level.value
+      return ent.props.level.value
     }, true)
     console.log('add a shape : ', ent)
     return ent

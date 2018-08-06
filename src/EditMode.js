@@ -5,8 +5,6 @@ import gx from './index.js'
 
 export class EditMode {
 
-  graphList = []
-
   viewer
   propEditor
   constructor(viewer, pe) {
@@ -57,48 +55,13 @@ export class EditMode {
   }
   create(obj) {
     this.nextMode(this.ACT_CREATE, obj)
-    this.graphList.push(obj)
     return obj
   }
 
   draw (obj) {
     this.nextMode(this.ACT_FINISH, obj)
     obj.finish()
-    this.graphList.push(obj)
     return obj
-  }
-
-  findById(id) {
-    return _.find(this.graphList, (graph) => graph.props.id.value === id)
-  }
-
-  findByType(type) {
-    return _.find(this.graphList, (graph) => graph.props.type.value === type)
-  }
-  
-  deleteGraph (graph) {
-    if (graph) {
-      graph.deleteGraph()
-      _.remove(this.graphList, graph)
-      return graph
-    } else {
-      return this.deleteSelectGraph()
-    }
-  }
-
-  clean () {
-    this.graphList.forEach(graph => {
-      this.deleteGraph(graph)
-    })
-  }
-
-  save () {
-    let graphs = this.graphList.map( graph => graph.getProperties())
-    return graphs
-  }
-
-  load (objs) {
-    return objs.map(graph => this.draw(graph))
   }
 
   mode = this.MODE_VIEW
@@ -406,7 +369,6 @@ export class EditMode {
       let graph = this.currentEditEnt.obj
       this.currentEditEnt.delete()
       this.currentEditEnt = undefined
-      _.remove(this.graphList, graph)
       this.nextMode(this.ACT_FINISH)
       return graph
     } else {

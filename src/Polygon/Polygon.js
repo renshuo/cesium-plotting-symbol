@@ -6,7 +6,7 @@ export default class Polygon extends Graph {
 
   minPointNum = 3
   
-  constructor (prop, viewer) {
+  constructor (prop, viewer, layer) {
     super({
       type: '多边形',
       color: '#00FF00',
@@ -16,7 +16,7 @@ export default class Polygon extends Graph {
       outlineColor: '#000',
       outlineWidth: 2,
       ...prop
-    }, viewer)
+    }, viewer, layer)
   }
 
   initProps (defs) {

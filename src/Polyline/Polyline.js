@@ -6,7 +6,7 @@ export default class Polyline extends Graph {
 
   minPointNum = 2
 
-  constructor (prop, viewer) {
+  constructor (prop, viewer, layer) {
     super({
       type: '折线',
       width: 1,
@@ -14,7 +14,7 @@ export default class Polyline extends Graph {
       alpha: 0.8,
       fill: true,
       ...prop
-    }, viewer)
+    }, viewer, layer)
   }
 
   initProps (defs) {

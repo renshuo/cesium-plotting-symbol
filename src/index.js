@@ -24,14 +24,21 @@ import CircleArc from './Polyline/CircleArc.js'
 
 import pe from './PropEditor/index.vue'
 import * as mapUtil from './mapUtil.js'
+import _ from 'lodash'
 
 export const mu = mapUtil
 export const PropEditor = pe
 export default class GraphManager {
  
+  graphList = []
+  lastGraph = undefined
+
+  layer
   em
-  constructor (viewer, propEditor) {
+  constructor (viewer, propEditor, layerId) {
     this.viewer = viewer
+    this.layer = this.viewer.entities.getOrCreateEntity( layerId ? layerId : 'biaohui')
+    console.log('create layer: ', this.layer)
     this.em = new EditMode(viewer, propEditor)
   }
 
@@ -51,8 +58,9 @@ export default class GraphManager {
    * @param {graph param} json 
    */
   create (json) {
-    let obj = this.createObj(json)
-    return this.em.create(obj)
+    this.lastGraph = this.createObj(json)
+    this.graphList.push(this.lastGraph)
+    return this.em.create(this.lastGraph)
   }
 
   /**
@@ -61,66 +69,84 @@ export default class GraphManager {
    * @param {graph param with ctls} json 
    */
   draw (json) {
-    let obj = this.createObj(json)
-    return this.em.draw(obj)
+    this.lastGraph = this.createObj(json)
+    this.graphList.push(this.lastGraph)
+    return this.em.draw(this.lastGraph)
   }
   
   findById(id) {
-    return this.em.findById(id)
+    return _.find(this.graphList, (graph) => graph.props.id.value === id)
   }
 
   findByType(type) {
-    return this.em.findByType(type)
+    return _.find(this.graphList, (graph) => graph.props.type.value === type)
   }
 
   delete (graph) {
-    return this.em.deleteGraph(graph)
+    let deleted = undefined
+    if (graph) {
+      graph.deleteGraph()
+      _.remove(this.graphList, graph)
+      deleted = graph
+    } else {
+      deleted = this.em.deleteSelectGraph()
+      if (deleted) {
+        _.remove(this.graphList, deleted)
+      }
+    }
+    console.log('deleted graph: ', deleted)
   }
 
-  deleteSelectGraph () {
-    return this.em.deleteSelectGraph()
+  clean () {
+    this.graphList.forEach(graph => {
+      this.deleteGraph(graph)
+    })
   }
 
   deleteAll () {
-    this.em.clean()
+    this.clean()
   }
 
   clean () {
     this.em.clean()
   }
 
-  save () {
-    return this.em.save()
+  load (jsons) {
+    return jsons.map(json => this.draw(json))
   }
 
-  load (jsons) {
-    return this.em.load(jsons.map(json => this.createObj(json)))
+  save () {
+    let graphs = this.graphList.map( graph => graph.getProperties())
+    return graphs
   }
 
   createObj (json) {
     console.log('createObj from json: ', json.obj)
+    if (this.lastGraph) {
+      this.lastGraph.finish() //TODO check is graph exist and operate list
+    }
     switch (json.obj) {
-      case 'RedFlag': return new RedFlag(json, this.viewer)
-      case 'Image': return new Image(json, this.viewer)
+      case 'RedFlag': return new RedFlag(json, this.viewer, this.layer)
+      case 'Image': return new Image(json, this.viewer, this.layer)
   
-      case 'Point': return new Point(json, this.viewer)
-      case 'Boat': return new Boat(json, this.viewer)
-      case 'Satellite': return new Satellite(json, this.viewer)
-      case 'Station': return new Station(json, this.viewer)
-      case 'Vehicle': return new Vehicle(json, this.viewer)
+      case 'Point': return new Point(json, this.viewer, this.layer)
+      case 'Boat': return new Boat(json, this.viewer, this.layer)
+      case 'Satellite': return new Satellite(json, this.viewer, this.layer)
+      case 'Station': return new Station(json, this.viewer, this.layer)
+      case 'Vehicle': return new Vehicle(json, this.viewer, this.layer)
   
-      case 'Polygon': return new Polygon(json, this.viewer)
-      case 'Arrow1': return new Arrow1(json, this.viewer)
-      case 'Circle': return new Circle(json, this.viewer)
+      case 'Polygon': return new Polygon(json, this.viewer, this.layer)
+      case 'Arrow1': return new Arrow1(json, this.viewer, this.layer)
+      case 'Circle': return new Circle(json, this.viewer, this.layer)
       case 'Ellipse': return new Ellipse(json, this.viewer)
-      case 'Rectangle': return new Rectangle(json, this.viewer)
+      case 'Rectangle': return new Rectangle(json, this.viewer, this.layer)
   
-      case 'Polyline': return new Polyline(json, this.viewer)
-      case 'Bezier1': return new Bezier1(json, this.viewer)
-      case 'Bezier2': return new Bezier2(json, this.viewer)
-      case 'BezierN': return new BezierN(json, this.viewer)
-      case 'BezierSpline': return new BezierSpline(json, this.viewer)
-      case 'CircleArc': return new CircleArc(json, this.viewer)
+      case 'Polyline': return new Polyline(json, this.viewer, this.layer)
+      case 'Bezier1': return new Bezier1(json, this.viewer, this.layer)
+      case 'Bezier2': return new Bezier2(json, this.viewer, this.layer)
+      case 'BezierN': return new BezierN(json, this.viewer, this.layer)
+      case 'BezierSpline': return new BezierSpline(json, this.viewer, this.layer)
+      case 'CircleArc': return new CircleArc(json, this.viewer, this.layer)
       default:
         console.log('invalid type')
         return undefined

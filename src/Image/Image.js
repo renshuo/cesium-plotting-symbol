@@ -4,7 +4,7 @@ import Cesium from 'cesium/Source/Cesium.js'
 
 export default class Image extends Rectangle {
   
-  constructor (p, viewer) {
+  constructor (p, viewerj, layer) {
     super({
       type: '图',
       color: '#fff',
@@ -12,7 +12,7 @@ export default class Image extends Rectangle {
       image: 'th1.jpg',
       outline: false,
       ...p
-    }, viewer)
+    }, viewer, layer)
   }
 
   initProps (defs) {

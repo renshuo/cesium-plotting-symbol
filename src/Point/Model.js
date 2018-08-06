@@ -4,14 +4,14 @@ import Point from '../Point/Point.js'
 
 export default class Model extends Point {
 
-  constructor (p, viewer) {
+  constructor (p, viewer, layer) {
     super({
       type: '3D模型',
       color: '#ffffff',
       scale: 30,
       uri: 'boat.gltf',
       ...p
-    }, viewer)
+    }, viewer, layer)
   }
 
   initProps (defs) {

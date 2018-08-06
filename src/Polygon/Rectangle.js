@@ -5,8 +5,8 @@ export default class Rectangle extends Polygon{
   maxPointNum = 2
   minPointNum = 2
 
-  constructor(p, viewer){
-    super({type: '矩形', ...p}, viewer)
+  constructor(p, viewer, layer){
+    super({type: '矩形', ...p}, viewer, layer)
   }
 
   calcuteShape (points, time) {

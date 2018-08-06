@@ -3,14 +3,14 @@ import * as mu from '../mapUtil.js'
 
 export default class Satellite extends Model {
 
-  constructor (p, viewer) {
+  constructor (p, viewer, layer) {
     super({
       type: '卫星',
       uri: 'satellite.gltf',
       scale: 30000,
       height: 700000,
       ...p
-    }, viewer)
+    }, viewer, layer)
   }
 
   initProps (defs) {

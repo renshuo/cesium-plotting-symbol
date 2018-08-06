@@ -4,10 +4,7 @@ import _ from 'lodash'
 
 export default class Graph {
   static seq = new Date().getTime()
-  static lastGraph
-  viewer
-  entitityCollection
-  layer
+  entities
 
   /**
    * set max ctl point number
@@ -30,24 +27,16 @@ export default class Graph {
   properties = {}
   props = {}
 
-  constructor (properties, viewer = window.viewer) {
-    this.viewer = viewer
-    this.entitityCollection = viewer.entities
+  constructor (properties, viewer, layer) {
+    if (!viewer) {
+      throw 'get null viewer.'
+    }
+    this.entities = viewer.entities
     this.properties = {
       level: 0,
       ...properties
     }
-    if (!window.layer) {
-      window.layer = {biaohui: this.viewer.entities.add({'id': 'biaohui', name: 'biaohui'})}
-    } else if (!window.layer.biaohui) {
-      window.layer.biaohui = this.viewer.entities.add({'id': 'biaohui', name: 'biaohui'})
-    }
-    this.layer = window.layer.biaohui
-    if (Graph.lastGraph) {
-      Graph.lastGraph.finish()
-    }
-    Graph.lastGraph = this
-    this.initRootEntity()
+    this.initRootEntity(layer)
     this.initProps({})
     this.initShape()
     this.initCtls(properties)
@@ -88,19 +77,18 @@ export default class Graph {
     }
   }
 
-  initRootEntity () {
-    console.log('this layer: ', this.layer)
-    this.graph = this.viewer.entities.add({
-      id: this.layer.name + '_graph_' + Graph.seq++,
-      parent: this.layer
+  initRootEntity (layer) {
+    this.graph = this.entities.add({
+      id: layer.id + '_graph_' + Graph.seq++,
+      parent: layer
     })
-    this.graph.ctl = this.viewer.entities.add({
+    this.graph.ctl = this.entities.add({
       id: this.graph.id + '__ctl',
       parent: this.graph,
       graphType: 'ctlRoot',
       show: true
     })
-    this.graph.shape = this.viewer.entities.add({
+    this.graph.shape = this.entities.add({
       id: this.graph.id + '__shape',
       parent: this.graph,
       graphType: 'shapeRoot',
@@ -109,7 +97,7 @@ export default class Graph {
   }
 
   initShape () {
-    console.log('should overide by sub class.')
+    throw 'should overide by sub class.'
   }
 
   /**
@@ -141,7 +129,7 @@ export default class Graph {
 
   addCtl (cartesian3) {
     let pos = mu.cartesian2lonlat(cartesian3)
-    let ctlPoint = this.viewer.entities.add({
+    let ctlPoint = this.entities.add({
       id: this.graph.id + '_ctlpoint_' + Graph.seq++,
       parent: this.graph.ctl,
       position: cartesian3,
@@ -212,7 +200,16 @@ export default class Graph {
 
   deleteGraph () {
     console.log('delete this graph: ', this)
-    mu.deleteEnts([this.graph], this.viewer)
+    this.deleteEnts([this.graph])
+  }
+
+  deleteEnts (ents) {
+    ents.forEach((ent) => {
+      if (ent._children.length > 0) {
+        this.deleteEnts(ent._children)
+      }
+      this.entities.remove(ent)
+    })
   }
 
   /**
@@ -220,7 +217,7 @@ export default class Graph {
    */
   deleteLastPoint () {
     let e = this.graph.ctl._children.pop()
-    this.viewer.entities.remove(e)
+    this.entities.remove(e)
     console.log('remove last control point: ', e)
   }
 
@@ -229,9 +226,9 @@ export default class Graph {
    * @param {ctlPoint} ctlPoint
    */
   deleteCtlPoint (ctlPoint) {
-    let seq = this.graph.ctl._children.indexOf(ctlPoint)
-    this.graph.ctl._children.splice(seq, 1)
-    this.viewer.entities.remove(ctlPoint)
+    let i = this.graph.ctl._children.indexOf(ctlPoint)
+    this.graph.ctl._children.splice(i, 1)
+    this.entities.remove(ctlPoint)
   }
 
   addShape (properties) {
@@ -242,13 +239,13 @@ export default class Graph {
         properties.id = 'shp_' + Graph.seq++
       }
     }
-    let ent = this.viewer.entities.add(new Cesium.Entity(properties))
+    let ent = this.entities.add(new Cesium.Entity(properties))
     ent.parent = this.graph.shape
     ent.graphType = 'shp'
     ent.obj = this
     ent.seq = Graph.seq
-    ent.highLight = () => this.highLight(true)
-    ent.downLight = () => this.highLight(false)
+    ent.highLight = () => this.highLighted = true
+    ent.downLight = () => this.highLighted = false
     ent.finish = () => this.finish()
     ent.toEdit = () => this.toEdit()
     ent.props = this.props
@@ -262,9 +259,9 @@ export default class Graph {
 
   deleteShape (ent) {
     console.log('delete shap entity.')
-    let seq = this.graph.shape._children.indexOf(ent)
-    this.graph.shape._children.splice(seq, 1)
-    this.viewer.entities.remove(ent)
+    let i = this.graph.shape._children.indexOf(ent)
+    this.graph.shape._children.splice(i, 1)
+    this.entities.remove(ent)
   }
 
   /* ############## spliter ############## */
@@ -274,15 +271,7 @@ export default class Graph {
    * @param {Entity} ctlPoint 控制点的实体
    */
   addHandler (ctlPoint, ctl) {
-    console.log('unimplemented')
-  }
-
-  /**
-   * 在选择模式下当鼠标over的时候，或者编辑模式下调用
-   * @param {boolean} enable
-   */
-  highLight (enabled) {
-    this.highLighted = enabled
+    throw 'unimplemented'
   }
 
   /**

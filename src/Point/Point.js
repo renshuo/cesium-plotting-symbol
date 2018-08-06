@@ -26,20 +26,16 @@ export default class Point extends Graph {
   }
 
   initShape() {
-    this.ent = this.addShape({
-      id: 'point_' + Graph.seq++,
-      point: {
-        pixelSize: new Cesium.CallbackProperty((time, result) => this.props.pixelSize.value, true),
-        color: new Cesium.CallbackProperty((time, result) => {
-          let c = Cesium.Color.fromCssColorString(this.props.color.value).withAlpha(this.props.alpha.value)
-          return this.highLighted ? c.brighten(0.6, new Cesium.Color()) : c
-        }, true),
-        heightReference: Cesium.HeightReference.CLAMP_TO_GROUND
-      }
+    this.ent = this.entities.add(new Cesium.Entity({point: {}}))
+    this.fillShape(this.ent)
+    Object.assign(this.ent.point, {
+      pixelSize: new Cesium.CallbackProperty((time, result) => this.ent.propx.pixelSize.value, true),
+      color: new Cesium.CallbackProperty((time, result) => {
+        let c = Cesium.Color.fromCssColorString(this.ent.propx.color.value).withAlpha(this.ent.propx.alpha.value)
+        return this.ent.highLighted ? c.brighten(0.6, new Cesium.Color()) : c
+      }, true),
+      heightReference: Cesium.HeightReference.CLAMP_TO_GROUND
     })
-  }
-
-  addHandler (ctlPoint, ctl) {
     this.ent.position = new Cesium.CallbackProperty((time, result) => {
       return this.calcuteShape(this.graph.ctl._children.concat(window.cursor), time)
     }, false)

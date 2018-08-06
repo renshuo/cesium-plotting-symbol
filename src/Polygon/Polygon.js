@@ -4,7 +4,7 @@ import * as mu from '../mapUtil.js'
 
 export default class Polygon extends Graph {
 
-  minPointNum = 3
+  minPointNum = 2
   
   constructor (prop, viewer, layer) {
     super({
@@ -32,32 +32,28 @@ export default class Polygon extends Graph {
   }
 
   initShape() {
-    this.ent = this.addShape({
-      polygon: {
-        fill: new Cesium.CallbackProperty((time, result) => this.props.fill.value, true),
-        material: new Cesium.ColorMaterialProperty(
-          new Cesium.CallbackProperty((time, result) => {
-            let c = Cesium.Color.fromCssColorString(this.props.color.value).withAlpha(this.props.alpha.value)
-            return this.highLighted ? c.brighten(0.6, new Cesium.Color()) : c
-          }, true)),
-        outline: new Cesium.CallbackProperty((time, result) => this.props.outline.value, true),
-        outlineColor: new Cesium.CallbackProperty((time, result) => {
-          return Cesium.Color.fromCssColorString(this.props.outlineColor.value).withAlpha(this.props.alpha.value)
-        }, true),
-        height: 0,
-        outlineWidth: new Cesium.CallbackProperty((time, result) => this.props.outlineWidth.value, true)
-      }
+    this.ent = this.entities.add(new Cesium.Entity({polygon: {}}))
+    this.fillShape(this.ent)
+    Object.assign(this.ent.polygon, {
+      fill: new Cesium.CallbackProperty((time, result) => this.ent.propx.fill.value, false),
+      material: new Cesium.ColorMaterialProperty(
+        new Cesium.CallbackProperty( () => {
+          let c = Cesium.Color.fromCssColorString(this.ent.propx.color.value).withAlpha(this.ent.propx.alpha.value)
+          return this.ent.highLighted ? c.brighten(0.6, new Cesium.Color()) : c
+        }, false)),
+      outline: new Cesium.CallbackProperty((time, result) => this.ent.propx.outline.value, false),
+      outlineColor: new Cesium.CallbackProperty(() => {
+        let c = Cesium.Color.fromCssColorString(this.ent.propx.outlineColor.value).withAlpha(this.ent.propx.alpha.value)
+        return this.ent.highLighted ? c.brighten(0.6, new Cesium.Color()) : c
+      }, false),
+      height: 0,
+      outlineWidth: new Cesium.CallbackProperty((time, result) => this.ent.propx.outlineWidth.value, true),
+      hierarchy: new Cesium.CallbackProperty((time, result) => {
+        return this.calcuteShape(this.graph.ctl._children.concat(window.cursor), time)
+      }, false)
     })
   }
 
-  addHandler (ctlPoint, ctl) {
-    if (ctl._children.length === 1) {      
-      this.ent.polygon.hierarchy = new Cesium.CallbackProperty((time, result) => {
-        return this.calcuteShape(this.graph.ctl._children.concat(window.cursor), time)
-      }, false)
-    }
-  }
-  
   calcuteShape (points, time) {
     if (points.length < this.minPointNum) {
       return []

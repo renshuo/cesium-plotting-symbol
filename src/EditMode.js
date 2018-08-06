@@ -156,7 +156,7 @@ export class EditMode {
   createMode (graphObj) {
     this.mode = this.MODE_CREATE
     this.currentEditEnt = graphObj
-    this.propEditor.show(true, this.currentEditEnt.props)
+    this.propEditor.show(true, this.currentEditEnt.propx)
     console.log(`into ${this.mode} mode`)
 
     kb.setContext(this.mode)
@@ -321,7 +321,7 @@ export class EditMode {
   editMode (ent) {
     this.mode = this.MODE_EDIT
     this.currentEditEnt = ent
-    this.propEditor.show(true, this.currentEditEnt.props)
+    this.propEditor.show(true, this.currentEditEnt.propx)
     console.log(`into ${this.mode} mode: `, this.currentEditEnt)
 
     kb.setContext(this.mode)

@@ -27,30 +27,24 @@ export default class Polyline extends Graph {
   }
   
   initShape() {
-    this.ent = this.addShape({
-      id: 'arrow1_' + Graph.seq++,
-      polyline: {
-        width: new Cesium.CallbackProperty((time, result) => this.props.width.value, true),
-        fill: true,
-        material: new Cesium.ColorMaterialProperty(
-          new Cesium.CallbackProperty((time, result) => {
-            let c = Cesium.Color.fromCssColorString(this.props.color.value).withAlpha(this.props.alpha.value)
-            return this.highLighted ? c.brighten(0.6, new Cesium.Color()) : c
-          }, true)),
-        height: 0,
-        outline: true,
-        outlineWidth: 1,
-        outlineColor: Cesium.Color.fromCssColorString('#fd7f44')
-      }
-    })
-  }
-
-  addHandler (ctlPoint, ctl) {
-    if (ctl._children.length === 1) {
-      this.ent.polyline.positions = new Cesium.CallbackProperty((time, result) => {
+    this.ent = this.entities.add(new Cesium.Entity({polyline: {}}))
+    this.fillShape(this.ent)
+    Object.assign(this.ent.polyline, {
+      width: new Cesium.CallbackProperty((time, result) => this.ent.propx.width.value, true),
+      fill: true,
+      material: new Cesium.ColorMaterialProperty(
+        new Cesium.CallbackProperty(() => {
+          let c = Cesium.Color.fromCssColorString(this.ent.propx.color.value).withAlpha(this.ent.propx.alpha.value)
+          return this.ent.highLighted ? c.brighten(0.6, new Cesium.Color()) : c
+        }, true)),
+      height: 0,
+      outline: true,
+      outlineWidth: 1,
+      outlineColor: Cesium.Color.fromCssColorString('#fd7f44'),
+      positions: new Cesium.CallbackProperty((time, result) => {
         return this.calcuteShape(this.graph.ctl._children.concat(window.cursor), time)
       }, false)
-    }
+    })
   }
 
   calcuteShape (points, time) {

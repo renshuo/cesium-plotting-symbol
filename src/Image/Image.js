@@ -4,7 +4,7 @@ import Cesium from 'cesium/Source/Cesium.js'
 
 export default class Image extends Rectangle {
   
-  constructor (p, viewerj, layer) {
+  constructor (p, viewer, layer) {
     super({
       type: '图',
       color: '#fff',
@@ -23,24 +23,27 @@ export default class Image extends Rectangle {
   }
 
   initShape() {
-    this.ent = this.addShape({
-      polygon: {
-        fill: new Cesium.CallbackProperty((time, result) => this.props.fill.value, true),
-        material: new Cesium.ImageMaterialProperty({
-          image: new Cesium.CallbackProperty((time, result) => '../../../static/img/' + this.props.image.value, true),
-          color: new Cesium.CallbackProperty((time, result) => {
-            let c = Cesium.Color.fromCssColorString(this.props.color.value).withAlpha(this.props.alpha.value)
-            return this.highLighted ? c.brighten(0.6, new Cesium.Color()) : c
-          }, true),
-          transparent: true
-        }),
-        outline: new Cesium.CallbackProperty((time, result) => this.props.outline.value, true),
-        outlineColor: new Cesium.CallbackProperty((time, result) => {
-          return Cesium.Color.fromCssColorString(this.props.outlineColor.value).withAlpha(this.props.alpha.value)
+    this.ent = this.entities.add(new Cesium.Entity({polygon: {}}))
+    super.fillShape(this.ent)
+    Object.assign(this.ent.polygon, {
+      fill: new Cesium.CallbackProperty((time, result) => this.ent.propx.fill.value, true),
+      material: new Cesium.ImageMaterialProperty({
+        image: new Cesium.CallbackProperty((time, result) => '../../../static/img/' + this.ent.propx.image.value, true),
+        color: new Cesium.CallbackProperty((time, result) => {
+          let c = Cesium.Color.fromCssColorString(this.ent.propx.color.value).withAlpha(this.ent.propx.alpha.value)
+          return this.ent.highLighted ? c.brighten(0.6, new Cesium.Color()) : c
         }, true),
-        height: 0,
-        outlineWidth: new Cesium.CallbackProperty((time, result) => this.props.outlineWidth.value, true)
-      }
+        transparent: true
+      }),
+      outline: new Cesium.CallbackProperty((time, result) => this.ent.propx.outline.value, true),
+      outlineColor: new Cesium.CallbackProperty((time, result) => {
+        return Cesium.Color.fromCssColorString(this.ent.propx.outlineColor.value).withAlpha(this.ent.propx.alpha.value)
+      }, true),
+      height: 0,
+      outlineWidth: new Cesium.CallbackProperty((time, result) => this.ent.propx.outlineWidth.value, true),
+      hierarchy: new Cesium.CallbackProperty((time, result) => {
+        return this.calcuteShape(this.graph.ctl._children.concat(window.cursor), time)
+      }, false)
     })
   }
 }

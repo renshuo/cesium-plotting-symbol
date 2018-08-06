@@ -143,7 +143,7 @@ export default class Graph {
       label: {
         text: 'Lon: ' + pos[0].toPrecision(5) + '\u00B0' +
         '\nLat: ' + pos[1].toPrecision(5) + '\u00B0',
-        font : '14px monospace',
+        font : '12px monospace',
         horizontalOrigin : Cesium.HorizontalOrigin.LEFT,
         verticalOrigin : Cesium.VerticalOrigin.TOP,
         pixelOffset : new Cesium.Cartesian2(15, 0)
@@ -163,14 +163,36 @@ export default class Graph {
         return window.cursorPos.clone()
       }, false)
     }
-    console.log('added a point: ', ctlPoint)
-    this.addHandler(ctlPoint, this.graph.ctl)
+    console.log('added a ctl: ', ctlPoint)
     return ctlPoint
   }
 
   addCtlPoint (pos) {
     let c3 = mu.lonlathei2Cartesian(pos)
     this.addCtl(c3)
+  }
+
+  fillShape (ent) {
+    ent.parent = this.graph.shape
+    ent.graphType = 'shp'
+    ent.seq = Graph.seq
+    ent.highLighted = false
+    ent.highLight = () => ent.highLighted = true
+    ent.downLight = () => ent.highLighted = false
+    ent.finish = () => this.finish()
+    ent.toEdit = () => this.toEdit()
+    ent.addCtlPoint = (pos) => this.addCtlPoint(pos)
+    ent.ishaveMaxCtls = () => this.ishaveMaxCtls()
+    ent.isCtlNumValid = () => this.isCtlNumValid()
+    ent.deleteLastPoint = () => this.deleteLastPoint()
+    ent.getProperties = () => this.getProperties()
+    ent.propx = this.props
+    ent.delete = () => this.delete()
+    ent.level = new Cesium.CallbackProperty((time, result) => {
+      return ent.propx.level.value
+    }, true)
+    console.log('add a shape : ', ent)
+    return ent
   }
 
   /**
@@ -195,6 +217,19 @@ export default class Graph {
     }
   }
 
+  /**
+   * 进入编辑模式
+   */
+  toEdit () {
+    this.highLighted = false
+    this.graph.ctl.show = true
+  }
+  /**
+   * 图形绘制结束后调用
+   */
+  finish () {
+    this.graph.ctl.show = false
+  }
 
   /* ############# delete ############# */
 
@@ -228,60 +263,5 @@ export default class Graph {
     let i = this.graph.ctl._children.indexOf(ctlPoint)
     this.graph.ctl._children.splice(i, 1)
     this.entities.remove(ctlPoint)
-  }
-
-  addShape (properties) {
-    if (!properties.id) {
-      if (properties.id_prefix) {
-        properties.id = properties.id_prefix + Graph.seq++
-      } else {
-        properties.id = 'shp_' + Graph.seq++
-      }
-    }
-    let ent = this.entities.add(new Cesium.Entity(properties))
-    ent.parent = this.graph.shape
-    ent.graphType = 'shp'
-    ent.obj = this
-    ent.seq = Graph.seq
-    ent.highLight = () => this.highLighted = true
-    ent.downLight = () => this.highLighted = false
-    ent.finish = () => this.finish()
-    ent.toEdit = () => this.toEdit()
-    ent.addCtlPoint = (pos) => this.addCtlPoint(pos)
-    ent.ishaveMaxCtls = () => this.ishaveMaxCtls()
-    ent.isCtlNumValid = () => this.isCtlNumValid()
-    ent.deleteLastPoint = () => this.deleteLastPoint()
-    ent.getProperties = () => this.getProperties()
-    ent.props = this.props
-    ent.delete = () => this.delete()
-    ent.level = new Cesium.CallbackProperty((time, result) => {
-      return ent.props.level.value
-    }, true)
-    console.log('add a shape : ', ent)
-    return ent
-  }
-
-  /* ############## spliter ############## */
-
-  /**
-   * 在ctlPoint增加之后被调用
-   * @param {Entity} ctlPoint 控制点的实体
-   */
-  addHandler (ctlPoint, ctl) {
-    throw 'unimplemented'
-  }
-
-  /**
-   * 进入编辑模式
-   */
-  toEdit () {
-    this.highLighted = false
-    this.graph.ctl.show = true
-  }
-  /**
-   * 图形绘制结束后调用
-   */
-  finish () {
-    this.graph.ctl.show = false
   }
 }

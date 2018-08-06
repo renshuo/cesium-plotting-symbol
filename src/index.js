@@ -22,13 +22,17 @@ import BezierN from './Polyline/BezierN.js'
 import BezierSpline from './Polyline/BezierSpline.js'
 import CircleArc from './Polyline/CircleArc.js'
 
-import pe from './PropEditor/index.vue'
+import PropEditor from './PropEditor/index.vue'
 import * as mapUtil from './mapUtil.js'
 import _ from 'lodash'
 
-export const mu = mapUtil
-export const PropEditor = pe
+export {
+  mapUtil,
+  PropEditor
+}
 export default class GraphManager {
+ 
+  graphList = []
 
   layer
   em
@@ -82,9 +86,9 @@ export default class GraphManager {
   delete (graph) {
     let deleted = undefined
     if (graph) {
-      graph.deleteGraph()
-      _.remove(this.graphList, graph)
+      graph.delete()
       deleted = graph
+      _.remove(this.graphList, deleted)
     } else {
       deleted = this.em.deleteSelectGraph()
       if (deleted) {
@@ -96,16 +100,13 @@ export default class GraphManager {
 
   clean () {
     this.graphList.forEach(graph => {
-      this.deleteGraph(graph)
+      graph.delete()
     })
+    this.graphList.splice(0, this.graphList.length)
   }
 
   deleteAll () {
     this.clean()
-  }
-
-  clean () {
-    this.em.clean()
   }
 
   load (jsons) {
@@ -118,6 +119,11 @@ export default class GraphManager {
   }
 
   createObj (json) {
+    let g = this.createObj0(json)
+    return g.ent
+  }
+
+  createObj0 (json) {
     console.log('createObj from json: ', json)
     switch (json.obj) {
       case 'RedFlag': return new RedFlag(json, this.viewer, this.layer)

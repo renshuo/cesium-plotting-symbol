@@ -198,8 +198,7 @@ export default class Graph {
 
   /* ############# delete ############# */
 
-  deleteGraph () {
-    console.log('delete this graph: ', this)
+  delete() {
     this.deleteEnts([this.graph])
   }
 
@@ -248,20 +247,18 @@ export default class Graph {
     ent.downLight = () => this.highLighted = false
     ent.finish = () => this.finish()
     ent.toEdit = () => this.toEdit()
+    ent.addCtlPoint = (pos) => this.addCtlPoint(pos)
+    ent.ishaveMaxCtls = () => this.ishaveMaxCtls()
+    ent.isCtlNumValid = () => this.isCtlNumValid()
+    ent.deleteLastPoint = () => this.deleteLastPoint()
+    ent.getProperties = () => this.getProperties()
     ent.props = this.props
-    ent.delete = () => this.deleteGraph()
+    ent.delete = () => this.delete()
     ent.level = new Cesium.CallbackProperty((time, result) => {
       return ent.props.level.value
     }, true)
     console.log('add a shape : ', ent)
     return ent
-  }
-
-  deleteShape (ent) {
-    console.log('delete shap entity.')
-    let i = this.graph.shape._children.indexOf(ent)
-    this.graph.shape._children.splice(i, 1)
-    this.entities.remove(ent)
   }
 
   /* ############## spliter ############## */

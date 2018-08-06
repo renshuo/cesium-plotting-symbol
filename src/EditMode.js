@@ -1,7 +1,6 @@
 import Cesium from 'cesium/Source/Cesium.js'
 import * as mu from './mapUtil.js'
 import kb from 'keyboardjs'
-import gx from './index.js'
 
 export class EditMode {
 
@@ -53,15 +52,15 @@ export class EditMode {
   start () {
     this.nextMode(this.ACT_START)
   }
-  create(obj) {
-    this.nextMode(this.ACT_CREATE, obj)
-    return obj
+  create(ent) {
+    this.nextMode(this.ACT_CREATE, ent)
+    return ent
   }
 
-  draw (obj) {
-    this.nextMode(this.ACT_FINISH, obj)
-    obj.finish()
-    return obj
+  draw (ent) {
+    this.nextMode(this.ACT_FINISH, ent)
+    ent.finish()
+    return ent
   }
 
   mode = this.MODE_VIEW
@@ -77,6 +76,9 @@ export class EditMode {
             /** 原本设计有启动绘图面板，即 MODE_VIEW + ACT_START，然后才可进入create模式
              * 如果没有绘图面板开启功能，则ACT_CREATE直接进入创建模式 */
             this.createMode(...args)
+            break
+          case this.ACT_FINISH:
+            // TODO nothing to do for draw a graph ?
             break
         }
         break
@@ -151,11 +153,10 @@ export class EditMode {
     })
   }
 
-  createGraph
   createMode (graphObj) {
     this.mode = this.MODE_CREATE
-    this.createGraph = graphObj
-    this.propEditor.show(true, this.createGraph.props)
+    this.currentEditEnt = graphObj
+    this.propEditor.show(true, this.currentEditEnt.props)
     console.log(`into ${this.mode} mode`)
 
     kb.setContext(this.mode)
@@ -170,18 +171,18 @@ export class EditMode {
     this.getHandler().setInputAction(event => {
       let newpos = mu.screen2Cartesian(event.position, 0, this.viewer)
       let p = mu.cartesian2lonlat(newpos, this.viewer)
-      this.createGraph.addCtlPoint({lon: p[0], lat: p[1]})
-      if (this.createGraph.ishaveMaxCtls()) {
-        this.nextMode(this.ACT_FINISH, this.createGraph.ent)
+      this.currentEditEnt.addCtlPoint({lon: p[0], lat: p[1]})
+      if (this.currentEditEnt.ishaveMaxCtls()) {
+        this.nextMode(this.ACT_FINISH, this.currentEditEnt)
       }
     }, Cesium.ScreenSpaceEventType.LEFT_CLICK)
 
     this.getHandler().setInputAction(event => {
-      this.createGraph.deleteLastPoint()
+      this.currentEditEnt.deleteLastPoint()
     }, Cesium.ScreenSpaceEventType.MIDDLE_CLICK)
 
     this.getHandler().setInputAction(event => {
-      this.nextMode(this.ACT_FINISH, this.createGraph.ent)
+      this.nextMode(this.ACT_FINISH, this.currentEditEnt)
     }, Cesium.ScreenSpaceEventType.RIGHT_CLICK)
   }
 
@@ -189,15 +190,15 @@ export class EditMode {
    * 完成当前绘图，如果图形能够绘制出来，则绘制，否则删除不成形的图形
    */
   finishCurrentCreate () {
-    console.log('finsih create: ', this.createGraph)
+    console.log('finsih create: ', this.currentEditEnt)
     this.viewer.entities.remove(window.cursor)
-    if (this.createGraph) {
-      if (this.createGraph.isCtlNumValid()) {
-        this.createGraph.finish()
+    if (this.currentEditEnt) {
+      if (this.currentEditEnt.isCtlNumValid()) {
+        this.currentEditEnt.finish()
       } else {
         console.log('delete graph by invalid ctlNums')
-        this.createGraph.ent.delete()
-        this.createGraph = undefined
+        this.currentEditEnt.delete()
+        this.currentEditEnt = undefined
       }
     }
   }
@@ -367,8 +368,7 @@ export class EditMode {
 
   deleteSelectGraph () {
     if (this.currentEditEnt) {
-      let graph = this.currentEditEnt.obj
-      console.log("creent: ", this.currentEditEnt)
+      let graph = this.currentEditEnt
       this.currentEditEnt.delete()
       this.currentEditEnt = undefined
       this.nextMode(this.ACT_FINISH)

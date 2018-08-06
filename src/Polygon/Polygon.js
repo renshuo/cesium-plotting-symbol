@@ -39,13 +39,13 @@ export default class Polygon extends Graph {
           new Cesium.CallbackProperty((time, result) => {
             let c = Cesium.Color.fromCssColorString(this.props.color.value).withAlpha(this.props.alpha.value)
             return this.highLighted ? c.brighten(0.6, new Cesium.Color()) : c
-          }, false)),
-        outline: new Cesium.CallbackProperty((time, result) => this.props.outline.value, false),
+          }, true)),
+        outline: new Cesium.CallbackProperty((time, result) => this.props.outline.value, true),
         outlineColor: new Cesium.CallbackProperty((time, result) => {
           return Cesium.Color.fromCssColorString(this.props.outlineColor.value).withAlpha(this.props.alpha.value)
-        }, false),
+        }, true),
         height: 0,
-        outlineWidth: new Cesium.CallbackProperty((time, result) => this.props.outlineWidth.value, false)
+        outlineWidth: new Cesium.CallbackProperty((time, result) => this.props.outlineWidth.value, true)
       }
     })
   }

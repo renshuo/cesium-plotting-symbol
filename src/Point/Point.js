@@ -33,7 +33,7 @@ export default class Point extends Graph {
         color: new Cesium.CallbackProperty((time, result) => {
           let c = Cesium.Color.fromCssColorString(this.props.color.value).withAlpha(this.props.alpha.value)
           return this.highLighted ? c.brighten(0.6, new Cesium.Color()) : c
-        }, false),
+        }, true),
         heightReference: Cesium.HeightReference.CLAMP_TO_GROUND
       }
     })

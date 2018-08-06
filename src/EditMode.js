@@ -172,7 +172,7 @@ export class EditMode {
       let p = mu.cartesian2lonlat(newpos, this.viewer)
       this.createGraph.addCtlPoint({lon: p[0], lat: p[1]})
       if (this.createGraph.ishaveMaxCtls()) {
-        this.nextMode(this.ACT_FINISH, this.createGraph)
+        this.nextMode(this.ACT_FINISH, this.createGraph.ent)
       }
     }, Cesium.ScreenSpaceEventType.LEFT_CLICK)
 
@@ -181,7 +181,7 @@ export class EditMode {
     }, Cesium.ScreenSpaceEventType.MIDDLE_CLICK)
 
     this.getHandler().setInputAction(event => {
-      this.nextMode(this.ACT_FINISH, this.createGraph)
+      this.nextMode(this.ACT_FINISH, this.createGraph.ent)
     }, Cesium.ScreenSpaceEventType.RIGHT_CLICK)
   }
 
@@ -196,7 +196,8 @@ export class EditMode {
         this.createGraph.finish()
       } else {
         console.log('delete graph by invalid ctlNums')
-        this.createGraph.deleteGraph()
+        this.createGraph.ent.delete()
+        this.createGraph = undefined
       }
     }
   }
@@ -367,6 +368,7 @@ export class EditMode {
   deleteSelectGraph () {
     if (this.currentEditEnt) {
       let graph = this.currentEditEnt.obj
+      console.log("creent: ", this.currentEditEnt)
       this.currentEditEnt.delete()
       this.currentEditEnt = undefined
       this.nextMode(this.ACT_FINISH)

@@ -29,9 +29,6 @@ import _ from 'lodash'
 export const mu = mapUtil
 export const PropEditor = pe
 export default class GraphManager {
- 
-  graphList = []
-  lastGraph = undefined
 
   layer
   em
@@ -58,9 +55,9 @@ export default class GraphManager {
    * @param {graph param} json 
    */
   create (json) {
-    this.lastGraph = this.createObj(json)
-    this.graphList.push(this.lastGraph)
-    return this.em.create(this.lastGraph)
+    let obj = this.createObj(json)
+    this.graphList.push(obj)
+    return this.em.create(obj)
   }
 
   /**
@@ -69,9 +66,9 @@ export default class GraphManager {
    * @param {graph param with ctls} json 
    */
   draw (json) {
-    this.lastGraph = this.createObj(json)
-    this.graphList.push(this.lastGraph)
-    return this.em.draw(this.lastGraph)
+    let obj = this.createObj(json)
+    this.graphList.push(obj)
+    return this.em.draw(obj)
   }
   
   findById(id) {
@@ -121,10 +118,7 @@ export default class GraphManager {
   }
 
   createObj (json) {
-    console.log('createObj from json: ', json.obj)
-    if (this.lastGraph) {
-      this.lastGraph.finish() //TODO check is graph exist and operate list
-    }
+    console.log('createObj from json: ', json)
     switch (json.obj) {
       case 'RedFlag': return new RedFlag(json, this.viewer, this.layer)
       case 'Image': return new Image(json, this.viewer, this.layer)

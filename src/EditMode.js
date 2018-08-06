@@ -141,7 +141,7 @@ export class EditMode {
   viewMode () {
     this.mode = this.MODE_VIEW
     kb.setContext(this.mode)
-    this.propEditor.show(false)
+    if (this.propEditor) this.propEditor.show(false)
     console.log(`into ${this.mode} mode`)
     this.destroyHandler()
     this.setCursor(this.CURSOR_auto)
@@ -156,7 +156,7 @@ export class EditMode {
   createMode (graphObj) {
     this.mode = this.MODE_CREATE
     this.currentEditEnt = graphObj
-    this.propEditor.show(true, this.currentEditEnt.propx)
+    if (this.propEditor) this.propEditor.show(true, this.currentEditEnt.propx)
     console.log(`into ${this.mode} mode`)
 
     kb.setContext(this.mode)
@@ -246,7 +246,7 @@ export class EditMode {
   selectMode () {
     this.mode = this.MODE_SELECT
     this.hoveredEnt = undefined
-    this.propEditor.show(false)
+    if (this.propEditor) this.propEditor.show(false)
     console.log(`into ${this.mode} mode`)
     
     kb.setContext(this.mode)
@@ -321,7 +321,7 @@ export class EditMode {
   editMode (ent) {
     this.mode = this.MODE_EDIT
     this.currentEditEnt = ent
-    this.propEditor.show(true, this.currentEditEnt.propx)
+    if (this.propEditor) this.propEditor.show(true, this.currentEditEnt.propx)
     console.log(`into ${this.mode} mode: `, this.currentEditEnt)
 
     kb.setContext(this.mode)

@@ -14,7 +14,6 @@ module.exports = {
   },
   externals: {
     '@turf/turf': '@turf/turf',
-    'bezier-js': 'bezier-js',
     "cesium/Source/Cesium.js": {
       commonjs: 'cesium/Source/Cesium.js',
       commonjs2: 'cesium/Source/Cesium.js',
@@ -24,6 +23,7 @@ module.exports = {
     },
     lodash: 'lodash',
     'vue-antd-ui': 'vue-antd-ui',
+    'vue-antd-ui/dist/antd.css': 'vue-antd-ui/dist/antd.css',
     'vue': 'vue'
   },
   output: {

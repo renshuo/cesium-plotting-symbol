@@ -27,6 +27,9 @@ import NumberEditor from './NumberEditor.vue'
 import BooleanCheck from './BooleanCheck.vue'
 import EditMode from '../EditMode.js'
 
+import 'vue-antd-ui/dist/antd.css'
+import antd from 'vue-antd-ui'
+
 export default {
   name: 'PropEditor',
   components: {

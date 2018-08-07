@@ -173,6 +173,7 @@ export default class Graph {
   }
 
   fillShape (ent) {
+    this.props.id.value = ent.id
     ent.parent = this.graph.shape
     ent.graphType = 'shp'
     ent.seq = Graph.seq

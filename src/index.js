@@ -36,10 +36,13 @@ export default class GraphManager {
 
   layer
   em
-  constructor (viewer, propEditor, layerId) {
+  constructor (viewer, config) {
+    let {
+      propEditor,
+       layerId
+    } = config
     this.viewer = viewer
     this.layer = this.viewer.entities.getOrCreateEntity( layerId ? layerId : 'biaohui')
-    console.log('create layer: ', this.layer)
     this.em = new EditMode(viewer, propEditor)
   }
 

@@ -52,7 +52,10 @@ export default {
           projectionPicker: true,
           infoBox: false // 是否显示右侧信息窗
           })
-      this.gm = viewer.cps = new cps(viewer, this.$refs.pe)
+      this.gm = viewer.cps = new cps(viewer, {
+        propEditor: this.$refs.pe,
+        layerId: 'testbh1'
+      })
 
       let mapContainer2 = document.getElementById('mapContainer2')
       let viewer2 = new Cesium.Viewer(mapContainer2, {
@@ -66,7 +69,10 @@ export default {
           projectionPicker: true,
           infoBox: false // 是否显示右侧信息窗
           })
-      this.gm2 = viewer2.cps = new cps(viewer2, this.$refs.pe2)
+      this.gm2 = viewer2.cps = new cps(viewer2, {
+        propEditor: this.$refs.pe2,
+        layerId: 'testbh2'
+      })
     }
   },
   mounted () {

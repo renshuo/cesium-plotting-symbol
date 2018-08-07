@@ -54,7 +54,8 @@ export default {
           })
       this.gm = viewer.cps = new cps(viewer, {
         propEditor: this.$refs.pe,
-        layerId: 'testbh1'
+        layerId: 'testbh1',
+        editAfterCreate: true
       })
 
       let mapContainer2 = document.getElementById('mapContainer2')
@@ -71,7 +72,8 @@ export default {
           })
       this.gm2 = viewer2.cps = new cps(viewer2, {
         propEditor: this.$refs.pe2,
-        layerId: 'testbh2'
+        layerId: 'testbh2',
+        editAfterCreate: false
       })
     }
   },

@@ -6,10 +6,11 @@ export class EditMode {
 
   viewer
   propEditor
-  constructor(viewer, pe) {
+  constructor(viewer, pe, editAfterCreate) {
     console.log('new editmode: ', this, this.viewer)
     this.viewer = viewer
     this.propEditor = pe
+    this.editAfterCreate = editAfterCreate
     this.initKeyboard()
   }
 
@@ -101,7 +102,11 @@ export class EditMode {
         this.finishCurrentCreate()
         switch (action) {
           case this.ACT_FINISH:
-            this.editMode(...args)
+            if (this.editAfterCreate) {
+              this.editMode(...args)
+            } else {
+              this.selectMode(...args)
+            }
             break
           case this.ACT_CREATE:
             this.createMode(...args)

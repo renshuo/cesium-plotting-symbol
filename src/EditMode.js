@@ -195,6 +195,10 @@ export class EditMode {
     if (this.currentEditEnt) {
       if (this.currentEditEnt.isCtlNumValid()) {
         this.currentEditEnt.finish()
+        this.currentEditEnt.graphList.push(this.currentEditEnt)
+        if (this.currentEditEnt.afterCreate) {
+          this.currentEditEnt.afterCreate()
+        }
       } else {
         console.log('delete graph by invalid ctlNums')
         this.currentEditEnt.delete()
@@ -353,6 +357,9 @@ export class EditMode {
   finishCurrentEdit() {
     if (this.currentEditEnt) {
       this.currentEditEnt.finish()
+      if (this.currentEditEnt.afterEdit) {
+        this.currentEditEnt.afterEdit()
+      }
       this.currentEditEnt = undefined
     }
   }

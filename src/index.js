@@ -58,9 +58,11 @@ export default class GraphManager {
    * begin draw a graph
    * @param {graph param} json 
    */
-  create (json) {
+  create (json, afterCreate, afterEdit) {
     let obj = this.createObj(json)
-    this.graphList.push(obj)
+    obj.afterCreate = afterCreate
+    obj.afterEdit = afterEdit
+    obj.graphList = this.graphList
     return this.em.create(obj)
   }
 
@@ -72,6 +74,7 @@ export default class GraphManager {
   draw (json) {
     let obj = this.createObj(json)
     this.graphList.push(obj)
+    obj.graphList = this.graphList
     return this.em.draw(obj)
   }
   

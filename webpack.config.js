@@ -13,7 +13,7 @@ module.exports = {
     index: './src/index.js'
   },
   externals: {
-    '@turf/turf': '@turf/turf',
+    // '@turf/turf': '@turf/turf',
     "cesium/Source/Cesium.js": {
       commonjs: 'cesium/Source/Cesium.js',
       commonjs2: 'cesium/Source/Cesium.js',
@@ -21,7 +21,7 @@ module.exports = {
       umd: "cesium/Source/Cesium.js",
       root: "Cesium"
     },
-    lodash: 'lodash',
+    // lodash: 'lodash',
     'vue-antd-ui': 'vue-antd-ui',
     'vue-antd-ui/dist/antd.css': 'vue-antd-ui/dist/antd.css',
     'vue': 'vue'

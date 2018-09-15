@@ -49,13 +49,13 @@
   },
   "dependencies": {
     "@turf/turf": "^5.1.6",
+    "ant-design-vue": "^1.1.1",
     "bezier-js": "^2.2.5",
     "cesium": "^1.46.1",
     "color": "^3.0.0",
     "file-saver": "^1.3.8",
     "keyboardjs": "^2.4.1",
     "lodash": "^4.17.10",
-    "vue-antd-ui": "^1.0.0",
     "vue-color": "^2.4.6"
   }
 }

@@ -1,5 +1,2 @@
-./static/Cesium/
-./dev/
-./test/
-./index.html
-./webpack.*
+static/Cesium/
+static/model/

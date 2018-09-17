@@ -12,9 +12,15 @@
   </div>
 </template>
 
+
 <script>
 import * as vc from 'vue-color'
 import Color from 'color'
+
+import Vue from 'vue'
+import { Input } from 'ant-design-vue'
+Vue.component(Input.name, Input)
+
 
 export default {
   name: 'colorEditor',

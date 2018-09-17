@@ -1,13 +1,10 @@
 import Vue from 'vue'
 import App from './index.vue'
 
-import 'vue-antd-ui/dist/antd.css'
-import antd from 'vue-antd-ui'
-
-Vue.use(antd)
+import 'ant-design-vue/dist/antd.css'
 
 new Vue({
-    el: "#app",
-    components: { App },
-    template: '<App/>'
+  el: "#app",
+  components: { App },
+  template: '<App/>'
 })

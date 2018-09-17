@@ -6,6 +6,10 @@
 
 <script>
 
+import Vue from 'vue'
+import { Input } from 'ant-design-vue'
+Vue.component(Input.name, Input)
+
 export default {
   name: 'colorEditor',
   props: {

@@ -7,10 +7,10 @@
             <a-col :span="6">{{value.title}}</a-col>
             <a-col :span="18">
               <component 
-              :is="getCompByType(value.type)"
-              v-bind="value"
-              @input="(e) => value.value=e"
-              :disabled="value.editable === false">
+                :is="getCompByType(value.type)"
+                v-bind="value"
+                @input="(e) => value.value=e"
+                :disabled="value.editable === false">
               </component>
             </a-col>
           </a-row>
@@ -27,8 +27,12 @@ import NumberEditor from './NumberEditor.vue'
 import BooleanCheck from './BooleanCheck.vue'
 import EditMode from '../EditMode.js'
 
-import 'vue-antd-ui/dist/antd.css'
-import antd from 'vue-antd-ui'
+import Vue from 'vue'
+import { Collapse, Row, Col } from 'ant-design-vue'
+Vue.component(Collapse.name, Collapse)
+Vue.component(Collapse.Panel.name, Collapse.Panel)
+Vue.component(Row.name, Row)
+Vue.component(Col.name, Col)
 
 export default {
   name: 'PropEditor',

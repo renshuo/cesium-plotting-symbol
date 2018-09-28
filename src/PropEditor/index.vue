@@ -3,14 +3,15 @@
     <a-collapse :bordered="false" activeKey="1">
       <a-collapse-panel header="属性编辑" key="1">
         <div v-for="(value, key) in prop" :key="key">
-          <a-row>
+          <a-row v-if="value.show === undefined || value.show === true" >
             <a-col :span="6">{{value.title}}</a-col>
             <a-col :span="18">
               <component 
                 :is="getCompByType(value.type)"
                 v-bind="value"
                 @input="(e) => value.value=e"
-                :disabled="value.editable === false">
+                :disabled="value.editable === false"
+              >
               </component>
             </a-col>
           </a-row>

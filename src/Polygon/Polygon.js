@@ -5,7 +5,7 @@ import * as mu from '../mapUtil.js'
 export default class Polygon extends Graph {
 
   minPointNum = 2
-  
+
   constructor (prop, viewer, layer) {
     super({
       type: '多边形',
@@ -22,6 +22,7 @@ export default class Polygon extends Graph {
   initProps (defs) {
     super.initProps([
       {name: 'color', title: '颜色', type: 'color'},
+      {name: 'material', title: '贴图', type: 'string', show: false},
       {name: 'alpha', title: '透明度', type: 'number', step: 0.05, max: 1, min: 0},
       {name: 'fill', title: '填充', type: 'boolean'},
       {name: 'outline', title: '边框', type: 'boolean'},
@@ -34,13 +35,26 @@ export default class Polygon extends Graph {
   initShape() {
     this.ent = this.entities.add(new Cesium.Entity({polygon: {}}))
     this.fillShape(this.ent)
-    Object.assign(this.ent.polygon, {
-      fill: new Cesium.CallbackProperty((time, result) => this.ent.propx.fill.value, false),
-      material: new Cesium.ColorMaterialProperty(
+    let material = this.ent.propx.material.value
+    if (material !== undefined && material !== '' ) {
+      material = new Cesium.ImageMaterialProperty({
+        image: material,
+        color: new Cesium.CallbackProperty( () => {
+          let c = Cesium.Color.fromCssColorString(this.ent.propx.color.value).withAlpha(this.ent.propx.alpha.value)
+          return this.ent.highLighted ? c.brighten(0.6, new Cesium.Color()) : c
+        }, false)
+      })
+    } else {
+      material = new Cesium.ColorMaterialProperty(
         new Cesium.CallbackProperty( () => {
           let c = Cesium.Color.fromCssColorString(this.ent.propx.color.value).withAlpha(this.ent.propx.alpha.value)
           return this.ent.highLighted ? c.brighten(0.6, new Cesium.Color()) : c
-        }, false)),
+        }, false))
+    }
+
+    Object.assign(this.ent.polygon, {
+      fill: new Cesium.CallbackProperty((time, result) => this.ent.propx.fill.value, false),
+      material: material,
       outline: new Cesium.CallbackProperty((time, result) => this.ent.propx.outline.value, false),
       outlineColor: new Cesium.CallbackProperty(() => {
         let c = Cesium.Color.fromCssColorString(this.ent.propx.outlineColor.value).withAlpha(this.ent.propx.alpha.value)

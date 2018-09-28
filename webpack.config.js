@@ -22,8 +22,6 @@ module.exports = {
       root: "Cesium"
     },
     // lodash: 'lodash',
-    'vue-antd-ui': 'vue-antd-ui',
-    'vue-antd-ui/dist/antd.css': 'vue-antd-ui/dist/antd.css',
     'vue': 'vue'
   },
   output: {

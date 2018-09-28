@@ -14,6 +14,8 @@
 <script>
 import fs from 'file-saver'
 
+import { Base64 } from 'js-base64'
+
 import Vue from 'vue'
 import { Button } from 'ant-design-vue'
 Vue.component(Button.name, Button)
@@ -64,7 +66,8 @@ export default {
           {name: '选择模式', func: () => this.gm.start() }
         ], [
           {name: '保存', func: this.saveGraphs },
-          {name: '上传', func: this.loadGraphs }
+          {name: '上传', func: this.loadGraphs },
+          {name: '贴图', func: this.loadBase64Picture }
         ]
       ]
     }
@@ -105,6 +108,17 @@ export default {
       console.log('currentGraphs: ', data)
       let blob = new Blob([JSON.stringify(data)], {type: "text/plain;charset=utf-8"})
       fs.saveAs(blob, "graphs.json")
+    },
+    loadBase64Picture () {
+      let reader = new FileReader()
+      reader.readAsDataURL(this.$refs.input.files[0])
+      reader.onload = f => {
+        let result = f.target.result
+        console.log('get data: ', result)
+        this.gm.draw({obj: 'Polygon', ctls: [[0,0], [10,0], [10, 10], [0,10]],
+                      material: result
+        })
+      }
     }
   },
   mounted () {

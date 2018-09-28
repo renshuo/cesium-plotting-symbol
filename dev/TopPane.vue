@@ -115,7 +115,7 @@ export default {
       reader.onload = f => {
         let result = f.target.result
         console.log('get data: ', result)
-        this.gm.draw({obj: 'Polygon', ctls: [[0,0], [10,0], [10, 10], [0,10]],
+        this.gm.draw({obj: 'Polygon', rotation: 12, ctls: [[130,30], [130, 40], [120,40], [120,30]],
                       material: result
         })
       }

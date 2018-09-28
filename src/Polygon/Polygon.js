@@ -22,6 +22,7 @@ export default class Polygon extends Graph {
   initProps (defs) {
     super.initProps([
       {name: 'color', title: '颜色', type: 'color'},
+      {name: 'rotation', title: '旋转', type: 'number', step: 0.1},
       {name: 'material', title: '贴图', type: 'string', show: false},
       {name: 'alpha', title: '透明度', type: 'number', step: 0.05, max: 1, min: 0},
       {name: 'fill', title: '填充', type: 'boolean'},
@@ -36,25 +37,38 @@ export default class Polygon extends Graph {
     this.ent = this.entities.add(new Cesium.Entity({polygon: {}}))
     this.fillShape(this.ent)
     let material = this.ent.propx.material.value
-    if (material !== undefined && material !== '' ) {
-      material = new Cesium.ImageMaterialProperty({
-        image: material,
-        color: new Cesium.CallbackProperty( () => {
-          let c = Cesium.Color.fromCssColorString(this.ent.propx.color.value).withAlpha(this.ent.propx.alpha.value)
-          return this.ent.highLighted ? c.brighten(0.6, new Cesium.Color()) : c
-        }, false)
-      })
-    } else {
-      material = new Cesium.ColorMaterialProperty(
-        new Cesium.CallbackProperty( () => {
-          let c = Cesium.Color.fromCssColorString(this.ent.propx.color.value).withAlpha(this.ent.propx.alpha.value)
-          return this.ent.highLighted ? c.brighten(0.6, new Cesium.Color()) : c
-        }, false))
-    }
+    material = material !== undefined && material !== '' && material.slice(0, 10) === 'data:image'
+             ? material
+             : 'data:image/jpeg;base64,' + material
+    material = new Cesium.ImageMaterialProperty({
+      image: material,
+      color: new Cesium.CallbackProperty( () => {
+        let c = Cesium.Color.fromCssColorString(this.ent.propx.color.value).withAlpha(this.ent.propx.alpha.value)
+        return this.ent.highLighted ? c.brighten(0.6, new Cesium.Color()) : c
+      }, false)
+    })
+    /* if (material !== undefined && material !== '' ) {
+     *   material = new Cesium.ImageMaterialProperty({
+     *     image: material,
+     *     color: new Cesium.CallbackProperty( () => {
+     *       let c = Cesium.Color.fromCssColorString(this.ent.propx.color.value).withAlpha(this.ent.propx.alpha.value)
+     *       return this.ent.highLighted ? c.brighten(0.6, new Cesium.Color()) : c
+     *     }, false)
+     *   })
+     * } else {
+     *   material = new Cesium.ColorMaterialProperty(
+     *     new Cesium.CallbackProperty( () => {
+     *       let c = Cesium.Color.fromCssColorString(this.ent.propx.color.value).withAlpha(this.ent.propx.alpha.value)
+     *       return this.ent.highLighted ? c.brighten(0.6, new Cesium.Color()) : c
+     *     }, false))
+     * } */
 
     Object.assign(this.ent.polygon, {
       fill: new Cesium.CallbackProperty((time, result) => this.ent.propx.fill.value, false),
       material: material,
+      stRotation: new Cesium.CallbackProperty((time, result) => {
+        return this.ent.propx.rotation.value*3.14/180 // convert degree to radian
+      }, false),
       outline: new Cesium.CallbackProperty((time, result) => this.ent.propx.outline.value, false),
       outlineColor: new Cesium.CallbackProperty(() => {
         let c = Cesium.Color.fromCssColorString(this.ent.propx.outlineColor.value).withAlpha(this.ent.propx.alpha.value)

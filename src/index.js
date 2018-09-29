@@ -24,6 +24,8 @@ import Bezier2 from './Polyline/Bezier2.js'
 import BezierN from './Polyline/BezierN.js'
 import BezierSpline from './Polyline/BezierSpline.js'
 import CircleArc from './Polyline/CircleArc.js'
+import PointLine from './Polyline/PointLine.js'
+import PointSpline from './Polyline/PointSpline.js'
 
 import PropEditor from './PropEditor/index.vue'
 import * as mapUtil from './mapUtil.js'
@@ -139,7 +141,7 @@ export default class GraphManager {
     switch (json.obj) {
       case 'RedFlag': return new RedFlag(json, this.viewer, this.layer)
       case 'Image': return new Image(json, this.viewer, this.layer)
-        
+
       case 'Point': return new Point(json, this.viewer, this.layer)
       case 'Boat': return new Boat(json, this.viewer, this.layer)
       case 'Satellite': return new Satellite(json, this.viewer, this.layer)
@@ -154,13 +156,16 @@ export default class GraphManager {
       case 'Circle': return new Circle(json, this.viewer, this.layer)
       case 'Ellipse': return new Ellipse(json, this.viewer)
       case 'Rectangle': return new Rectangle(json, this.viewer, this.layer)
-  
+
       case 'Polyline': return new Polyline(json, this.viewer, this.layer)
       case 'Bezier1': return new Bezier1(json, this.viewer, this.layer)
       case 'Bezier2': return new Bezier2(json, this.viewer, this.layer)
       case 'BezierN': return new BezierN(json, this.viewer, this.layer)
       case 'BezierSpline': return new BezierSpline(json, this.viewer, this.layer)
       case 'CircleArc': return new CircleArc(json, this.viewer, this.layer)
+      case 'PointLine': return new PointLine(json, this.viewer, this.layer)
+      case 'PointSpline': return new PointSpline(json, this.viewer, this.layer)
+
       default:
         console.log('invalid type')
         return undefined

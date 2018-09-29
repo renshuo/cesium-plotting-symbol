@@ -46,6 +46,8 @@ export default {
           {name: 'bezierN', func: () => this.gm.create({obj: 'BezierN', color: '#f00'}) },
           {name: '平滑线', func: () => this.gm.create({obj: 'BezierSpline', color: '#f00'}) },
           {name: '圆弧线', func: () => this.gm.create({obj: 'CircleArc', color: '#f00'}) },
+          {name: '顶点线', func: () => this.gm.create({obj: 'PointLine', color: '#f00'}) },
+          {name: '顶点平滑线', func: () => this.gm.create({obj: 'PointSpline', color: '#f00'}) },
         ],
         [
           {name: '点', func: () => this.gm.create({obj: 'Point', color: '#0f0'}) },

@@ -164,7 +164,11 @@ export default class Graph {
       }, false)
     }
     console.log('added a ctl: ', ctlPoint)
+    this.handleNewCtl(ctlPoint)
     return ctlPoint
+  }
+
+  handleNewCtl (ctl) {
   }
 
   addCtlPoint (pos) {

@@ -53,6 +53,10 @@ export default {
           {name: '车', func: () => this.gm.create({obj: 'Vehicle', color: '#0f0'}) },
           {name: '地面站', func: () => this.gm.create({obj: 'Station', color: '#0f0'}) },
           {name: '卫星', func: () => this.gm.create({obj: 'Satellite', color: '#0f0'}) },
+          {name: 'PinText', func: () => this.gm.create({obj: 'PinText', color: '#0f0'}) },
+          {name: 'PinIcon', func: () => this.gm.create({obj: 'PinIcon', color: '#0f0'}) },
+          {name: 'PinImg', func: () => this.gm.create({obj: 'PinImage', color: '#0f0'}) },
+          {name: 'PinImg2', func: this.loadPinImage },
         ],
         [
           {name: '图', func: () => this.gm.create({obj: 'Image', color: '#ff0'}) },
@@ -118,6 +122,15 @@ export default {
         this.gm.draw({obj: 'Polygon', rotation: 12, ctls: [[130,30], [130, 40], [120,40], [120,30]],
                       material: result
         })
+      }
+    },
+    loadPinImage () {
+      let reader = new FileReader()
+      reader.readAsDataURL(this.$refs.input.files[0])
+      reader.onload = f => {
+        let result = f.target.result
+        console.log('get data: ', result)
+        this.gm.create({obj: 'PinImage', rotation: 12, image: result})
       }
     }
   },

@@ -10,6 +10,8 @@ export default class Polygon extends Graph {
     super({
       type: '多边形',
       color: '#00FF00',
+      rotation: 0,
+      material: '',
       alpha: 0.8,
       fill: true,
       outline: true,

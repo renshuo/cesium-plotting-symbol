@@ -89,11 +89,11 @@ export default class GraphManager {
   }
   
   findById(id) {
-    return _.find(this.graphList, (graph) => graph.props.id.value === id)
+    return _.find(this.graphList, (graph) => graph.propx.id.value === id)
   }
 
   findByType(type) {
-    return _.find(this.graphList, (graph) => graph.props.type.value === type)
+    return _.find(this.graphList, (graph) => graph.propx.type.value === type)
   }
 
   delete (graph) {

@@ -66,7 +66,8 @@ export default {
         ],
         [
           {name: '删除', func: () => this.gm.delete() },
-          {name: '删除特定', func: this.testDelete },
+          {name: '删除对象', func: this.testDelete },
+          {name: '删除id', func: this.testDeleteById },
           {name: '清空', func: () => this.gm.deleteAll() },
           {name: '自动', func: this.createByJson },
           {name: '选择模式', func: () => this.gm.start() }
@@ -108,6 +109,12 @@ export default {
       this.graphList.forEach(graph => {
         this.gm.delete(graph)
       })
+    },
+    testDeleteById () {
+      this.gm.draw({id: 'xxx1', obj: 'Point', color: '#ff0', ctls: [[99, 36]]})
+      let obj = this.gm.findById('xxx1')
+      console.log('obj: ', obj)
+      this.gm.delete(obj)
     },
     saveGraphs () {
       let data = this.gm.save()

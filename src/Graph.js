@@ -82,6 +82,7 @@ export default class Graph {
       id: layer.id + '_graph_' + Graph.seq++,
       parent: layer
     })
+    this.graph.graphType = 'entity'
     this.graph.ctl = this.entities.add({
       id: this.graph.id + '__ctl',
       parent: this.graph,

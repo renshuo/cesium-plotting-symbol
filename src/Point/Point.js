@@ -26,7 +26,7 @@ export default class Point extends Graph {
   }
 
   initShape() {
-    this.ent = this.entities.add(new Cesium.Entity({point: {}}))
+    this.ent = this.entities.add(new Cesium.Entity({point: {}, name: '画点'}))
     this.fillShape(this.ent)
     Object.assign(this.ent.point, {
       pixelSize: new Cesium.CallbackProperty((time, result) => this.ent.propx.pixelSize.value, true),

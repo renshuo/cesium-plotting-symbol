@@ -27,7 +27,7 @@ export default class Polyline extends Graph {
   }
   
   initShape() {
-    this.ent = this.entities.add(new Cesium.Entity({polyline: {}}))
+    this.ent = this.entities.add(new Cesium.Entity({polyline: {}, name: '画线'}))
     this.fillShape(this.ent)
     Object.assign(this.ent.polyline, {
       width: new Cesium.CallbackProperty((time, result) => this.ent.propx.width.value, true),

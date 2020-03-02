@@ -36,7 +36,7 @@ export default class Polygon extends Graph {
   }
 
   initShape() {
-    this.ent = this.entities.add(new Cesium.Entity({polygon: {}}))
+    this.ent = this.entities.add(new Cesium.Entity({polygon: {}, name: '画面'}))
     this.fillShape(this.ent)
     let material = this.ent.propx.material.value
     material = material !== undefined && material !== '' && material.slice(0, 10) === 'data:image'

@@ -13,8 +13,6 @@
 <script lang="ts" setup>
 import { ref, defineComponent } from 'vue'
 import fs from 'file-saver'
-import { Base64 } from 'js-base64'
-
 
 const input=ref()
 
@@ -26,17 +24,17 @@ const files=ref([])
 const graphList = ref([])
 
 function createByJson () {
-  graphList.push(prop.gm.draw({obj: 'Point', color: '#f00', ctls: [[98, 37]]}))
-  graphList.push(prop.gm.draw({obj: 'Point', color: '#f50', ctls: [{lon: 98, lat: 39}]}))
-  graphList.push(prop.gm.draw({obj: 'Point', color: '#f80', ctls: [{lon: 100, lat: 39}]}))
-  graphList.push(prop.gm.draw({obj: 'Point', color: '#fc0', ctls: [[100, 37]]}))
-  prop.gm.draw({obj: 'Polygon', color: '#f08', ctls: [
+  graphList.push(prop.gm.draw({obj: 'Point', color: '#ff0000', ctls: [[98, 37]]}))
+  graphList.push(prop.gm.draw({obj: 'Point', color: '#ff5500', ctls: [{lon: 98, lat: 39}]}))
+  graphList.push(prop.gm.draw({obj: 'Point', color: '#ff8800', ctls: [{lon: 100, lat: 39}]}))
+  graphList.push(prop.gm.draw({obj: 'Point', color: '#ffcc00', ctls: [[100, 37]]}))
+  prop.gm.draw({obj: 'Polygon', color: '#ff0088', ctls: [
     {lon: 102, lat: 40},
     [110, 43, 10000],
     {lon: 110, lat: 43},
     {lon: 102, lat: 46, hei: 10000},
   ]})
-  prop.gm.draw({obj: 'Polyline', color: '#0ff', ctls: [
+  prop.gm.draw({obj: 'Polyline', color: '#00ffff', ctls: [
     {lon: 112, lat: 40, hei: 0},
     {lon: 120, lat: 43, hei: 10000},
     {lon: 112, lat: 46},
@@ -58,7 +56,7 @@ function testDelete () {
 }
 
 function testDeleteById () {
-  prop.gm.draw({id: 'xxx1', obj: 'Point', color: '#ff0', ctls: [[99, 36]]})
+  prop.gm.draw({id: 'xxx1', obj: 'Point', color: '#ffff00', ctls: [[99, 36]]})
   let obj = prop.gm.findById('xxx1')
   console.log('obj: ', obj)
   prop.gm.delete(obj)
@@ -95,36 +93,36 @@ function loadPinImage() {
 
 const funcs1 = ref([
   [
-    {name: '多边形', func: () => prop.gm.create({obj: 'Polygon', color: '#00F'}) },
-    {name: '矩形', func: () => prop.gm.create({obj: 'Rectangle', color: '#00F'}) },
-    {name: '单箭头', func: () => prop.gm.create({obj: 'Arrow1', color: '#00F'}) },
-    {name: '椭圆', func: () => prop.gm.create({obj: 'Ellipse', color: '#00F'}) },
-    {name: '圆', func: () => prop.gm.create({obj: 'Circle', color: '#00F'}) },
+    {name: '多边形', func: () => prop.gm.create({obj: 'Polygon', color: '#00FF00'}) },
+    {name: '矩形', func: () => prop.gm.create({obj: 'Rectangle', color: '#00FF00'}) },
+    {name: '单箭头', func: () => prop.gm.create({obj: 'Arrow1', color: '#00FF00'}) },
+    {name: '椭圆', func: () => prop.gm.create({obj: 'Ellipse', color: '#00FF00'}) },
+    {name: '圆', func: () => prop.gm.create({obj: 'Circle', color: '#00FF00'}) },
   ],
   [
-    {name: '直线', func: () => prop.gm.create({obj: 'Polyline', color: '#f00'}) },
-    {name: 'bezier1', func: () => prop.gm.create({obj: 'Bezier1', color: '#f00'}) },
-    {name: 'bezier2', func: () => prop.gm.create({obj: 'Bezier2', color: '#f00'}) },
-    {name: 'bezierN', func: () => prop.gm.create({obj: 'BezierN', color: '#f00'}) },
-    {name: '平滑线', func: () => prop.gm.create({obj: 'BezierSpline', color: '#f00'}) },
-    {name: '圆弧线', func: () => prop.gm.create({obj: 'CircleArc', color: '#f00'}) },
-    {name: '顶点线', func: () => prop.gm.create({obj: 'PointLine', color: '#f00'}) },
-    {name: '顶点平滑线', func: () => prop.gm.create({obj: 'PointSpline', color: '#f00'}) },
+    {name: '直线', func: () => prop.gm.create({obj: 'Polyline', color: '#ff0000'}) },
+    {name: 'bezier1', func: () => prop.gm.create({obj: 'Bezier1', color: '#ff0000'}) },
+    {name: 'bezier2', func: () => prop.gm.create({obj: 'Bezier2', color: '#ff0000'}) },
+    {name: 'bezierN', func: () => prop.gm.create({obj: 'BezierN', color: '#ff0000'}) },
+    {name: '平滑线', func: () => prop.gm.create({obj: 'BezierSpline', color: '#ff0000'}) },
+    {name: '圆弧线', func: () => prop.gm.create({obj: 'CircleArc', color: '#ff0000'}) },
+    {name: '顶点线', func: () => prop.gm.create({obj: 'PointLine', color: '#ff0000'}) },
+    {name: '顶点平滑线', func: () => prop.gm.create({obj: 'PointSpline', color: '#ff0000'}) },
   ],
   [
-    {name: '点', func: () => prop.gm.create({obj: 'Point', color: '#0f0'}) },
-    {name: '船', func: () => prop.gm.create({obj: 'Boat', color: '#0f0'}) },
-    {name: '车', func: () => prop.gm.create({obj: 'Vehicle', color: '#0f0'}) },
-    {name: '地面站', func: () => prop.gm.create({obj: 'Station', color: '#0f0'}) },
-    {name: '卫星', func: () => prop.gm.create({obj: 'Satellite', color: '#0f0'}) },
-    {name: 'PinText', func: () => prop.gm.create({obj: 'PinText', color: '#0f0'}) },
-    {name: 'PinIcon', func: () => prop.gm.create({obj: 'PinIcon', color: '#0f0'}) },
-    {name: 'PinImg', func: () => prop.gm.create({obj: 'PinImage', color: '#0f0'}) },
+    {name: '点', func: () => prop.gm.create({obj: 'Point', color: '#00ff00'}) },
+    {name: '船', func: () => prop.gm.create({obj: 'Boat', color: '#00ff00'}) },
+    {name: '车', func: () => prop.gm.create({obj: 'Vehicle', color: '#00ff00'}) },
+    {name: '地面站', func: () => prop.gm.create({obj: 'Station', color: '#00ff00'}) },
+    {name: '卫星', func: () => prop.gm.create({obj: 'Satellite', color: '#00ff00'}) },
+    {name: 'PinText', func: () => prop.gm.create({obj: 'PinText', color: '#00ff00'}) },
+    {name: 'PinIcon', func: () => prop.gm.create({obj: 'PinIcon', color: '#00ff00'}) },
+    {name: 'PinImg', func: () => prop.gm.create({obj: 'PinImage', color: '#00ff00'}) },
     {name: 'PinImg2', func: loadPinImage },
   ],
   [
-    {name: '图', func: () => prop.gm.create({obj: 'Image', color: '#ff0'}) },
-    {name: '红旗', func: () => prop.gm.create({obj: 'RedFlag', color: '#ff0'}) },
+    {name: '图', func: () => prop.gm.create({obj: 'Image', color: '#ffff00'}) },
+    {name: '红旗', func: () => prop.gm.create({obj: 'RedFlag', color: '#ffff00'}) },
   ],
   [
     {name: '删除', func: () => prop.gm.delete() },
@@ -152,6 +150,6 @@ const funcs1 = ref([
   min-width: 90px;
   font-size: 14px;
   line-height: 16px;
-  color: #0f0;
+  color: #00ff00;
 }
 </style>

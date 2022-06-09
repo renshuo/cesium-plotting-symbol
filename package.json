@@ -11,9 +11,7 @@
     "@turf/turf": "^6.5.0",
     "bezier-js": "^6.1.0",
     "cesium": "^1.94.2",
-    "color": "^4.2.3",
     "file-saver": "^2.0.5",
-    "jscolor": "^0.3.0",
     "keyboardjs": "^2.6.4",
     "lodash": "^4.17.21",
     "vue": "^3.2.37"

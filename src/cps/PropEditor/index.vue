@@ -48,6 +48,7 @@ function show (isShow0, props) {
     // 会导致vue复用之前的组件，导致编辑界面的组件不更新
     // 所以用timeout异步更新props
     setTimeout(() => {
+      console.log("for color: ", props)
       prop.value = props
     }, 1)
   }

@@ -1,14 +1,10 @@
 <template>
-  <input v-model="xvalue" data-jscolor="{}" @change="emit('input', xvalue)"
-    :style="{backgroundColor: xvalue, color: xvalue}" :disabled="disabled" />
+  <input v-model="xvalue" @change="emit('input', xvalue)" :disabled="disabled" />
 </template>
 
 
 <script setup>
-import {ref, defineExpose, onMounted} from 'vue'
-
-import Color from 'color'
-import jscolor from 'jscolor'
+import {ref, onMounted} from 'vue'
 
 const  prop = defineProps({
   value: String,
@@ -19,9 +15,7 @@ const  prop = defineProps({
 })
 
 const xvalue = ref()
-
 const emit = defineEmits(["input"])
-
 onMounted( () => {
   xvalue.value = prop.value
 })

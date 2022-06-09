@@ -44,7 +44,7 @@ function createByJson () {
 }
 function loadGraphs (file) {
   let reader = new FileReader()
-  reader.readAsText($refs.input.files[0])
+  reader.readAsText(input.value.files[0])
   reader.onload = f => {
     let graphs = JSON.parse(f.target.result)
     prop.gm.load(graphs)
@@ -73,7 +73,7 @@ function saveGraphs () {
 
 function loadBase64Picture () {
   let reader = new FileReader()
-  reader.readAsDataURL($refs.input.files[0])
+  reader.readAsDataURL(input.value.files[0])
   reader.onload = f => {
     let result = f.target.result
     console.log('get data: ', result)
@@ -85,7 +85,7 @@ function loadBase64Picture () {
 
 function loadPinImage() {
   let reader = new FileReader()
-  reader.readAsDataURL($refs.input.files[0])
+  reader.readAsDataURL(input.value.files[0])
   reader.onload = f => {
     let result = f.target.result
     console.log('get data: ', result)

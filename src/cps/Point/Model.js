@@ -33,7 +33,7 @@ export default class Model extends Graph {
     this.ent = this.entities.add(new Cesium.Entity({model: {}}))
     this.fillShape(this.ent)
     Object.assign(this.ent.model, {
-      uri: new Cesium.CallbackProperty((time, result) => '../../../static/model/' + this.ent.propx.uri.value, true),
+      uri: new Cesium.CallbackProperty((time, result) => '/model/' + this.ent.propx.uri.value, true),
       scale: new Cesium.CallbackProperty((time, result) => this.ent.propx.scale.value, true),
       color: new Cesium.CallbackProperty((time, result) => {
         let c = Cesium.Color.fromCssColorString(this.ent.propx.color.value).withAlpha(this.ent.propx.alpha.value)

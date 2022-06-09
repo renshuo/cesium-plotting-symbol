@@ -25,7 +25,12 @@ onMounted(() => {
   Cesium.Camera.DEFAULT_VIEW_RECTANGLE = Cesium.Rectangle.fromDegrees(
     100, 30, 110, 40
   )
-  let viewer = new Cesium.Viewer('mapContainer', {});
+  let viewer = new Cesium.Viewer('mapContainer', {
+    infoBox: false, //是否显示信息框
+    selectionIndicator: false, //是否显示选取指示器组件
+    timeline: false, //是否显示时间轴
+    animation: false, //是否创建动画小器件，左下角仪表
+  });
 
   gm.value = new cps(viewer, {
     propEditor: popEdit,

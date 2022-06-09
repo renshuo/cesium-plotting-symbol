@@ -8,7 +8,7 @@ export default class PinImage extends Pin {
   constructor (p, viewer, layer) {
     super({
       type: 'BillBoard',
-      image: '/static/facility.gif',
+      image: '/facility.gif',
       color: '#ff0',
       alpha: 0.8,
       width: 30,

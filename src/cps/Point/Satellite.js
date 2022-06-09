@@ -15,7 +15,7 @@ export default class Satellite extends Model {
 
   initProps (defs) {
     super.initProps([
-      {name: 'color', title: '高度', type: 'number', min: 1, max: 30000000, unit: '米'},
+      { name: 'height', title: '高度', type: 'Number', min: 1, max: 30000000, unit: '米'},
       ...defs
     ])
   }
@@ -27,6 +27,6 @@ export default class Satellite extends Model {
     let cart = points[0].position.getValue(time)
     let lonlat = mu.cartesian2lonlat(cart)
     return mu.lonlat2Cartesian(lonlat, this.props.height.value)
-  }
+ }
 
 }

@@ -11,21 +11,16 @@ import Color from 'color'
 import jscolor from 'jscolor'
 
 const  prop = defineProps({
-  value: {},
+  value: String,
   disabled: {
     default: false,
     type: Boolean
   }
 })
 
-const xvalue = ref("")
+const xvalue = ref()
+
 const emit = defineEmits(["input"])
-const isShowPicker = ref(false)
-
-const colors = ref("#fff")
-const textColor = ref("#fff")
-
-emit('input', colors.value)
 
 onMounted( () => {
   xvalue.value = prop.value
@@ -34,13 +29,4 @@ onMounted( () => {
 </script>
 
 <style>
-.colorpane {
-  position: relative;
-  float: left;
-  width: 260px;
-}
-
-input .vc-input__input {
-  width: 100%
-}
 </style>

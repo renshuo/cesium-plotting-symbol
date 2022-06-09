@@ -9,7 +9,7 @@ export default class Image extends Rectangle {
       type: '图',
       color: '#fff',
       alpha: 1,
-      image: 'th1.jpg',
+      image: 'image/th1.jpg',
       outline: false,
       ...p
     }, viewer, layer)
@@ -28,7 +28,7 @@ export default class Image extends Rectangle {
     Object.assign(this.ent.polygon, {
       fill: new Cesium.CallbackProperty((time, result) => this.ent.propx.fill.value, true),
       material: new Cesium.ImageMaterialProperty({
-        image: new Cesium.CallbackProperty((time, result) => '../../../static/img/' + this.ent.propx.image.value, true),
+        image: new Cesium.CallbackProperty((time, result) => '/' + this.ent.propx.image.value, true),
         color: new Cesium.CallbackProperty((time, result) => {
           let c = Cesium.Color.fromCssColorString(this.ent.propx.color.value).withAlpha(this.ent.propx.alpha.value)
           return this.ent.highLighted ? c.brighten(0.6, new Cesium.Color()) : c
@@ -42,7 +42,8 @@ export default class Image extends Rectangle {
       height: 0,
       outlineWidth: new Cesium.CallbackProperty((time, result) => this.ent.propx.outlineWidth.value, true),
       hierarchy: new Cesium.CallbackProperty((time, result) => {
-        return this.calcuteShape(this.graph.ctl._children.concat(window.cursor), time)
+        let ps = this.calcuteShape(this.graph.ctl._children.concat(window.cursor), time)
+        return new Cesium.PolygonHierarchy(ps, [])
       }, false)
     })
   }

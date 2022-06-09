@@ -1,61 +1,27 @@
 {
   "name": "cesium-plotting-symbol",
-  "version": "0.0.46",
-  "description": "cesiu plotting symbol",
-  "main": "dist/index.js",
+  "private": true,
+  "version": "0.0.0",
   "scripts": {
-    "dev": "webpack-dev-server --inline --progress --config ./webpack.dev.config.js",
-    "test": "jest",
-    "build": "webpack"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/renshuo/cesium-plotting-symbol.git"
-  },
-  "keywords": [
-    "cesium",
-    "plotting",
-    "symbol"
-  ],
-  "author": "sren",
-  "license": "GPL-3.0",
-  "bugs": {
-    "url": "https://github.com/renshuo/cesium-plotting-symbol/issues"
-  },
-  "homepage": "https://github.com/renshuo/cesium-plotting-symbol#readme",
-  "devDependencies": {
-    "babel-core": "^6.26.3",
-    "babel-loader": "^7.1.4",
-    "babel-preset-env": "^1.7.0",
-    "babel-preset-stage-2": "^6.24.1",
-    "copy-webpack-plugin": "^4.5.1",
-    "css-loader": "^0.28.11",
-    "eslint": "^4.19.1",
-    "eslint-config-enough": "^0.3.3",
-    "eslint-loader": "^2.0.0",
-    "html-webpack-plugin": "^3.2.0",
-    "jest": "^23.1.0",
-    "jsx-loader": "^0.13.2",
-    "style-loader": "^0.21.0",
-    "url-loader": "^1.0.1",
-    "vue": "^2.5.16",
-    "vue-loader": "^15.2.4",
-    "vue-style-loader": "^4.1.0",
-    "vue-template-compiler": "^2.5.16",
-    "webpack": "^4.11.1",
-    "webpack-cli": "^3.0.1",
-    "webpack-dev-server": "^3.1.4",
-    "webpack-merge": "^4.1.2"
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
-    "@turf/turf": "^5.1.6",
-    "ant-design-vue": "^1.1.1",
-    "bezier-js": "^2.2.5",
-    "cesium": "^1.51.0",
-    "color": "^3.0.0",
-    "file-saver": "^1.3.8",
-    "keyboardjs": "^2.4.1",
-    "lodash": "^4.17.10",
-    "vue-color": "^2.4.6"
+    "@turf/turf": "^6.5.0",
+    "bezier-js": "^6.1.0",
+    "cesium": "^1.94.2",
+    "color": "^4.2.3",
+    "file-saver": "^2.0.5",
+    "jscolor": "^0.3.0",
+    "keyboardjs": "^2.6.4",
+    "lodash": "^4.17.21",
+    "vue": "^3.2.37"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^2.3.3",
+    "typescript": "^4.5.4",
+    "vite": "^2.9.9",
+    "vue-tsc": "^0.34.7"
   }
 }

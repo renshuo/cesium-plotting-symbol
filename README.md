@@ -1,26 +1,36 @@
 # cesium-plotting-symbol
-基于cesiumn的标绘插件
+基于cesiumn的标绘，支持VUE3
 
 ## 支持图形
-1. [点类型](https://github.com/renshuo/cesium-plotting-symbol/tree/master/src/Point)
+1. [点类型](https://github.com/renshuo/cesium-plotting-symbol/tree/master/src/cps/Point)
     1. 点
+       1. 单点
+       2. 文本图钉
+       3. 图标图钉
+       4. 图片图钉
+       5. 自定义图片图钉
     2. 3D模型
-2. [线](https://github.com/renshuo/cesium-plotting-symbol/tree/master/src/Polyline)
+       1. 地面模型
+       2. 带有高度的参数的模型
+2. [线](https://github.com/renshuo/cesium-plotting-symbol/tree/master/src/cps/Polyline)
+    1. 多段直线
     1. 2阶bezier曲线
     2. 3阶bezier曲线
     3. N阶bezier曲线
     4. bezier平滑线
     5. 圆弧线
-    6. 折线
-3. [多边形](https://github.com/renshuo/cesium-plotting-symbol/tree/master/src/Polygon)
+    6. 带顶点的折线
+    7. 带顶点的平滑线
+3. [多边形](https://github.com/renshuo/cesium-plotting-symbol/tree/master/src/cps/Polygon)
     1. 多边形
     2. 矩形
     3. 椭圆
     4. 圆形
 4. 其他
     1. 单箭头
-5. [贴图类](https://github.com/renshuo/cesium-plotting-symbol/tree/master/src/Image)
-    3. 红旗
+5. [贴图类](https://github.com/renshuo/cesium-plotting-symbol/tree/master/src/cps/Image)
+    1. 红旗
+    2. 地面贴图
 
 ## 安装
 ```bash
@@ -33,15 +43,20 @@ import cps from 'cesium-plotting-symbol'
 ```
 ## 属性编辑窗
 ```html
-<prop-editor /> <!-- 在html template 中插入prop-editor组件 -->
+<PropEditor ref="propEdit" /> <!-- 在html template 中插入prop-editor组件 -->
 ```
 
 ```javascript
-export default {
-  components: {
-    'prop-editor': cps.PropEditor // 在vue中注册cps.PropEditor
-  }
-}
+import {PropEditor} from 'cesium-plotting-symbol'
+```
+
+创建cps实例时，需要将propEditor作为参数传递给cps
+```javascript
+  new cps(viewer, {
+    propEditor: popEdit,
+    layerId: 'testbh1',
+    editAfterCreate: true
+  })
 ```
 
 ## 开始绘图
@@ -102,43 +117,5 @@ cps.load(json)
 #### 控制点编辑模式
 
 
-## 一个栗子（VUE）：
-```html
-<template>
-      <button @click="drawPoint"></button>
-      <button @click="drawArea"></button>
-      <button @click="getCtlPositions"></button>
-</template>
-```
-```javascript
-import cps from 'cesium-plotting-symbol'
-
-export default {
-  name: 'mapview',
-  data () {
-    return {
-      graphList: []
-    }
-  },
-  methods: {
-    drawPoint () {
-      this.$data.graphList.push(cps.start(new cps.Point()))
-    },
-    drawArea () {
-      this.$data.graphList.push(cps.start({obj: 'Polygon'}))
-    },
-    getCtlPositions () {
-      this.$data.graphList.map((graph) => {
-        let pos = graph.getCtlPositions()
-        if (pos.length === 1) {
-          console.log('point:', cps.mapUtil.convertCartesian(pos[0]))
-        } else {
-          console.log('area:', pos.map((po) => {
-            return cps.mapUtil.convertCartesian(po)
-          }))
-        }
-      })
-    }
-  }
-```
-具体栗子见(https://github.com/renshuo/cesium-plotting-symbol/tree/master/dev/TopPane.vue)
+## demo（VUE3）：
+见(https://github.com/renshuo/cesium-plotting-symbol/tree/master/src/TopPane.vue)

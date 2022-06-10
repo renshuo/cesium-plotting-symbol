@@ -1,7 +1,26 @@
 {
   "name": "cesium-plotting-symbol",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.47",
+  "author": "sren",
+  "files": [ "dist" ],
+  "keywords": [
+    "cesium",
+    "plotting",
+    "symbol"
+  ],
+  "module": "./dist/cesium-plotting-symbol.es.ts",
+  "main": "./dist/cesium-plotting-symbol.umd.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/cesium-plotting-symbol.es.ts",
+      "require": "./dist/cesium-plotting-symbol.umd.ts"
+    },
+    "./dist/style.css": {
+      "import": "./dist/style.css",
+      "require": "./dist/style.css"
+    }
+  },
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",

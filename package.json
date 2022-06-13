@@ -1,7 +1,7 @@
 {
   "name": "cesium-plotting-symbol",
-  "private": true,
-  "version": "0.0.47",
+  "private": false,
+  "version": "0.0.49",
   "author": "sren",
   "files": [ "dist" ],
   "keywords": [
@@ -9,12 +9,12 @@
     "plotting",
     "symbol"
   ],
-  "module": "./dist/cesium-plotting-symbol.es.ts",
-  "main": "./dist/cesium-plotting-symbol.umd.ts",
+  "module": "./dist/cesium-plotting-symbol.es.js",
+  "main": "./dist/cesium-plotting-symbol.umd.js",
   "exports": {
     ".": {
-      "import": "./dist/cesium-plotting-symbol.es.ts",
-      "require": "./dist/cesium-plotting-symbol.umd.ts"
+      "import": "./dist/cesium-plotting-symbol.es.js",
+      "require": "./dist/cesium-plotting-symbol.umd.js"
     },
     "./dist/style.css": {
       "import": "./dist/style.css",

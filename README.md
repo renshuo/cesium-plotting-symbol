@@ -43,7 +43,7 @@ npm install cesium-plotting-symbol --save
 
 ## 引入： 
 ```javascript
-import cps from 'cesium-plotting-symbol'
+import GraphManager from 'cesium-plotting-symbol'
 ```
 ## 属性编辑窗
 ```html

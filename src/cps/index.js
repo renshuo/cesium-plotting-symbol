@@ -29,11 +29,7 @@ import PropEditor from './PropEditor/index.vue'
 import * as mapUtil from './mapUtil.js'
 import _ from 'lodash'
 
-export {
-  mapUtil,
-  PropEditor
-}
-export default class GraphManager {
+class GraphManager {
  
   graphList = []
 
@@ -167,4 +163,11 @@ export default class GraphManager {
         return undefined
     }
   }
+}
+
+
+export {
+  mapUtil,
+  PropEditor,
+  GraphManager
 }

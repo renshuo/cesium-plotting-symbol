@@ -36,6 +36,10 @@
 ```bash
 npm install cesium-plotting-symbol --save
 ```
+注意： 需要将cesium的公共资源（cesium/Build/Cesium）复制到你的项目的public（或者static）目录下，保证下列路径正确：
+```
+/public/Cesium/Widgets/widgets.css
+```
 
 ## 引入： 
 ```javascript

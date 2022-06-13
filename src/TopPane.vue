@@ -111,8 +111,6 @@ const funcs1 = ref([
   ],
   [
     {name: '点', func: () => prop.gm.create({obj: 'Point', color: '#00ff00'}) },
-    {name: '船', func: () => prop.gm.create({obj: 'Boat', color: '#00ff00'}) },
-    {name: '车', func: () => prop.gm.create({obj: 'Vehicle', color: '#00ff00'}) },
     {name: '地面站', func: () => prop.gm.create({obj: 'Station', color: '#00ff00'}) },
     {name: '卫星', func: () => prop.gm.create({obj: 'Satellite', color: '#00ff00'}) },
     {name: 'PinText', func: () => prop.gm.create({obj: 'PinText', color: '#00ff00'}) },

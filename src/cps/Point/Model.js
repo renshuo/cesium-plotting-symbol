@@ -14,7 +14,7 @@ export default class Model extends Graph {
       color: '#ffffff',
       alpha: 0.8,
       scale: 30,
-      uri: 'boat.gltf',
+      uri: 'station.gltf',
       ...p
     }, viewer, layer)
   }

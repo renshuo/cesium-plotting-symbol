@@ -4,10 +4,8 @@ import Image from './Image/Image.js'
 import RedFlag from './Image/RedFlag.js'
 
 import Point from './Point/Point.js'
-import Boat from './Point/Boat.js'
 import Satellite from './Point/Satellite.js'
 import Station from './Point/Station.js'
-import Vehicle from './Point/Vehicle.js'
 import PinText from './Point/PinText.js'
 import PinIcon from './Point/PinMakiIcon.js'
 import PinImage from './Point/PinImage.js'
@@ -143,10 +141,8 @@ export default class GraphManager {
       case 'Image': return new Image(json, this.viewer, this.layer)
 
       case 'Point': return new Point(json, this.viewer, this.layer)
-      case 'Boat': return new Boat(json, this.viewer, this.layer)
       case 'Satellite': return new Satellite(json, this.viewer, this.layer)
       case 'Station': return new Station(json, this.viewer, this.layer)
-      case 'Vehicle': return new Vehicle(json, this.viewer, this.layer)
       case 'PinText': return new PinText(json, this.viewer, this.layer)
       case 'PinIcon': return new PinIcon(json, this.viewer, this.layer)
       case 'PinImage': return new PinImage(json, this.viewer, this.layer)

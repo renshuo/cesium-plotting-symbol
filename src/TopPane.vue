@@ -21,7 +21,7 @@ const prop = defineProps({
 })
 
 const files=ref([])
-const graphList = ref([])
+const graphList = []
 
 function createByJson () {
   graphList.push(prop.gm.draw({obj: 'Point', color: '#ff0000', ctls: [[98, 37]]}))

@@ -14,7 +14,7 @@ import "cesium/Build/Cesium/Widgets/widgets.css";
 
 import TopPane from './TopPane.vue'
 
-import cps from './cps/index.js'
+import {GraphManager as cps} from './cps/index.js'
 import {PropEditor} from './cps/index.js'
 
 const gm = ref()

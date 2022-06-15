@@ -77,8 +77,6 @@ class GraphManager {
    */
   create(json, afterCreate, afterEdit) {
     let obj = this.createObj(json);
-    obj.afterCreate = afterCreate;
-    obj.afterEdit = afterEdit;
     obj.graphList = this.graphList;
     return this.em.create(obj);
   }
@@ -90,8 +88,6 @@ class GraphManager {
    */
   draw(json) {
     let obj = this.createObj(json);
-    this.graphList.push(obj);
-    obj.graphList = this.graphList;
     return this.em.draw(obj);
   }
 

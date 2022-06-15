@@ -1,6 +1,7 @@
 import * as Cesium from 'cesium';
-import * as mu from './mapUtil.js';
+import * as mu from './mapUtil';
 import kb from 'keyboardjs';
+import Graph from './Graph';
 
 export class EditMode {
 
@@ -8,8 +9,8 @@ export class EditMode {
   propEditor: HTMLElement
   editAfterCreate: boolean
 
-  constructor(viewer: Cesium.Viewer, pe, editAfterCreate: boolean) {
-    console.log('new editmode: ', this, viewer, pe)
+  constructor(viewer: Cesium.Viewer, pe: HTMLElement, editAfterCreate: boolean) {
+    console.log('create editmode: ', this, viewer, pe)
     this.viewer = viewer
     this.propEditor = pe
     this.editAfterCreate = editAfterCreate
@@ -160,7 +161,7 @@ export class EditMode {
     })
   }
 
-  createMode (graphObj) {
+  createMode (graphObj: Graph) {
     console.log("in createMode: ", graphObj)
     this.mode = this.MODE_CREATE
     this.currentEditEnt = graphObj
@@ -204,9 +205,6 @@ export class EditMode {
       if (this.currentEditEnt.isCtlNumValid()) {
         this.currentEditEnt.finish()
         this.currentEditEnt.graphList.push(this.currentEditEnt)
-        if (this.currentEditEnt.afterCreate) {
-          this.currentEditEnt.afterCreate()
-        }
       } else {
         console.log('delete graph by invalid ctlNums')
         this.currentEditEnt.delete()
@@ -319,7 +317,7 @@ export class EditMode {
       this.hoveredEnt = undefined
     }
   }
-  
+
   initKeyboardSelect () {
     kb.withContext(this.MODE_SELECT, () => {
       kb.bind('1', (e) => console.log('select: ', e, this))
@@ -362,9 +360,6 @@ export class EditMode {
   finishCurrentEdit() {
     if (this.currentEditEnt) {
       this.currentEditEnt.finish()
-      if (this.currentEditEnt.afterEdit) {
-        this.currentEditEnt.afterEdit()
-      }
       this.currentEditEnt = undefined
     }
   }

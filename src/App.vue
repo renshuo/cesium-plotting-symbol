@@ -36,8 +36,6 @@ onMounted(() => {
     propEditor: popEdit.value,
     editAfterCreate: true
   })
-  viewer.cps = gm.value
-
 })
 
 </script>

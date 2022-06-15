@@ -65,7 +65,7 @@ class GraphManager {
     Object.assign(this.config, userCfg)
     console.log("create GraphManager: ", viewer, this.config)
     this.layer = this.viewer.entities.getOrCreateEntity(this.config.layerId);
-    this.em = new EditMode(viewer, this.config.propEditor, this.config.editAfterCreate);
+    this.em = new EditMode(viewer, this.config.propEditor, this, this.config.editAfterCreate);
   }
 
   /**
@@ -83,9 +83,8 @@ class GraphManager {
    * begin draw a graph
    * @param json graph param
    */
-  create(json, afterCreate, afterEdit) {
+  create(json) {
     let obj = this.createObj(json);
-    obj.graphList = this.graphList;
     return this.em.create(obj);
   }
 
@@ -149,8 +148,10 @@ class GraphManager {
       case 'Image': return new Image(json, this.viewer, this.layer);
 
       case 'Point': return new Point(json, this.viewer, this.layer);
+
       case 'Satellite': return new Satellite(json, this.viewer, this.layer);
       case 'Station': return new Station(json, this.viewer, this.layer);
+
       case 'PinText': return new PinText(json, this.viewer, this.layer);
       case 'PinIcon': return new PinIcon(json, this.viewer, this.layer);
       case 'PinImage': return new PinImage(json, this.viewer, this.layer);

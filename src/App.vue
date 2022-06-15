@@ -2,7 +2,7 @@
   <div style="position: relative">
     <div id="mapContainer"></div>
     <TopPane :gm="gm" style="position: absolute; top: 0px" />
-    <PropEditor ref="popEdit" />
+    <PropEditor ref="propEdit" />
   </div>
 </template>
 
@@ -14,11 +14,11 @@ import "cesium/Build/Cesium/Widgets/widgets.css";
 
 import TopPane from './TopPane.vue'
 
-import {GraphManager as cps} from './cps/index.ts'
+import {GraphManager} from './cps/index.ts'
 import {PropEditor} from './cps/index.ts'
 
 const gm = ref()
-const popEdit = ref()
+const propEdit = ref()
 
 onMounted(() => {
   Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIxNWY5YzhhMS05ZmYxLTQ5NzgtOTcwNC0zZmViNGFjZjc4ODEiLCJpZCI6ODU0MjMsImlhdCI6MTY0Njk4ODA1NX0.4-plF_5ZfEMMpHqJyefkDCFC8JWkFw39s3yKVcNg55c';
@@ -32,8 +32,9 @@ onMounted(() => {
     animation: false, //是否创建动画小器件，左下角仪表
   });
 
-  gm.value = new cps(viewer, {
-    propEditor: popEdit.value,
+  gm.value = new GraphManager(viewer, {
+    propEditor: propEdit.value,
+    layerId: 'testbh1',
     editAfterCreate: true
   })
 })

@@ -4,7 +4,7 @@ import * as mu from '../mapUtil'
 
 export default class Polygon extends Graph {
 
-  minPointNum = 2
+  minPointNum = 3
 
   constructor (prop, viewer, layer) {
     super({

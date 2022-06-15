@@ -2,18 +2,21 @@ import * as Cesium from 'cesium';
 import * as mu from './mapUtil';
 import kb from 'keyboardjs';
 import Graph from './Graph';
+import {GraphManager} from './index'
 
 export class EditMode {
 
   viewer: Cesium.Viewer
   propEditor: HTMLElement
   editAfterCreate: boolean
+  gm: GraphManager
 
-  constructor(viewer: Cesium.Viewer, pe: HTMLElement, editAfterCreate: boolean) {
-    console.log('create editmode: ', this, viewer, pe)
+  constructor(viewer: Cesium.Viewer, pe: HTMLElement, gm0: GraphManager, editAfterCreate: boolean) {
+    console.log('create editmode: ', this, viewer, pe, gm0)
     this.viewer = viewer
     this.propEditor = pe
     this.editAfterCreate = editAfterCreate
+    this.gm = gm0
     this.initKeyboard()
   }
 
@@ -204,7 +207,7 @@ export class EditMode {
     if (this.currentEditEnt) {
       if (this.currentEditEnt.isCtlNumValid()) {
         this.currentEditEnt.finish()
-        this.currentEditEnt.graphList.push(this.currentEditEnt)
+        this.gm.graphList.push(this.currentEditEnt)
       } else {
         console.log('delete graph by invalid ctlNums')
         this.currentEditEnt.delete()

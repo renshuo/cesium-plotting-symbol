@@ -14,8 +14,8 @@ import "cesium/Build/Cesium/Widgets/widgets.css";
 
 import TopPane from './TopPane.vue'
 
-import {GraphManager as cps} from './cps/index.js'
-import {PropEditor} from './cps/index.js'
+import {GraphManager as cps} from './cps/index.ts'
+import {PropEditor} from './cps/index.ts'
 
 const gm = ref()
 const popEdit = ref()
@@ -33,8 +33,7 @@ onMounted(() => {
   });
 
   gm.value = new cps(viewer, {
-    propEditor: popEdit,
-    layerId: 'testbh1',
+    propEditor: popEdit.value,
     editAfterCreate: true
   })
   viewer.cps = gm.value

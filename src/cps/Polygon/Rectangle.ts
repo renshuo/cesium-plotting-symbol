@@ -1,5 +1,5 @@
 import Polygon from './Polygon.js'
-import * as mu from '../mapUtil.js'
+import * as mu from '../mapUtil.ts'
 
 export default class Rectangle extends Polygon{
   maxPointNum = 2

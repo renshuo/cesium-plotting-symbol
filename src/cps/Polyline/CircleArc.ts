@@ -1,5 +1,5 @@
 import Polyline from './Polyline.js'
-import * as mu from '../mapUtil.js'
+import * as mu from '../mapUtil.ts'
 import * as turf from '@turf/turf'
 
 export default class CircleArc extends Polyline {

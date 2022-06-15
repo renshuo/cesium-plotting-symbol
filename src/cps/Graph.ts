@@ -1,64 +1,102 @@
-import * as mu from './mapUtil.js'
+import * as mu from './mapUtil';
 import * as Cesium from 'cesium';
-import _ from 'lodash'
+import _ from 'lodash';
+
+
+type Pos = {
+  lon: number,
+  lat: number,
+  hei: number
+}
+
+type PropDef = {
+  name: string,
+  title: string,
+  type: string,
+  editable: boolean,
+}
+
+type PropDefNum = PropDef & {
+  min: number,
+  max: number,
+  step: number
+}
+
+type GraphProperties = {
+  id: string,
+  name: string,
+  description: string,
+  level: number,
+  type: string,
+}
 
 export default class Graph {
   static seq = new Date().getTime()
-  entities
+  entities: Cesium.EntityCollection
 
   /**
    * set max ctl point number
    * when ctlPoints.length >= maxPointNum call this.finish()
    */
-  maxPointNum = Infinity
-  minPointNum = 1
+  maxPointNum: number = Infinity
+  minPointNum: number = 1
 
-  graph
-  /**
-   * graph
-   *  L ctl (graphType='ctlRoot')
-   *      L children (graphType='ctl')
-   *  L shape (graphType='shapeRoot')
-   *      L children (graphType='shp')
-   */
+  graph: Cesium.Entity
+  ctls: Array<Cesium.Entity> = []
+  shapes: Array<Cesium.Entity> = []
 
-  highLighted
+  highLighted: boolean = false
 
-  properties = {}
-  props = {}
+  public propDefs: Array<PropDef | PropDefNum> = [
+    { name: 'id', title: '编号', type: 'string', editable: false },
+    { name: 'name', title: '名称', type: 'string', editable: true  },
+    { name: 'type', title: '类型', type: 'string', editable: false },
+    { name: 'description', title: '描述', type: 'string', editable: true},
+    { name: 'level', title: '层', type: 'number', editable: true, min: -10, max: 10, step: 1 },
+    { name: 'color', title: '颜色', type: 'color', editable: true },
+    { name: 'alpha', title: '透明度', type: 'number', editable: true, step: 0.05, max: 1, min: 0 },
+  ]
 
-  constructor (properties, viewer, layer) {
+  props = {
+    id:'',
+    name: '',
+    description: '',
+    level: 1,
+    type: 'graph',
+    color: '#00ff00',
+    alpha: 0.8
+  }
+
+  constructor(props: {}, viewer: Cesium.Viewer, layer: Cesium.Entity) {
     if (!viewer) {
       throw 'get null viewer.'
     }
     this.entities = viewer.entities
-    this.properties = {
-      level: 0,
-      ...properties
-    }
-    this.initRootEntity(layer)
-    this.initProps([])
-    this.initShape()
-    this.initCtls(properties)
-  }
+    Object.assign(this.props, props)
 
-  initProps (defs) {
-    [
-      {name: 'id', title: '编号', type: 'string', editable: false},
-      {name: 'name', title: '名称', type: 'string'},
-      {name: 'description', title: '描述', type: 'string'},
-      {name: 'level', title: '层', type: 'number', min: -10, max: 10, step: 1},
-      {name: 'type', title: '类型', type: 'string', editable: false},
-      ...defs
-    ].forEach(prop => {
-      prop.value = this.properties[prop.name]
-      this.props[prop.name] = prop
+    this.graph = this.entities.add({
+      id: layer.id + '_graph_' + Graph.seq++,
+      parent: layer
     })
+    this.initRootEntity(layer)
+    // this.initProps(properties)
+    this.initShape()
+    this.initCtls(props.ctls)
   }
 
-  initCtls (properties) {
-    if (properties.ctls) {
-      properties.ctls.forEach(pos => {
+  // initProps (properties: GraphProperties) {
+
+  //   [
+  //     ...defs
+  //   ].forEach(prop => {
+  //     prop.value = this.properties[prop.name]
+  //     this.props[prop.name] = prop
+  //   })
+  // }
+
+  initCtls (ctls) {
+    if (ctls) {
+      ctls.forEach(pos => {
         let p = {}
         if (pos instanceof Array) {
           if (pos.length === 2) {
@@ -77,41 +115,24 @@ export default class Graph {
     }
   }
 
-  initRootEntity (layer) {
-    this.graph = this.entities.add({
-      id: layer.id + '_graph_' + Graph.seq++,
-      parent: layer
-    })
-    this.graph.graphType = 'entity'
-    this.graph.ctl = this.entities.add({
-      id: this.graph.id + '__ctl',
-      parent: this.graph,
-      graphType: 'ctlRoot',
-      show: true
-    })
-    this.graph.shape = this.entities.add({
-      id: this.graph.id + '__shape',
-      parent: this.graph,
-      graphType: 'shapeRoot',
-      show: true
-    })
+  initRootEntity (layer: Cesium.Entity) {
   }
 
-  initShape () {
+  initShape() {
     throw 'should overide by sub class.'
   }
 
   /**
    * 返回当前Graph的属性，以及控制点数据
    */
-  getProperties () {
+  getProperties() {
     let p = {
       obj: this.constructor.name
     }
     _.forIn(this.props, (v, k) => {
       p[k] = v.value
     })
-    p.ctls = this.getCtlPositions().map(c3 => {
+    p.ctls = this.getCtlPositions().map((c3: Cesium.Cartesian3) => {
       let lonlat = mu.cartesian2lonlat(c3)
       return {lon: lonlat[0], lat: lonlat[1]}
     })
@@ -121,20 +142,20 @@ export default class Graph {
   /**
    * 返回当前graph的所有控制点坐标（cartesian3）
    */
-  getCtlPositions () {
+  getCtlPositions (): Array<Cesium.Cartesian3> {
     let dt = Cesium.JulianDate.fromDate(new Date())
-    return this.graph.ctl._children.map((cp) => {
-      return cp.position.getValue(dt)
+    return this.ctls.map( (ctl: Cesium.Entity) => {
+      let p = ctl.position?.getValue(dt)
+      return p == undefined ? new Cesium.Cartesian3(0,0,0) : p
     })
   }
 
-  addCtl (cartesian3) {
+  addCtl (cartesian3: Cesium.Cartesian3) {
     let pos = mu.cartesian2lonlat(cartesian3)
-    let ctlPoint = this.entities.add({
+    let ctlPoint: Cesium.Entity = this.entities.add({
       id: this.graph.id + '_ctlpoint_' + Graph.seq++,
-      parent: this.graph.ctl,
-      position: cartesian3,
       graphType: 'ctl',
+      position: cartesian3,
       point: {
         pixelSize: 8,
         color: Cesium.Color.fromBytes(255, 255, 255, 70),
@@ -166,6 +187,7 @@ export default class Graph {
     }
     console.log('added a ctl: ', ctlPoint)
     this.handleNewCtl(ctlPoint)
+    this.ctls.push(ctlPoint)
     return ctlPoint
   }
 
@@ -173,42 +195,34 @@ export default class Graph {
   }
 
   addCtlPoint (pos) {
-    let c3 = mu.lonlathei2Cartesian(pos)
+    let c3 = mu.lonlatheiObj2Cartesian(pos)
     this.addCtl(c3)
   }
 
   fillShape (ent) {
-    if (this.props.id.value === undefined || this.props.id.value === '') {
-      this.props.id.value = ent.id
+    if (this.props.id === undefined || this.props.id === '') {
+      this.props.id = ent.id
     }
-    ent.parent = this.graph.shape
-    ent.graphType = 'shp'
-    ent.seq = Graph.seq
-    ent.highLighted = false
-    ent.highLight = () => ent.highLighted = true
-    ent.downLight = () => ent.highLighted = false
-    ent.finish = () => this.finish()
-    ent.toEdit = () => this.toEdit()
-    ent.addCtlPoint = (pos) => this.addCtlPoint(pos)
-    ent.ishaveMaxCtls = () => this.ishaveMaxCtls()
-    ent.isCtlNumValid = () => this.isCtlNumValid()
-    ent.deleteLastPoint = () => this.deleteLastPoint()
-    ent.getProperties = () => this.getProperties()
-    ent.propx = this.props
-    ent.delete = () => this.delete()
+    ent.graph = this
+    this.shapes.push(ent)
     ent.level = new Cesium.CallbackProperty((time, result) => {
-      return ent.propx.level.value
+      return this.props.level
     }, true)
-    console.log('add a shape : ', ent)
-    return ent
   }
 
+  highLight() {
+    this.highLighted = true
+  }
+
+  lowLight() {
+    this.highLighted = false
+  }
   /**
    * 对于maxPointNum为指定值的图形，返回是否已达到最大ctl数量
    * 比如rectange只需要2个点即可结束绘制
    */
   ishaveMaxCtls () {
-    return this.graph.ctl._children.length >= this.maxPointNum
+    return this.ctls.length >= this.maxPointNum
   }
 
   /**
@@ -217,7 +231,7 @@ export default class Graph {
    * 对于限定ctl数量的图形，ctlnum >= max 返回true
    */
   isCtlNumValid () {
-    let ctlnum = this.graph.ctl._children.length
+    let ctlnum = this.ctls.length
     if (this.maxPointNum === Infinity){
       return ctlnum >= this.minPointNum
     } else {
@@ -230,46 +244,43 @@ export default class Graph {
    */
   toEdit () {
     this.highLighted = false
-    this.graph.ctl.show = true
+    this.ctls.map( (ctl) => {ctl.show = true})
   }
   /**
    * 图形绘制结束后调用
    */
   finish () {
-    this.graph.ctl.show = false
+    this.ctls.map((ctl) => { ctl.show = false })
   }
 
   /* ############# delete ############# */
 
   delete() {
-    this.deleteEnts([this.graph])
-  }
-
-  deleteEnts (ents) {
-    ents.forEach((ent) => {
-      if (ent._children.length > 0) {
-        this.deleteEnts(ent._children)
-      }
-      this.entities.remove(ent)
-    })
+    this.entities.remove(this.graph)
+    this.ctls.map( (ctl) => { this.entities.remove(ctl) })
+    this.shapes.map((shp) => { this.entities.remove(shp) })
   }
 
   /**
    * delete last point,
    */
   deleteLastPoint () {
-    let e = this.graph.ctl._children.pop()
-    this.entities.remove(e)
-    console.log('remove last control point: ', e)
+    let e = this.ctls.pop()
+    if (e !== undefined) {
+      this.entities.remove(e)
+      console.log('remove last control point: ', e)
+    } else {
+      console.log('no last point')
+    }
   }
 
   /**
    * delelte a point in list
    * @param {ctlPoint} ctlPoint
    */
-  deleteCtlPoint (ctlPoint) {
-    let i = this.graph.ctl._children.indexOf(ctlPoint)
-    this.graph.ctl._children.splice(i, 1)
+  deleteCtlPoint (ctlPoint: Cesium.Entity) {
+    let i = this.ctls.indexOf(ctlPoint)
+    this.ctls.splice(i, 1)
     this.entities.remove(ctlPoint)
   }
 }

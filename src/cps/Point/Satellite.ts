@@ -1,5 +1,5 @@
 import Model from './Model.js'
-import * as mu from '../mapUtil.js'
+import * as mu from '../mapUtil.ts'
 
 export default class Satellite extends Model {
 

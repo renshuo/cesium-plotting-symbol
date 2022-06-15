@@ -1,5 +1,5 @@
 <template>
-  <input :min="min" :max="max" :step="step" v-model="xvalue" @change="updateValue" :disabled="disabled" />
+  <input :min="min" type="number" :max="max" :step="step" v-model="xvalue" @change="updateValue" :disabled="disabled" />
 </template>
 
 <script setup>

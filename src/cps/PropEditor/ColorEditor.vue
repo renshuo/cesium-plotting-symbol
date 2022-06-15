@@ -1,5 +1,5 @@
 <template>
-  <input v-model="xvalue" @change="emit('input', xvalue)" :disabled="disabled" />
+  <input v-model="xvalue" type="color" @change="emit('input', xvalue)" :disabled="disabled" />
 </template>
 
 

@@ -1,13 +1,15 @@
 import * as Cesium from 'cesium';
-import * as mu from './mapUtil.js'
-import kb from 'keyboardjs'
+import * as mu from './mapUtil.js';
+import kb from 'keyboardjs';
 
 export class EditMode {
 
-  viewer
-  propEditor
-  constructor(viewer, pe, editAfterCreate) {
-    console.log('new editmode: ', this, this.viewer)
+  viewer: Cesium.Viewer
+  propEditor: HTMLElement
+  editAfterCreate: boolean
+
+  constructor(viewer: Cesium.Viewer, pe, editAfterCreate: boolean) {
+    console.log('new editmode: ', this, viewer, pe)
     this.viewer = viewer
     this.propEditor = pe
     this.editAfterCreate = editAfterCreate
@@ -159,9 +161,10 @@ export class EditMode {
   }
 
   createMode (graphObj) {
+    console.log("in createMode: ", graphObj)
     this.mode = this.MODE_CREATE
     this.currentEditEnt = graphObj
-    if (this.propEditor) this.propEditor.show(true, this.currentEditEnt.propx)
+    if (this.propEditor) this.propEditor.show(true, this.currentEditEnt)
     console.log(`into ${this.mode} mode`)
 
     kb.setContext(this.mode)
@@ -248,7 +251,6 @@ export class EditMode {
     })
   }
 
-  
 
 
   hoveredEnt
@@ -257,7 +259,7 @@ export class EditMode {
     this.hoveredEnt = undefined
     if (this.propEditor) this.propEditor.show(false)
     console.log(`into ${this.mode} mode`)
-    
+
     kb.setContext(this.mode)
     this.setCursor(this.CURSOR_auto)
 
@@ -270,7 +272,7 @@ export class EditMode {
             return cur.id.level.getValue() > a.id.level.getValue() ? cur : a
           }, objs[0])
           console.debug(`moved to ent:`, obj)
-          obj.id.highLight()
+          obj.id.graph.highLight()
           this.setCursor(this.CURSOR_pointer)
           this.hoveredEnt = obj
         } else if (this.hoveredEnt !== undefined && objs.length > 0) {
@@ -282,14 +284,14 @@ export class EditMode {
           } else {
             // moved from ent1 to ent2. ent1 and ent2 maybe overlap
             console.debug(`moved from ent1 to ent2: `, this.hoveredEnt, obj)
-            this.hoveredEnt.id.downLight()
-            obj.id.highLight()
+            this.hoveredEnt.id.graph.lowLight()
+            obj.id.graph.highLight()
             this.setCursor(this.CURSOR_pointer)
             this.hoveredEnt = obj
           }
         } else if (this.hoveredEnt !== undefined && objs.length === 0) {
           console.debug(`moved out of ent: `, this.hoveredEnt)
-          this.hoveredEnt.id.downLight()
+          this.hoveredEnt.id.graph.lowLight()
           this.setCursor(this.CURSOR_auto)
           this.hoveredEnt = undefined
         } else {
@@ -301,7 +303,8 @@ export class EditMode {
     this.getHandler().setInputAction(event => {
       if (this.hoveredEnt) {
         let selectedEnt = this.hoveredEnt.id
-        this.nextMode(this.ACT_SELECT, selectedEnt)
+        let graph = selectedEnt.graph
+        this.nextMode(this.ACT_SELECT, graph)
       }
     }, Cesium.ScreenSpaceEventType.LEFT_CLICK)
 
@@ -312,7 +315,7 @@ export class EditMode {
 
   finishCurrentSelect () {
     if (this.hoveredEnt) {
-      this.hoveredEnt.id.downLight()
+      this.hoveredEnt.id.graph.lowLight()
       this.hoveredEnt = undefined
     }
   }
@@ -330,7 +333,7 @@ export class EditMode {
   editMode (ent) {
     this.mode = this.MODE_EDIT
     this.currentEditEnt = ent
-    if (this.propEditor) this.propEditor.show(true, this.currentEditEnt.propx)
+    if (this.propEditor) this.propEditor.show(true, this.currentEditEnt)
     console.log(`into ${this.mode} mode: `, this.currentEditEnt)
 
     kb.setContext(this.mode)
@@ -344,10 +347,7 @@ export class EditMode {
     this.getHandler().setInputAction(event => {
       let objs = this.viewer.scene.drillPick(event.position)
       if (Cesium.defined(objs)) {
-        let ctl = objs.filter((st) => {
-          return st.id.graphType === 'ctl' &&
-            st.id.parent.parent === ent.parent.parent
-        })
+        let ctl = objs.filter((st) => {return this.currentEditEnt.ctls.indexOf(st.id)>=0 })
         if (ctl.length > 0) {
           this.nextMode(this.ACT_PICKUP, ctl[0].id, this.currentEditEnt)
         }

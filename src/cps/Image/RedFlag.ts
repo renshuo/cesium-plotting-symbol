@@ -1,8 +1,9 @@
 import Image from './Image'
-import * as Cesium from 'cesium';
+import { Viewer, Entity} from 'cesium';
+
 
 export default class RedFlag extends Image {
-  constructor (p, viewer, layer) {
+  constructor (p, viewer:Viewer, layer: Entity) {
     super({
       type: '红旗',
       image: 'image/redflag1.png',

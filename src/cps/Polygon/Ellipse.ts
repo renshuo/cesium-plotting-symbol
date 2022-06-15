@@ -1,4 +1,4 @@
-import * as mu from '../mapUtil.js'
+import * as mu from '../mapUtil.ts'
 import Polygon from './Polygon.js'
 import * as turf from '@turf/turf'
 

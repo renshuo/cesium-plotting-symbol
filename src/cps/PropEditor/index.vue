@@ -2,19 +2,21 @@
 
   <div class="propeditor" :hidden="!isShow">
 
-        <div v-for="(value, key) in prop" :key="key">
+        <div v-for="(value, key) in graph.propDefs" :key="value.name">
 
           <div v-if="value.show === undefined || value.show === true"  class="propItem">
             <span class="propName">{{value.title}}: </span>
-              <component
-                :is="comps[value.type]"
-                v-bind="value"
-                @input="(e) => value.value=e"
-                :disabled="value.editable === false"
-                class="propValue"
-              >
-              </component>
-
+            <component
+              :is="comps[value.type]"
+              :value="getValue(value.name)"
+              @input="(e) => graph.props[value.name]=e"
+              :disabled="value.editable === false"
+              :min="value.min"
+              :max="value.max"
+              :step="value.step"
+              class="propValue"
+            >
+            </component>
           </div>
         </div>
 
@@ -31,7 +33,7 @@ import NumberEditor from './NumberEditor.vue'
 import BooleanCheck from './BooleanCheck.vue'
 
 const isShow = ref(false)
-const prop = ref({})
+const graph = ref([])
 
 const comps = {
   number: NumberEditor,
@@ -40,17 +42,25 @@ const comps = {
   boolean: BooleanCheck
 }
 
-function show (isShow0, props) {
+
+function getValue(name) {
+  return graph.value.props[name]
+}
+
+function show (isShow0, graph0: Graph) {
   isShow.value = isShow0
   if (isShow0) {
-    prop.value = {}
-    // 这里如果不将props置空，直接更新props
-    // 会导致vue复用之前的组件，导致编辑界面的组件不更新
-    // 所以用timeout异步更新props
-    setTimeout(() => {
-      console.log("for color: ", props)
-      prop.value = props
-    }, 1)
+    graph.value = graph0
+  }
+  if (isShow0) {
+    // propDefs.value = {}
+    // // 这里如果不将props置空，直接更新props
+    // // 会导致vue复用之前的组件，导致编辑界面的组件不更新
+    // // 所以用timeout异步更新props
+    // setTimeout(() => {
+    //   console.log("for color: ", props)
+    //   prop.value = props
+    // }, 1)
   }
 }
 

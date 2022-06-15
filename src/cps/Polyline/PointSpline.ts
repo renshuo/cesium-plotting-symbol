@@ -1,12 +1,13 @@
 import Polyline from './Polyline.js'
 import * as Cesium from 'cesium';
-import * as mu from '../mapUtil.js'
+import * as mu from '../mapUtil.ts'
 import * as turf from '@turf/turf'
+import PointLine from './PointLine.js'
 
-export default class BezierSpline extends Polyline {
+export default class PointSpline extends PointLine {
   
   constructor(prop, viewer, layer){
-    super({type: '平滑bezier曲线', ...prop}, viewer, layer)
+    super({type: '顶点平滑曲线', ...prop}, viewer, layer)
   }
 
   calcuteShape (points, time) {

@@ -1,48 +1,61 @@
 import EditMode from './EditMode';
 
-import Image from './Image/Image.js';
-import RedFlag from './Image/RedFlag.js';
+import Image from './Image/Image';
+import RedFlag from './Image/RedFlag';
 
-import Point from './Point/Point.js';
-import Satellite from './Point/Satellite.js';
-import Station from './Point/Station.js';
-import PinText from './Point/PinText.js';
-import PinIcon from './Point/PinMakiIcon.js';
-import PinImage from './Point/PinImage.js';
+import Point from './Point/Point';
+import Satellite from './Point/Satellite';
+import Station from './Point/Station';
+import PinText from './Point/PinText';
+import PinIcon from './Point/PinMakiIcon';
+import PinImage from './Point/PinImage';
 
-import Polygon from './Polygon/Polygon.js';
-import Arrow1 from './Polygon/Arrow1.js';
-import Circle from './Polygon/Circle.js';
-import Ellipse from './Polygon/Ellipse.js';
-import Rectangle from './Polygon/Rectangle.js';
+import Polygon from './Polygon/Polygon';
+import Arrow1 from './Polygon/Arrow1';
+import Circle from './Polygon/Circle';
+import Ellipse from './Polygon/Ellipse';
+import Rectangle from './Polygon/Rectangle';
 
 import Polyline from './Polyline/Polyline';
-import Bezier1 from './Polyline/Bezier1.js';
-import Bezier2 from './Polyline/Bezier2.js';
-import BezierN from './Polyline/BezierN.js';
-import BezierSpline from './Polyline/BezierSpline.js';
-import CircleArc from './Polyline/CircleArc.js';
-import PointLine from './Polyline/PointLine.js';
-import PointSpline from './Polyline/PointSpline.js';
+import Bezier1 from './Polyline/Bezier1';
+import Bezier2 from './Polyline/Bezier2';
+import BezierN from './Polyline/BezierN';
+import BezierSpline from './Polyline/BezierSpline';
+import CircleArc from './Polyline/CircleArc';
+import PointLine from './Polyline/PointLine';
+import PointSpline from './Polyline/PointSpline';
 
 import PropEditor from './PropEditor/index.vue';
-import * as mapUtil from './mapUtil.js';
+import * as mapUtil from './mapUtil';
 import _ from 'lodash';
+import * as Cesium from 'cesium';
+
+
+type GMConfig = {
+  propEditor: any,
+  layerId: string,
+  editAfterCreate: boolean
+}
 
 class GraphManager {
 
-  graphList = []
+  viewer: Cesium.Viewer
+  config: GMConfig = {
+    propEditor: undefined,
+    layerId: 'biaohui',
+    editAfterCreate: false
+  }
 
-  layer
-  em
-  constructor(viewer, userCfg) {
-    this.config = {
-      propEditor: undefined,
-      layerId: 'biaohui',
-      editAfterCreate: false,
-      ...userCfg
-    };
+  graphList: Array<Any> = []
+
+  layer: Cesium.Entity
+
+  em: EditMode
+
+  constructor(viewer: Cesium.Viewer, userCfg: GMConfig) {
     this.viewer = viewer;
+    Object.assign(this.config, userCfg)
+    console.log("create GraphManager: ", viewer, this.config)
     this.layer = this.viewer.entities.getOrCreateEntity(this.config.layerId);
     this.em = new EditMode(viewer, this.config.propEditor, this.config.editAfterCreate);
   }
@@ -50,17 +63,17 @@ class GraphManager {
   /**
    * into select mode
    */
-  start() {
+  start(): void {
     this.em.start();
   }
 
-  destroyHandler() {
+  destroyHandler(): void {
     this.em.destroyHandler();
   }
 
   /**
    * begin draw a graph
-   * @param {graph param} json 
+   * @param json graph param
    */
   create(json, afterCreate, afterEdit) {
     let obj = this.createObj(json);
@@ -82,12 +95,12 @@ class GraphManager {
     return this.em.draw(obj);
   }
 
-  findById(id) {
-    return _.find(this.graphList, (graph) => graph.propx.id.value === id);
+  findById(id: string): Cesium.Entity | undefined {
+    return _.find(this.graphList, (graph: Cesium.Entity) => graph.propx.id.value === id);
   }
 
-  findByType(type) {
-    return _.find(this.graphList, (graph) => graph.propx.type.value === type);
+  findByType(type: string): Cesium.Entity | undefined {
+    return _.find(this.graphList, (graph: Cesium.Entity) => graph.propx.type.value === type);
   }
 
   delete(graph) {
@@ -126,11 +139,6 @@ class GraphManager {
   }
 
   createObj(json) {
-    let g = this.createObj0(json);
-    return g.ent;
-  }
-
-  createObj0(json) {
     console.log('createObj from json: ', json);
     switch (json.obj) {
       case 'RedFlag': return new RedFlag(json, this.viewer, this.layer);

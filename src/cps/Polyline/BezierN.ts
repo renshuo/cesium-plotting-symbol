@@ -1,6 +1,6 @@
 import Polyline from './Polyline.js'
 import * as Cesium from 'cesium';
-import * as mu from '../mapUtil.js'
+import * as mu from '../mapUtil.ts'
 import {Bezier} from 'bezier-js'
 import _ from 'lodash'
 

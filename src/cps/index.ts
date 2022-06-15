@@ -1,21 +1,29 @@
 import EditMode from './EditMode';
 
+// image
 import Image from './Image/Image';
 import RedFlag from './Image/RedFlag';
 
-import Point from './Point/Point';
-import Satellite from './Point/Satellite';
-import Station from './Point/Station';
-import PinText from './Point/PinText';
-import PinIcon from './Point/PinMakiIcon';
-import PinImage from './Point/PinImage';
+//model
+import Satellite from './Model/Satellite';
+import Station from './Model/Station';
 
+//point
+import Point from './Point/Point';
+
+// pin
+import PinText from './Pin/PinText';
+import PinIcon from './Pin/PinMakiIcon';
+import PinImage from './Pin/PinImage';
+
+//polygon
 import Polygon from './Polygon/Polygon';
 import Arrow1 from './Polygon/Arrow1';
 import Circle from './Polygon/Circle';
 import Ellipse from './Polygon/Ellipse';
 import Rectangle from './Polygon/Rectangle';
 
+//polyline
 import Polyline from './Polyline/Polyline';
 import Bezier1 from './Polyline/Bezier1';
 import Bezier2 from './Polyline/Bezier2';

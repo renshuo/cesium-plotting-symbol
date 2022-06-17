@@ -1,16 +1,17 @@
-import Polyline from './Polyline.js'
-import * as mu from '../mapUtil.ts'
+import Polyline from './Polyline'
+import * as mu from '../mapUtil'
 import * as turf from '@turf/turf'
+import {Viewer, Entity, JulianDate} from 'cesium';
 
 export default class CircleArc extends Polyline {
   maxPointNum = 3
   minPointNum = 3
 
-  constructor(props, viewer, layer){
-    super({type: '圆弧线', ...props}, viewer, layer)
+  constructor(p: {}, viewer: Viewer, layer: Entity){
+    super({type: '圆弧线', ...p}, viewer, layer)
   }
 
-  calcuteShape (points, time) {
+  calcuteShape (points: Array<Entity>, time: JulianDate) {
     if (points.length < this.minPointNum) {
       return []
     }
@@ -21,7 +22,6 @@ export default class CircleArc extends Polyline {
 
     let b1 = turf.bearing(ctls[0], ctls[1])
     let b2 = turf.bearing(ctls[0], ctls[2])
-    
 
     let d1 = turf.distance(ctls[0], ctls[1], {units: 'kilometers'})
     let d2 = turf.distance(ctls[0], ctls[2], {units: 'kilometers'})

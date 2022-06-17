@@ -9,10 +9,10 @@
     2. [点](https://github.com/renshuo/cesium-plotting-symbol/tree/master/src/cps/Point)
        1. 单点
     3. [图钉](https://github.com/renshuo/cesium-plotting-symbol/tree/master/src/cps/Pin)
-       2. 文本图钉
-       3. 图标图钉
-       4. 图片图钉
-       5. 自定义图片图钉
+       1. 文本图钉
+       2. 图标图钉
+       3. 图片图钉
+       4. 自定义图片图钉
 3. [多边形](https://github.com/renshuo/cesium-plotting-symbol/tree/master/src/cps/Polygon)
     1. 多边形
     2. 单箭头
@@ -86,25 +86,28 @@ graph.getCtlPositions() // 返回图形的所有控制点的坐标，
 ```
 
 ## 删除，清除图形
+删除当前选中的图形
 ```javascript
 gm.delete()
 ```
-删除当前选中的图形
 
+
+删除所有图形
 ```javascript
 gm.deleteAll()
 ```
-删除所有图形
 
+
+保存当前所有标绘到一个json对象列表
 ```javascript
 let json = cps.save()
 ```
-保存当前所有标绘到一个json对象列表
 
+
+从json中获取标绘图形列表，并直接绘制在地图上
 ```javascript
 gm.load(json)
 ```
-从json中获取标绘图形列表，并直接绘制在地图上
 
 
 ## 快捷键

@@ -1,16 +1,15 @@
-import Polyline from './Polyline.js'
 import * as Cesium from 'cesium';
-import * as mu from '../mapUtil.ts'
+import * as mu from '../mapUtil'
 import * as turf from '@turf/turf'
-import PointLine from './PointLine.js'
+import PointLine from './PointLine'
 
 export default class PointSpline extends PointLine {
-  
-  constructor(prop, viewer, layer){
-    super({type: '顶点平滑曲线', ...prop}, viewer, layer)
+
+  constructor(p: {}, viewer: Cesium.Viewer, layer: Cesium.Entity){
+    super({type: '顶点平滑曲线', ...p}, viewer, layer)
   }
 
-  calcuteShape (points, time) {
+  calcuteShape (points: Array<Cesium.Entity>, time: Cesium.JulianDate) {
     if (points.length < this.minPointNum) {
       return []
     }

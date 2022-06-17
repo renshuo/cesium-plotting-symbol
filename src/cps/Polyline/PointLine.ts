@@ -1,24 +1,24 @@
 import * as Cesium from 'cesium';
-import Polyline from './Polyline.js';
+import Polyline from './Polyline';
 
 export default class PointLine extends Polyline {
 
-  constructor (prop, viewer, layer) {
+  constructor(p: {}, viewer: Cesium.Viewer, layer: Cesium.Entity) {
     super({
       type: '顶点折线',
       pointPixelSize: 12,
       pointColor: '#00FF00',
       pointAlpha: 0.8,
-      ...prop
+      ...p
     }, viewer, layer)
     this.propDefs.push(
       { name: 'pointColor', title: '顶点颜色', type: 'color', editable: true },
-      { name: 'pointAlpha', title: '顶点透明度', type: 'number', step: 0.05, max: 1, min: 0 },
-      { name: 'pointPixelSize', title: '顶点大小', type: 'number', min: 1, max: 256 },
+      { name: 'pointAlpha', title: '顶点透明度', type: 'number', editable: true, step: 0.05, max: 1, min: 0 },
+      { name: 'pointPixelSize', title: '顶点大小', type: 'number', editable: true, min: 1, max: 256, step: 1 },
     )
   }
 
-  handleNewCtl (ctl) {
+  handleNewCtl (ctl: Cesium.Entity) {
     let p = this.entities.add(new Cesium.Entity({ point: {}}))
     this.fillShape(p)
     Object.assign(p.point, {

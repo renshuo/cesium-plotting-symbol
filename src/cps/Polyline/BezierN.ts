@@ -1,19 +1,19 @@
 import Polyline from './Polyline.js'
-import * as Cesium from 'cesium';
-import * as mu from '../mapUtil.ts'
-import {Bezier} from 'bezier-js'
+import * as mu from '../mapUtil';
+import {Bezier} from 'bezier-js';
 import _ from 'lodash'
+import {Entity, Viewer, JulianDate} from 'cesium';
 
 export default class BezierN extends Polyline {
 
-  constructor(prop, viewer, layer) {
+  constructor(p: {}, viewer: Viewer, layer: Entity) {
     super({
       type: 'n阶bezier曲线',
-      ...prop
+      ...p
     }, viewer, layer)
   }
 
-  calcuteShape (points, time) {
+  calcuteShape (points: Array<Entity>, time: JulianDate) {
     if (points.length < this.minPointNum) {
       return []
     }

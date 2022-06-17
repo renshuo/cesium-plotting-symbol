@@ -2,15 +2,12 @@ import * as Cesium from 'cesium';
 import Graph from '../Graph'
 import * as mu from '../mapUtil'
 
-import type PropDef from '../Graph';
-import type PropDefNum from '../Graph';
-
 
 export default class Polyline extends Graph {
 
   minPointNum = 2
 
-  constructor (prop, viewer, layer) {
+  constructor (prop: {}, viewer: Cesium.Viewer, layer: Cesium.Entity) {
     super({
       type: '折线',
       width: 1,

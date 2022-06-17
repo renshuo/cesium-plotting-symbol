@@ -22,13 +22,6 @@ type PropDefNum = PropDef & {
   step: number
 }
 
-type GraphProperties = {
-  id: string,
-  name: string,
-  description: string,
-  level: number,
-  type: string,
-}
 
 export default class Graph {
   static seq = new Date().getTime()
@@ -64,7 +57,8 @@ export default class Graph {
     level: 1,
     type: 'graph',
     color: '#00ff00',
-    alpha: 0.8
+    alpha: 0.8,
+    ctls: []
   }
 
   constructor(props: {}, viewer: Cesium.Viewer, layer: Cesium.Entity) {
@@ -84,33 +78,22 @@ export default class Graph {
     this.initCtls(props.ctls)
   }
 
-  // initProps (properties: GraphProperties) {
-
-  //   [
-  //     ...defs
-  //   ].forEach(prop => {
-  //     prop.value = this.properties[prop.name]
-  //     this.props[prop.name] = prop
-  //   })
-  // }
-
-  initCtls (ctls) {
-    if (ctls) {
-      ctls.forEach(pos => {
-        let p = {}
+  initCtls (ctlsPos: Array<Pos | Array<number>>) {
+    if (ctlsPos) {
+      ctlsPos.forEach((pos: Pos | Array<number>) => {
         if (pos instanceof Array) {
           if (pos.length === 2) {
-            p = {lon: pos[0], lat: pos[1]}
+            let p = {lon: pos[0], lat: pos[1], hei: 0}
+            this.addCtlPoint(p)
           } else if (pos.length === 3) {
-            p = {lon: pos[0], lat: pos[1], hei: pos[2]}
+            let p = {lon: pos[0], lat: pos[1], hei: pos[2]}
+            this.addCtlPoint(p)
           } else {
             console.log('invalid pos array length: ', pos)
           }
         } else {
-          p = pos
+          this.addCtlPoint(pos)
         }
-        console.log('pos: ', p)
-        this.addCtlPoint(p)
       })
     }
   }
@@ -129,12 +112,12 @@ export default class Graph {
     let p = {
       obj: this.constructor.name
     }
-    _.forIn(this.props, (v, k) => {
-      p[k] = v.value
-    })
-    p.ctls = this.getCtlPositions().map((c3: Cesium.Cartesian3) => {
-      let lonlat = mu.cartesian2lonlat(c3)
-      return {lon: lonlat[0], lat: lonlat[1]}
+    Object.assign(p, this.props)
+    Object.assign(p, {
+      ctls: this.getCtlPositions().map((c3: Cesium.Cartesian3) => {
+        let lonlat = mu.cartesian2lonlat(c3)
+        return { lon: lonlat[0], lat: lonlat[1] }
+      })
     })
     return p
   }
@@ -154,7 +137,6 @@ export default class Graph {
     let pos = mu.cartesian2lonlat(cartesian3)
     let ctlPoint: Cesium.Entity = this.entities.add({
       id: this.graph.id + '_ctlpoint_' + Graph.seq++,
-      graphType: 'ctl',
       position: cartesian3,
       point: {
         pixelSize: 8,
@@ -185,21 +167,23 @@ export default class Graph {
         return window.cursorPos.clone()
       }, false)
     }
+    ctlPoint.graph = this
     console.log('added a ctl: ', ctlPoint)
     this.handleNewCtl(ctlPoint)
     this.ctls.push(ctlPoint)
     return ctlPoint
   }
 
-  handleNewCtl (ctl) {
+  handleNewCtl(ctl: Cesium.Entity) {
+    console.log("handle new ctl point: ", ctl)
   }
 
-  addCtlPoint (pos) {
+  addCtlPoint (pos: Pos) {
     let c3 = mu.lonlatheiObj2Cartesian(pos)
     this.addCtl(c3)
   }
 
-  fillShape (ent) {
+  fillShape(ent: Cesium.Entity) {
     if (this.props.id === undefined || this.props.id === '') {
       this.props.id = ent.id
     }

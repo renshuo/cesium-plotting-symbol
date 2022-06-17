@@ -42,6 +42,7 @@ import PropEditor from './PropEditor/index.vue';
 import * as mapUtil from './mapUtil';
 import _ from 'lodash';
 import * as Cesium from 'cesium';
+import MultiPartArrow from './Polygon/MultiPartArrow';
 
 
 type GMConfig = {
@@ -171,6 +172,7 @@ class GraphManager {
       case 'SectorArea': return new SectorArea(json, this.viewer, this.layer);
       case 'FlagTriangle': return new FlagTriangle(json, this.viewer, this.layer);
       case 'FlagRectangle': return new FlagRectangle(json, this.viewer, this.layer);
+      case 'MultiPartArrow': return new MultiPartArrow(json, this.viewer, this.layer);
 
       case 'Polyline': return new Polyline(json, this.viewer, this.layer);
       case 'Bezier1': return new Bezier1(json, this.viewer, this.layer);

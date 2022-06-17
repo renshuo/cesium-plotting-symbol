@@ -22,23 +22,20 @@ export default class MultiPartArrow extends Polygon {
   getStartPoints(s: Pot, s1: Pot, width: number) {
     let bearing = turf.bearing(s, s1)
     let distance = turf.distance(s, s1, this.options)
-    let a = distance / 10 
     return [
-      turf.destination(s, a, bearing - 90, this.options),
-      turf.destination(s, a, bearing, this.options),
-      turf.destination(s, a, bearing + 90, this.options)
+      turf.destination(s, width, bearing - 90, this.options),
+      turf.destination(s, width, bearing, this.options),
+      turf.destination(s, width, bearing + 90, this.options)
       ]
   }
 
   getEndPoints(e0: Pot, e: Pot, width: number) {
     let bearing = turf.bearing(e0, e)
     let distance = turf.distance(e0, e, this.options)
-    let b = distance / 10
-    let innerDeg = 170
-    let innerDis = b * 0.9
-
-    let outerDeg = 160
-    let outerDis = b * 1.41
+    let innerDeg = 160
+    let innerDis = width/2 / Math.cos((innerDeg-90)/180*Math.PI)
+    let outerDeg = 150
+    let outerDis = width / Math.cos((outerDeg-90)/180*Math.PI)
     return [
       turf.destination(e, innerDis, bearing + innerDeg, this.options),
       turf.destination(e, outerDis, bearing + outerDeg, this.options),
@@ -49,19 +46,8 @@ export default class MultiPartArrow extends Polygon {
   }
 
   genMidPoints(eb: Pot, e: Pot, en: Pot, width: number) {
-
     let bbear = turf.bearing(eb, e)
-    let bdis = turf.distance(eb, e, this.options)
-
     let nbear = turf.bearing(e, en)
-    let ndis = turf.distance(e, en, this.options)
-
-    let ma = turf.midpoint(eb, en)
-    let ba = turf.bearing(e, ma)
-    
-    if (ba<0) {
-      ba = -ba
-    }
     return [
       turf.destination(e, width, -(180 - bbear - nbear)/2, this.options),
       turf.destination(e, width, (180 + bbear  + nbear)/2, this.options)
@@ -78,14 +64,14 @@ export default class MultiPartArrow extends Polygon {
       return turf.point(longLat)
     })
     if (turfPoints.length > 1) {
-      let s = turfPoints[0]
-      let s1 = turfPoints[1]
+      let tps = turfPoints.map( p => {return p.geometry.coordinates})
+      //let totalLength = turf.length(turf.lineString(tps), this.options)
+      let distance = turf.distance(turfPoints[0], turfPoints[1], this.options)
+      let startWidth = distance/10
+      let endWidth = startWidth/2
 
-      let e = turfPoints[turfPoints.length-1]
-      let e0 = turfPoints[turfPoints.length-2]
-
-      let startPs = this.getStartPoints(s, s1, 0)
-      let endPs = this.getEndPoints(e0, e, 0)
+      let startPs = this.getStartPoints(turfPoints[0], turfPoints[1], startWidth)
+      let endPs = this.getEndPoints(turfPoints[turfPoints.length-2], turfPoints[turfPoints.length-1], endWidth)
 
       let midPs = []
       if (turfPoints.length> 2) {
@@ -93,18 +79,17 @@ export default class MultiPartArrow extends Polygon {
           let eb = turfPoints[i]
           let e = turfPoints[i+1]
           let en = turfPoints[i+2]
-          midPs.push(this.genMidPoints(eb, e, en, 10))
+          let eWidth = startWidth - (startWidth-endWidth)/(turfPoints.length-1) * (i+1)
+          midPs.push(this.genMidPoints(eb, e, en, eWidth))
         }
-        console.log("get midps", midPs)
       }
       let tgts = []
 
       tgts.push(...startPs)
       midPs.map( mp => tgts.push(mp[1]))
       tgts.push(...endPs)
-      midPs.map(mp => tgts.push(mp[0]))
+      midPs.reverse().map(mp => tgts.push(mp[0]))
 
-      console.log("get poins: ", tgts)
       return tgts.map(tgt => mu.lonlat2Cartesian(turf.getCoord(tgt)))
     } else {
       return []

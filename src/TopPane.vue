@@ -99,6 +99,8 @@ const funcs1 = ref([
     {name: '椭圆', func: () => prop.gm.create({obj: 'Ellipse', color: '#00FF00'}) },
     {name: '圆', func: () => prop.gm.create({obj: 'Circle', color: '#00FF00'}) },
     {name: '方形箭头', func: () => prop.gm.create({obj: 'SquareArrow', color: '#00FF00'}) },
+    {name: '弧面', func: () => prop.gm.create({obj: 'CircleArcArea', color: '#00FF00'}) },
+    {name: '扇形', func: () => prop.gm.create({obj: 'SectorArea', color: '#00FF00'}) },
   ],
   [
     {name: '直线', func: () => prop.gm.create({obj: 'Polyline', color: '#ff0000'}) },

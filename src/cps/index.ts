@@ -23,6 +23,8 @@ import Circle from './Polygon/Circle';
 import Ellipse from './Polygon/Ellipse';
 import Rectangle from './Polygon/Rectangle';
 import SquareArrow from './Polygon/SquareArrow'
+import CircleArcArea from './Polygon/CircleArcArea';
+import SectorArea from './Polygon/SectorArea';
 
 //polyline
 import Polyline from './Polyline/Polyline';
@@ -163,6 +165,8 @@ class GraphManager {
       case 'Ellipse': return new Ellipse(json, this.viewer, this.layer);
       case 'Rectangle': return new Rectangle(json, this.viewer, this.layer);
       case 'SquareArrow': return new SquareArrow(json, this.viewer, this.layer);
+      case 'CircleArcArea': return new CircleArcArea(json, this.viewer, this.layer);
+      case 'SectorArea': return new SectorArea(json, this.viewer, this.layer);
 
       case 'Polyline': return new Polyline(json, this.viewer, this.layer);
       case 'Bezier1': return new Bezier1(json, this.viewer, this.layer);

@@ -25,6 +25,8 @@ import Rectangle from './Polygon/Rectangle';
 import SquareArrow from './Polygon/SquareArrow'
 import CircleArcArea from './Polygon/CircleArcArea';
 import SectorArea from './Polygon/SectorArea';
+import FlagTriangle from './Polygon/FlagTriangle';
+import FlagRectangle from './Polygon/FlagRectangle';
 
 //polyline
 import Polyline from './Polyline/Polyline';
@@ -167,6 +169,8 @@ class GraphManager {
       case 'SquareArrow': return new SquareArrow(json, this.viewer, this.layer);
       case 'CircleArcArea': return new CircleArcArea(json, this.viewer, this.layer);
       case 'SectorArea': return new SectorArea(json, this.viewer, this.layer);
+      case 'FlagTriangle': return new FlagTriangle(json, this.viewer, this.layer);
+      case 'FlagRectangle': return new FlagRectangle(json, this.viewer, this.layer);
 
       case 'Polyline': return new Polyline(json, this.viewer, this.layer);
       case 'Bezier1': return new Bezier1(json, this.viewer, this.layer);

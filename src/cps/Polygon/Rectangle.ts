@@ -1,15 +1,17 @@
-import Polygon from './Polygon.js'
-import * as mu from '../mapUtil.ts'
+import Polygon from './Polygon'
+import * as mu from '../mapUtil'
+import {Viewer, Entity, JulianDate} from 'cesium';
 
-export default class Rectangle extends Polygon{
+
+export default class Rectangle extends Polygon {
   maxPointNum = 2
   minPointNum = 2
 
-  constructor(p, viewer, layer){
-    super({type: '矩形', ...p}, viewer, layer)
+  constructor(p: {}, viewer: Viewer, layer: Entity) {
+    super({ type: '矩形', ...p }, viewer, layer)
   }
 
-  calcuteShape (points, time) {
+  calcuteShape(points: Array<Entity>, time: JulianDate) {
     if (points.length < this.minPointNum) {
       return []
     }

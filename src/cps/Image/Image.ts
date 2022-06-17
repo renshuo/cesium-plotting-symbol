@@ -1,9 +1,9 @@
 import Rectangle from '../Polygon/Rectangle';
-import { Viewer, Entity, Color, CallbackProperty, PolygonHierarchy, ImageMaterialProperty } from 'cesium';
+import { Viewer, Entity, Color, CallbackProperty, PolygonHierarchy, ImageMaterialProperty, JulianDate } from 'cesium';
 
 export default class Image extends Rectangle {
-  
-  constructor (p, viewer: Viewer, layer: Entity) {
+
+  constructor (p: {}, viewer: Viewer, layer: Entity) {
     super({
       type: '图',
       image: 'image/th1.jpg',

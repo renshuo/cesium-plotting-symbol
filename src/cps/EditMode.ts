@@ -336,8 +336,6 @@ export class EditMode {
   finishCurrentSelect () {
     if (this.hoveredEnt) {
       this.hoveredEnt.id.graph.lowLight()
-      //this.currentEditEnt
-      this.hoveredEnt = undefined
     }
   }
 

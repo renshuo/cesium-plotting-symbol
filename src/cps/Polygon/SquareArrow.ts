@@ -10,7 +10,7 @@ export default class Arrow1 extends Polygon {
 
   constructor(p, viewer, layer){
     super({
-      type: '单箭头',
+      type: '单方型箭头',
       ...p}, viewer, layer)
     this.propDefs.push(
     )
@@ -35,17 +35,16 @@ export default class Arrow1 extends Polygon {
 
       let distance = turf.distance(point1, point2, options)
 
-      let a = distance/10
+      let a = distance/10/2
       let b = distance/10
 
-      let innerDeg = 170
-      let innerDis = b * 0.9
+      let innerDeg = 157.5
+      let innerDis = b
 
-      let outerDeg = 160
-      let outerDis = b*1.41
+      let outerDeg = 135
+      let outerDis = b* 2.732/2
 
       tgts.push(turf.destination(point1, a, bearing - 90, options))
-      tgts.push(turf.destination(point1, a, bearing, options))
       tgts.push(turf.destination(point1, a, bearing + 90, options))
 
       tgts.push(turf.destination(point2, innerDis, bearing + innerDeg, options))

@@ -105,11 +105,24 @@ export default class MultiPartArrow extends Polygon {
       }
       let tgts = []
 
-      tgts.push(...startPs)
-      midPs.map( mp => tgts.push(mp.right))
-      tgts.push(...endPs)
-      midPs.reverse().map(mp => tgts.push(mp.left))
+      let rightEdge = [
+        startPs[2],
+        ... (midPs.map( mp => mp.right)),
+        endPs[0]
+      ].map( pt => pt.geometry.coordinates)
+      let rightSpline = turf.bezierSpline(turf.lineString(rightEdge)).geometry.coordinates
 
+      let leftEdge = [
+        endPs[4],
+        ... (midPs.reverse().map( mp => mp.left)),
+        startPs[0],
+      ].map ( pt => pt.geometry.coordinates)
+      let leftSpline = turf.bezierSpline(turf.lineString(leftEdge)).geometry.coordinates
+
+      tgts.push(...(startPs.map(p => p.geometry.coordinates)))
+      tgts.push(...rightSpline)
+      tgts.push(...(endPs.map(p => p.geometry.coordinates)))
+      tgts.push(...leftSpline)
       return tgts.map(tgt => mu.lonlat2Cartesian(turf.getCoord(tgt)))
     } else {
       return []

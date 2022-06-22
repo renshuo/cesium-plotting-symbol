@@ -17,7 +17,7 @@ export default class MultiPartArrow extends Polygon {
     this.propDefs.push(
     )
   }
-  options = { units: 'kilometers' }
+  options: {units: turf.helpers.Units | undefined } = { units:  'kilometers' }
 
   getStartPoints(s: Pot, s1: Pot, width: number) {
     let bearing = turf.bearing(s, s1)
@@ -48,10 +48,30 @@ export default class MultiPartArrow extends Polygon {
   genMidPoints(eb: Pot, e: Pot, en: Pot, width: number) {
     let bbear = turf.bearing(eb, e)
     let nbear = turf.bearing(e, en)
-    return [
-      turf.destination(e, width, -(180 - bbear - nbear)/2, this.options),
-      turf.destination(e, width, (180 + bbear  + nbear)/2, this.options)
-    ]
+    let ndis = turf.distance(e, en, this.options)
+
+    let leftBear = -(180 - bbear - nbear) / 2
+    let rightBear = (180 + bbear + nbear) / 2
+
+    let leftPoint = turf.destination(e, width, leftBear, this.options)
+    let isClock = turf.booleanClockwise(
+      turf.lineString([
+        e.geometry.coordinates,
+        leftPoint.geometry.coordinates,
+        en.geometry.coordinates,
+        e.geometry.coordinates,
+      ]))
+    if (isClock) {
+      return {
+        left: turf.destination(e, width, leftBear, this.options),
+        right: turf.destination(e, width, rightBear, this.options)
+      }
+    } else {
+      return {
+        right: turf.destination(e, width, leftBear, this.options),
+        left: turf.destination(e, width, rightBear, this.options)
+      }
+    }
   }
 
   calcuteShape (points: Array<Cesium.Entity>, time: Cesium.JulianDate) {
@@ -86,9 +106,9 @@ export default class MultiPartArrow extends Polygon {
       let tgts = []
 
       tgts.push(...startPs)
-      midPs.map( mp => tgts.push(mp[1]))
+      midPs.map( mp => tgts.push(mp.right))
       tgts.push(...endPs)
-      midPs.reverse().map(mp => tgts.push(mp[0]))
+      midPs.reverse().map(mp => tgts.push(mp.left))
 
       return tgts.map(tgt => mu.lonlat2Cartesian(turf.getCoord(tgt)))
     } else {

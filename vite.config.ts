@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [vue()],
   build: {
     lib: {
-      entry: path.resolve(__dirname, "src/cps/index.js"),
+      entry: path.resolve(__dirname, "src/cps/index.ts"),
       name: 'cesium-plotting-symbol',
     },
     rollupOptions: {

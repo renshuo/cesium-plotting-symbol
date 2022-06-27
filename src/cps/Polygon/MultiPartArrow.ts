@@ -13,8 +13,12 @@ export default class MultiPartArrow extends Polygon {
   constructor(p: {}, viewer: Cesium.Viewer, layer: Cesium.Entity){
     super({
       type: '多段箭头',
+      headWidth: 5,
+      tailWidth: 20,
       ...p}, viewer, layer)
     this.propDefs.push(
+      { name: 'headWidth', title: '头部宽度', type: 'number', editable: true, step: 1, min: 1, max: 100 },
+      { name: 'tailWidth', title: '尾部宽度', type: 'number', editable: true, step: 1, min: 1, max: 100 },
     )
   }
   options: {units: turf.helpers.Units | undefined } = { units:  'kilometers' }
@@ -87,8 +91,8 @@ export default class MultiPartArrow extends Polygon {
       let tps = turfPoints.map( p => {return p.geometry.coordinates})
       //let totalLength = turf.length(turf.lineString(tps), this.options)
       let distance = turf.distance(turfPoints[0], turfPoints[1], this.options)
-      let startWidth = distance/10
-      let endWidth = startWidth/2
+      let startWidth = this.props.tailWidth
+      let endWidth = this.props.headWidth
 
       let startPs = this.getStartPoints(turfPoints[0], turfPoints[1], startWidth)
       let endPs = this.getEndPoints(turfPoints[turfPoints.length-2], turfPoints[turfPoints.length-1], endWidth)

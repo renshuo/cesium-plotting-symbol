@@ -105,6 +105,7 @@ const funcs1 = ref([
     {name: '四角旗', func: () => prop.gm.create({obj: 'FlagRectangle', color: '#00FF00'}) },
     {name: '多段箭头', func: () => prop.gm.create({obj: 'MultiPartArrow', color: '#00FF00'}) },
     {name: '平滑区域', func: () => prop.gm.create({obj: 'SplineArea', color: '#00FF00'}) },
+    {name: '钳击', func: () => prop.gm.create({obj: 'PincerAttack', color: '#00FF00'}) },
   ],
   [
     {name: '直线', func: () => prop.gm.create({obj: 'Polyline', color: '#ff0000'}) },

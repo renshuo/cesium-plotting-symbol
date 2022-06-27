@@ -29,6 +29,7 @@ import FlagTriangle from './Polygon/FlagTriangle';
 import FlagRectangle from './Polygon/FlagRectangle';
 import MultiPartArrow from './Polygon/MultiPartArrow';
 import SplineArea from './Polygon/SplineArea';
+import PincerAttack from './Polygon/PincerAttack';
 
 //polyline
 import Polyline from './Polyline/Polyline';
@@ -175,6 +176,7 @@ class GraphManager {
       case 'FlagRectangle': return new FlagRectangle(json, this.viewer, this.layer);
       case 'MultiPartArrow': return new MultiPartArrow(json, this.viewer, this.layer);
       case 'SplineArea': return new SplineArea(json, this.viewer, this.layer);
+      case 'PincerAttack': return new PincerAttack(json, this.viewer, this.layer);
 
       case 'Polyline': return new Polyline(json, this.viewer, this.layer);
       case 'Bezier1': return new Bezier1(json, this.viewer, this.layer);

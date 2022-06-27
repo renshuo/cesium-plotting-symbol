@@ -27,6 +27,8 @@ import CircleArcArea from './Polygon/CircleArcArea';
 import SectorArea from './Polygon/SectorArea';
 import FlagTriangle from './Polygon/FlagTriangle';
 import FlagRectangle from './Polygon/FlagRectangle';
+import MultiPartArrow from './Polygon/MultiPartArrow';
+import SplineArea from './Polygon/SplineArea';
 
 //polyline
 import Polyline from './Polyline/Polyline';
@@ -42,7 +44,6 @@ import PropEditor from './PropEditor/index.vue';
 import * as mapUtil from './mapUtil';
 import _ from 'lodash';
 import * as Cesium from 'cesium';
-import MultiPartArrow from './Polygon/MultiPartArrow';
 
 
 type GMConfig = {
@@ -173,6 +174,7 @@ class GraphManager {
       case 'FlagTriangle': return new FlagTriangle(json, this.viewer, this.layer);
       case 'FlagRectangle': return new FlagRectangle(json, this.viewer, this.layer);
       case 'MultiPartArrow': return new MultiPartArrow(json, this.viewer, this.layer);
+      case 'SplineArea': return new SplineArea(json, this.viewer, this.layer);
 
       case 'Polyline': return new Polyline(json, this.viewer, this.layer);
       case 'Bezier1': return new Bezier1(json, this.viewer, this.layer);

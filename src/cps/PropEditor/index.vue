@@ -1,56 +1,49 @@
 <template>
-
   <div class="propeditor" :hidden="!isShow">
-
-        <div v-for="(value, key) in graph.propDefs" :key="value.name">
-
-          <div v-if="value.show === undefined || value.show === true"  class="propItem">
-            <span class="propName">{{value.title}}: </span>
-            <component
-              :is="comps[value.type]"
-              :value="getValue(value.name)"
-              @input="(e) => graph.props[value.name]=e"
-              :disabled="value.editable === false"
-              :min="value.min"
-              :max="value.max"
-              :step="value.step"
-              class="propValue"
-            >
-            </component>
-          </div>
-        </div>
-
+    <div v-for="(value, key) in graph.propDefs" :key="value.name">
+      <div v-if="value.show === undefined || value.show === true" class="propItem">
+        <span class="propName">{{ value.title }}:</span>
+        <component
+          :is="comps[value.type]"
+          :value="getValue(value.name)"
+          @input="(e) => (graph.props[value.name] = e)"
+          :disabled="value.editable === false"
+          :min="value.min"
+          :max="value.max"
+          :step="value.step"
+          class="propValue"
+        ></component>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import EditMode from '../EditMode.js'
-import {ref, defineExpose} from 'vue'
+import { defineExpose, ref } from "vue";
 
-import ColorEditor from './ColorEditor.vue'
-import TextEditor from './TextEditor.vue'
-import NumberEditor from './NumberEditor.vue'
-import BooleanCheck from './BooleanCheck.vue'
+import BooleanCheck from "./BooleanCheck.vue";
+import ColorEditor from "./ColorEditor.vue";
+import NumberEditor from "./NumberEditor.vue";
+import TextEditor from "./TextEditor.vue";
 
-const isShow = ref(false)
-const graph = ref([])
+const isShow = ref(false);
+const graph = ref([]);
 
 const comps = {
   number: NumberEditor,
   string: TextEditor,
   color: ColorEditor,
-  boolean: BooleanCheck
-}
-
+  boolean: BooleanCheck,
+};
 
 function getValue(name) {
-  return graph.value.props[name]
+  return graph.value.props[name];
 }
 
-function show (isShow0, graph0: Graph) {
-  isShow.value = isShow0
+function show(isShow0, graph0: Graph) {
+  isShow.value = isShow0;
   if (isShow0) {
-    graph.value = graph0
+    graph.value = graph0;
   }
   if (isShow0) {
     // propDefs.value = {}
@@ -64,8 +57,7 @@ function show (isShow0, graph0: Graph) {
   }
 }
 
-defineExpose({show})
-
+defineExpose({ show });
 </script>
 
 <style>
@@ -77,9 +69,8 @@ defineExpose({show})
 }
 
 .editor {
-  width: 100%
+  width: 100%;
 }
-
 
 .propItem {
   display: flex;
@@ -95,7 +86,7 @@ defineExpose({show})
 }
 
 .propValue {
-  background:transparent;
+  background: transparent;
   background-color: #59f2;
   border: 1px solid #59f;
   border-radius: 2px;
@@ -104,10 +95,8 @@ defineExpose({show})
   color: #eee;
 }
 
-
 .propValue:disabled {
   color: #aaa;
   border-width: 0px;
-
 }
 </style>

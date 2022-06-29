@@ -1,9 +1,8 @@
 import * as Cesium from 'cesium';
-import * as mu from './mapUtil';
 import kb from 'keyboardjs';
 import Graph from './Graph';
-import {GraphManager} from './index'
-
+import { GraphManager } from './index';
+import * as mu from './mapUtil';
 
 enum Mode {
   View,
@@ -46,7 +45,7 @@ export class EditMode {
 
   /** handler单例 */
   handler: Cesium.ScreenSpaceEventHandler | undefined
-  getHandler (): Cesium.ScreenSpaceEventHandler {
+  getHandler(): Cesium.ScreenSpaceEventHandler {
     if (!this.handler || this.handler.isDestroyed()) {
       this.handler = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas)
     }
@@ -54,12 +53,12 @@ export class EditMode {
   }
 
 
-  destroyHandler () {
+  destroyHandler() {
     this.handler?.destroy()
     this.handler = undefined
   }
 
-  initKeyboard () {
+  initKeyboard() {
     this.initKeyboardView()
     this.initKeyboardCreate()
     this.initKeyboardSelect()
@@ -69,7 +68,7 @@ export class EditMode {
 
   static seq = new Date().getTime()
 
-  start () {
+  start() {
     this.nextMode(Act.Start)
   }
 
@@ -80,7 +79,7 @@ export class EditMode {
     return ent
   }
 
-  draw (ent: Graph) {
+  draw(ent: Graph) {
     this.nextMode(Act.Finish)
     this.currentEditEnt = ent
     ent.finish()
@@ -89,7 +88,7 @@ export class EditMode {
   }
 
   mode = Mode.View
-  nextMode (action: Act) {
+  nextMode(action: Act) {
     console.log(`mode changed from '${Mode[this.mode]}' by action '${Act[action]}'`)
     switch (this.mode) {
       case Mode.View:
@@ -119,8 +118,8 @@ export class EditMode {
           case Act.Finish:
             this.viewMode()
             break
-          }
         }
+      }
         break
       case Mode.Create: {
         this.finishCurrentCreate()
@@ -135,8 +134,8 @@ export class EditMode {
           case Act.Create:
             this.createMode()
             break
-          }
         }
+      }
         break
       case Mode.Edit: {
         this.finishCurrentEdit()
@@ -150,18 +149,18 @@ export class EditMode {
           case Act.Pickup:
             this.ctlEditMode()
             break
-          }
         }
+      }
         break
       case Mode.CtlEdit: {
         this.finishCurrentCtledit()
         switch (action) {
-        case Act.Finish:
+          case Act.Finish:
             this.editMode()
-          break
-        case Act.Create:
-          this.createMode()
-          break
+            break
+          case Act.Create:
+            this.createMode()
+            break
         }
       }
     }
@@ -172,7 +171,7 @@ export class EditMode {
   hoveredEnt: Cesium.Entity
   pickedctl: Cesium.Entity
 
-  viewMode () {
+  viewMode() {
     this.mode = Mode.View
     kb.setContext(this.mode)
     if (this.propEditor) this.propEditor.show(false)
@@ -181,13 +180,13 @@ export class EditMode {
     this.setCursor(Cursor.auto)
   }
 
-  initKeyboardView () {
+  initKeyboardView() {
     kb.withContext(Mode.View, () => {
       kb.bind('1', (e) => console.log('view: ', e, this))
     })
   }
 
-  createMode () {
+  createMode() {
     this.mode = Mode.Create
     if (this.propEditor) this.propEditor.show(true, this.currentEditEnt)
     console.log(`into ${Mode[this.mode]} mode`, this.currentEditEnt)
@@ -204,7 +203,7 @@ export class EditMode {
     this.getHandler().setInputAction(event => {
       let newpos = mu.screen2Cartesian(event.position, 0, this.viewer)
       let p = mu.cartesian2lonlat(newpos, this.viewer)
-      this.currentEditEnt.addCtlPoint({lon: p[0], lat: p[1]})
+      this.currentEditEnt.addCtlPoint({ lon: p[0], lat: p[1] })
       if (this.currentEditEnt.ishaveMaxCtls()) {
         this.nextMode(Act.Finish)
       }
@@ -222,7 +221,7 @@ export class EditMode {
   /**
    * 完成当前绘图，如果图形能够绘制出来，则绘制，否则删除不成形的图形
    */
-  finishCurrentCreate () {
+  finishCurrentCreate() {
     console.log('finsih create: ', this.currentEditEnt)
     this.viewer.entities.remove(window.cursor)
     if (this.currentEditEnt) {
@@ -237,7 +236,7 @@ export class EditMode {
     }
   }
 
-  initCreateCursor () {
+  initCreateCursor() {
     window.cursor = this.viewer.entities.add({
       id: 'cursor',
       position: new Cesium.CallbackProperty((time, result) => {
@@ -259,21 +258,21 @@ export class EditMode {
             '\nLat: ' + window.cursorScreenPos[1].toPrecision(5) + '\u00B0' :
             ''
         }, true),
-        font : '14px monospace',
-        horizontalOrigin : Cesium.HorizontalOrigin.LEFT,
-        verticalOrigin : Cesium.VerticalOrigin.TOP,
-        pixelOffset : new Cesium.Cartesian2(15, 0)
+        font: '14px monospace',
+        horizontalOrigin: Cesium.HorizontalOrigin.LEFT,
+        verticalOrigin: Cesium.VerticalOrigin.TOP,
+        pixelOffset: new Cesium.Cartesian2(15, 0)
       }
     })
   }
 
-  initKeyboardCreate () {
+  initKeyboardCreate() {
     kb.withContext(Mode.Create, () => {
       kb.bind('1', (e) => console.log('create: ', e, this))
     })
   }
 
-  selectMode () {
+  selectMode() {
     this.mode = Mode.Select
     this.hoveredEnt = undefined
     if (this.propEditor) this.propEditor.show(false)
@@ -333,13 +332,13 @@ export class EditMode {
     }, Cesium.ScreenSpaceEventType.RIGHT_CLICK)
   }
 
-  finishCurrentSelect () {
+  finishCurrentSelect() {
     if (this.hoveredEnt) {
       this.hoveredEnt.id.graph.lowLight()
     }
   }
 
-  initKeyboardSelect () {
+  initKeyboardSelect() {
     kb.withContext(Mode.Select, () => {
       kb.bind('1', (e) => console.log('select: ', e, this))
       kb.bind(['ctrl+shift+d', 'shift+delete'], e => {
@@ -348,7 +347,7 @@ export class EditMode {
     })
   }
 
-  editMode () {
+  editMode() {
     this.mode = Mode.Edit
     if (this.propEditor) this.propEditor.show(true, this.currentEditEnt)
     console.log(`into ${Mode[this.mode]} mode`, this.currentEditEnt)
@@ -360,18 +359,18 @@ export class EditMode {
     this.getHandler().setInputAction(move => {
       window.cursorPos = mu.screen2Cartesian(move.endPosition, 0, this.viewer)
     }, Cesium.ScreenSpaceEventType.MOUSE_MOVE)
-  
+
     this.getHandler().setInputAction(event => {
       let objs = this.viewer.scene.drillPick(event.position)
       if (Cesium.defined(objs)) {
-        let ctl = objs.filter((st) => {return this.currentEditEnt.ctls.indexOf(st.id)>=0 })
+        let ctl = objs.filter((st) => { return this.currentEditEnt.ctls.indexOf(st.id) >= 0 })
         if (ctl.length > 0) {
           this.pickedctl = ctl[0].id
           this.nextMode(Act.Pickup)
         }
       }
     }, Cesium.ScreenSpaceEventType.LEFT_CLICK)
-  
+
     this.getHandler().setInputAction(event => {
       this.nextMode(Act.Finish)
     }, Cesium.ScreenSpaceEventType.RIGHT_CLICK)
@@ -384,7 +383,7 @@ export class EditMode {
     }
   }
 
-  initKeyboardEdit () {
+  initKeyboardEdit() {
     kb.withContext(Mode.Edit, () => {
       kb.bind('1', (e) => console.log('edit: ', e, this))
       kb.bind(['delete', 'ctrl+d'], e => {
@@ -393,7 +392,7 @@ export class EditMode {
     })
   }
 
-  deleteSelectGraph () {
+  deleteSelectGraph() {
     if (this.currentEditEnt) {
       let graph = this.currentEditEnt
       this.currentEditEnt.delete()
@@ -406,7 +405,7 @@ export class EditMode {
     }
   }
 
-  ctlEditMode () {
+  ctlEditMode() {
     this.mode = Mode.CtlEdit
     console.log(`into ${Mode[this.mode]} mode`, this.pickedctl, this.currentEditEnt)
 
@@ -430,20 +429,20 @@ export class EditMode {
     }, Cesium.ScreenSpaceEventType.RIGHT_CLICK)
   }
 
-  finishCurrentCtledit () {
+  finishCurrentCtledit() {
     if (this.pickedctl) {
       this.pickedctl.finish()
       this.pickedctl = undefined
     }
   }
 
-  initKeyboardCtledit () {
+  initKeyboardCtledit() {
     kb.withContext(Mode.CtlEdit, () => {
       kb.bind('1', (e) => console.log('ctledit: ', e, this))
     })
   }
 
-  setCursor (cursor: Cursor) {
+  setCursor(cursor: Cursor) {
     this.viewer.canvas.style.cursor = Cursor[cursor]
   }
 }

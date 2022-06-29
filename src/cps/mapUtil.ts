@@ -1,15 +1,14 @@
-import * as Cesium from 'cesium';
 import * as turf from '@turf/turf';
-
+import * as Cesium from 'cesium';
 
 /**
  * 转换屏幕坐标（来自于鼠标的各种event）为地理坐标
  * @param screenPos screen position from mouse
  */
-export function screen2lonlat (screenPos: Cesium.Cartesian2, viewer: Cesium.Viewer): Array<number> {
+export function screen2lonlat(screenPos: Cesium.Cartesian2, viewer: Cesium.Viewer): Array<number> {
   if (!viewer) throw 'null viewer'
   // 通过指定的椭球或者地图对应的坐标系，将鼠标的二维坐标转换为对应椭球体三维坐标
-  let cartesian: Cesium.Cartesian3|undefined = viewer.camera.pickEllipsoid(screenPos)
+  let cartesian: Cesium.Cartesian3 | undefined = viewer.camera.pickEllipsoid(screenPos)
   if (cartesian) {
     return cartesian2lonlat(cartesian)
   } else {
@@ -25,7 +24,7 @@ export function screen2lonlat (screenPos: Cesium.Cartesian2, viewer: Cesium.View
  * @param {地理坐标} lonlat
  * @param {高度值} height
  */
-export function lonlat2Cartesian(lonlat: Array<number>, height: number|undefined): Cesium.Cartesian3 {
+export function lonlat2Cartesian(lonlat: Array<number>, height: number | undefined): Cesium.Cartesian3 {
   return Cesium.Cartesian3.fromDegrees(
     lonlat[0],
     lonlat[1],
@@ -57,7 +56,7 @@ export function cartesian2lonlat(cartesian: Cesium.Cartesian3): Array<number> {
 }
 
 
-export function screen2Cartesian (screenPos: Cesium.Cartesian2, height: number| undefined, viewer: Cesium.Viewer): Cesium.Cartesian3 {
+export function screen2Cartesian(screenPos: Cesium.Cartesian2, height: number | undefined, viewer: Cesium.Viewer): Cesium.Cartesian3 {
   let degrees = screen2lonlat(screenPos, viewer)
   return lonlat2Cartesian(degrees, height)
 }
@@ -66,13 +65,13 @@ export function screen2Cartesian (screenPos: Cesium.Cartesian2, height: number| 
  * @param date script date type
  * @Return iso8601 date string like 2012-04-30T12:00:00Z
  */
-export function dateToString (date: Date): String {
+export function dateToString(date: Date): String {
   return Cesium.JulianDate.toIso8601(julianDate(date))
 }
 
 /**
  * 将date日期转换为Julian日期对象，如果date为空，则获取当前时间
- * @param {JulianDate} date 
+ * @param {JulianDate} date
  */
 export function julianDate(date: Date): Cesium.JulianDate {
   if (!date) {
@@ -81,7 +80,7 @@ export function julianDate(date: Date): Cesium.JulianDate {
   return Cesium.JulianDate.fromDate(date)
 }
 
-export function distance (cart1: Cesium.Cartesian3, cart2: Cesium.Cartesian3): number {
+export function distance(cart1: Cesium.Cartesian3, cart2: Cesium.Cartesian3): number {
   //return Cesium.Cartesian3.distance(cart1, cart2)
   let from = turf.point(cartesian2lonlat(cart1))
   let to = turf.point(cartesian2lonlat(cart2))
@@ -99,7 +98,7 @@ export function turfGeometry2Cartesians(g) {
   return geo.map((p) => lonlat2Cartesian(p, undefined))
 }
 
-export function deleteEnts (ents: Array<Cesium.Entity>, viewer: Cesium.Viewer) {
+export function deleteEnts(ents: Array<Cesium.Entity>, viewer: Cesium.Viewer) {
   ents.forEach((ent: Cesium.Entity) => {
     if (ent._children.length > 0) {
       deleteEnts(ent._children, viewer)

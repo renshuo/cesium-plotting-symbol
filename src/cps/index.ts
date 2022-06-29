@@ -12,27 +12,26 @@ import Station from './Model/Station';
 import Point from './Point/Point';
 
 // pin
-import PinText from './Pin/PinText';
-import PinIcon from './Pin/PinMakiIcon';
 import PinImage from './Pin/PinImage';
+import PinIcon from './Pin/PinMakiIcon';
+import PinText from './Pin/PinText';
 
 //polygon
-import Polygon from './Polygon/Polygon';
 import Arrow1 from './Polygon/Arrow1';
 import Circle from './Polygon/Circle';
-import Ellipse from './Polygon/Ellipse';
-import Rectangle from './Polygon/Rectangle';
-import SquareArrow from './Polygon/SquareArrow'
 import CircleArcArea from './Polygon/CircleArcArea';
-import SectorArea from './Polygon/SectorArea';
-import FlagTriangle from './Polygon/FlagTriangle';
+import Ellipse from './Polygon/Ellipse';
 import FlagRectangle from './Polygon/FlagRectangle';
+import FlagTriangle from './Polygon/FlagTriangle';
 import MultiPartArrow from './Polygon/MultiPartArrow';
-import SplineArea from './Polygon/SplineArea';
 import PincerAttack from './Polygon/PincerAttack';
+import Polygon from './Polygon/Polygon';
+import Rectangle from './Polygon/Rectangle';
+import SectorArea from './Polygon/SectorArea';
+import SplineArea from './Polygon/SplineArea';
+import SquareArrow from './Polygon/SquareArrow';
 
 //polyline
-import Polyline from './Polyline/Polyline';
 import Bezier1 from './Polyline/Bezier1';
 import Bezier2 from './Polyline/Bezier2';
 import BezierN from './Polyline/BezierN';
@@ -40,11 +39,12 @@ import BezierSpline from './Polyline/BezierSpline';
 import CircleArc from './Polyline/CircleArc';
 import PointLine from './Polyline/PointLine';
 import PointSpline from './Polyline/PointSpline';
+import Polyline from './Polyline/Polyline';
 
-import PropEditor from './PropEditor/index.vue';
-import * as mapUtil from './mapUtil';
-import _ from 'lodash';
 import * as Cesium from 'cesium';
+import _ from 'lodash';
+import * as mapUtil from './mapUtil';
+import PropEditor from './PropEditor/index.vue';
 
 
 type GMConfig = {
@@ -99,7 +99,7 @@ class GraphManager {
   /**
    * draw a graph with ctls.
    * finish to edit mode.
-   * @param {graph param with ctls} json 
+   * @param {graph param with ctls} json
    */
   draw(json) {
     let obj = this.createObj(json);
@@ -199,4 +199,4 @@ export {
   mapUtil,
   PropEditor,
   GraphManager
-}
+};

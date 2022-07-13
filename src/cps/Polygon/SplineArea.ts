@@ -9,6 +9,7 @@ export default class SplineArea extends Polygon {
 
   constructor (prop, viewer: Cesium.Viewer, layer: Cesium.Entity) {
     super({
+      type: '平滑面',
       ...prop
     }, viewer, layer)
     this.propDefs.push(

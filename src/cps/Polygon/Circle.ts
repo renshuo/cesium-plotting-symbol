@@ -1,12 +1,13 @@
 import * as mu from '../mapUtil.ts'
 import Polygon from './Polygon.js'
 import * as turf from '@turf/turf'
+import { Entity, Viewer } from 'cesium'
 
 export default class Circle extends Polygon {
   maxPointNum = 2
   minPointNum = 2
   
-  constructor(p, viewer, layer){
+  constructor(p, viewer: Viewer, layer: Entity){
     super({type: '圆', ...p}, viewer, layer)
   }
 

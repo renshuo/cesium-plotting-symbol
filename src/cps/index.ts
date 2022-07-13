@@ -1,4 +1,4 @@
-import EditMode from './EditMode';
+import EditMode, { GraphSelectHandler } from './EditMode';
 
 // image
 import Image from './Image/Image';
@@ -44,11 +44,11 @@ import Polyline from './Polyline/Polyline';
 import * as Cesium from 'cesium';
 import _ from 'lodash';
 import * as mapUtil from './mapUtil';
-import PropEditor from './PropEditor/index.vue';
+import Graph from './Graph';
 
 
 type GMConfig = {
-  propEditor: any,
+  propEditor: HTMLElement,
   layerId: string,
   editAfterCreate: boolean
 }
@@ -62,7 +62,7 @@ class GraphManager {
     editAfterCreate: false
   }
 
-  graphList: Array<Any> = []
+  graphList: Array<Graph> = []
 
   layer: Cesium.Entity
 
@@ -192,11 +192,14 @@ class GraphManager {
         return undefined;
     }
   }
+
+  setGraphSelectHandler(handler: GraphSelectHandler) {
+    this.em.setGraphSelectHandler(handler)
+  }
 }
 
 
 export {
   mapUtil,
-  PropEditor,
   GraphManager
 };

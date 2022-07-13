@@ -8,7 +8,7 @@ export default class SectorArea extends Polygon {
   minPointNum = 3
 
   constructor(p: {}, viewer: Viewer, layer: Entity){
-    super({type: '圆弧面', ...p}, viewer, layer)
+    super({type: '扇形', ...p}, viewer, layer)
   }
 
   calcuteShape (points: Array<Entity>, time: JulianDate) {
@@ -28,7 +28,6 @@ export default class SectorArea extends Polygon {
     let radius = d1 > d2 ? d1 : d2
     let linestr = turf.lineArc(ctls[0], radius, b1, b2)
     let area = linestr.geometry.coordinates.concat([ctls[0].geometry.coordinates])
-    console.log("get area: ", area)
     return area.map((p) => mu.lonlat2Cartesian(p))
   }
 }

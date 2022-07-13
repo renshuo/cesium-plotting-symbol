@@ -2,25 +2,34 @@
 基于cesiumn的标绘，支持VUE3
 
 ## 支持图形
-1. [点类型]
-    1. [3D模型](https://github.com/renshuo/cesium-plotting-symbol/tree/master/src/cps/Model)
-       1. 地面模型
-       2. 带有高度的参数的模型
-    2. [点](https://github.com/renshuo/cesium-plotting-symbol/tree/master/src/cps/Point)
-       1. 单点
-    3. [图钉](https://github.com/renshuo/cesium-plotting-symbol/tree/master/src/cps/Pin)
-       1. 文本图钉
-       2. 图标图钉
-       3. 图片图钉
-       4. 自定义图片图钉
-3. [多边形](https://github.com/renshuo/cesium-plotting-symbol/tree/master/src/cps/Polygon)
-    1. 多边形
-    2. 单箭头
-    2. 矩形
-    3. 椭圆
-    4. 圆形
-2. [线](https://github.com/renshuo/cesium-plotting-symbol/tree/master/src/cps/Polyline)
-    1. 多段直线
+1. [贴图类](https://github.com/renshuo/cesium-plotting-symbol/tree/master/src/cps/Image)
+    1. 红旗
+    2. 地面贴图
+2. [3D模型](https://github.com/renshuo/cesium-plotting-symbol/tree/master/src/cps/Model)
+   1. 地面模型（地面站）
+   2. 带有高度的参数的模型（卫星）
+3. [图钉](https://github.com/renshuo/cesium-plotting-symbol/tree/master/src/cps/Pin)
+   1. 文本图钉
+   2. 图标图钉
+   3. 图片图钉
+   4. 自定义图片图钉
+4. [点类型](https://github.com/renshuo/cesium-plotting-symbol/tree/master/src/cps/Point)
+   1. 单点
+5. [多边形](https://github.com/renshuo/cesium-plotting-symbol/tree/master/src/cps/Polygon)
+    1. 单箭头
+    2. 圆形
+    3. 圆弧面    
+    4. 椭圆
+    5. 方型旗
+    6. 三角旗
+    7. 多段线
+    8. 钳击箭头
+    9. 多边形
+    10. 矩形
+    11. 扇形
+    12. 平滑面
+    13. 方箭头
+6. [线](https://github.com/renshuo/cesium-plotting-symbol/tree/master/src/cps/Polyline)
     1. 2阶bezier曲线
     2. 3阶bezier曲线
     3. N阶bezier曲线
@@ -28,9 +37,7 @@
     5. 圆弧线
     6. 带顶点的折线
     7. 带顶点的平滑线
-5. [贴图类](https://github.com/renshuo/cesium-plotting-symbol/tree/master/src/cps/Image)
-    1. 红旗
-    2. 地面贴图
+    8. 多段线
 
 ## 安装
 ```bash
@@ -46,20 +53,28 @@ npm install cesium-plotting-symbol --save
 import {GraphManager} from 'cesium-plotting-symbol'
 ```
 ## 属性编辑窗
+可以使用内置的propEditor：
+```javascript
+import PropEditor from 'cesium-plotting-symbol/PropEditor/index.vue'
+```
 ```html
 <PropEditor ref="propEdit" /> <!-- 在html template 中插入prop-editor组件 -->
 ```
 
-```javascript
-import {PropEditor} from 'cesium-plotting-symbol'
-```
 
-创建cps实例时，需要将propEditor作为参数传递给cps
+让propHandler响应Graph Select事件：
 ```javascript
-  let gm = new GraphManager(viewer, {
-    propEditor: popEdit.value,
-    layerId: 'testbh1',
-    editAfterCreate: true
+  const propEdit = ref();
+  gm.value.setGraphSelectHandler( (ent: Graph) => {
+    if (ent) {
+      propEdit.value.show(true, ent)
+      let propDefs = ent.propDefs
+      let props = ent.props
+      console.log("handle select ent in top", propDefs, props)
+    } else {
+      propEdit.value.show(false, ent)
+      console.log("unselect")
+    }
   })
 ```
 

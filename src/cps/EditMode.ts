@@ -26,18 +26,17 @@ enum Cursor {
   pointer
 }
 
+export type GraphSelectHandler = (graph: Graph) => void
 
 export class EditMode {
 
   viewer: Cesium.Viewer
-  propEditor: HTMLElement
   editAfterCreate: boolean
   gm: GraphManager
 
   constructor(viewer: Cesium.Viewer, pe: HTMLElement, gm0: GraphManager, editAfterCreate: boolean) {
     console.log('create editmode: ', this, viewer, pe, gm0)
     this.viewer = viewer
-    this.propEditor = pe
     this.editAfterCreate = editAfterCreate
     this.gm = gm0
     this.initKeyboard()
@@ -74,14 +73,14 @@ export class EditMode {
 
   create(ent: Graph) {
     this.nextMode(Act.Finish) // finish last edit if it is
-    this.currentEditEnt = ent
+    this.setCurrentEditEnt(ent)
     this.nextMode(Act.Create)
     return ent
   }
 
   draw(ent: Graph) {
     this.nextMode(Act.Finish)
-    this.currentEditEnt = ent
+    this.setCurrentEditEnt(ent)
     ent.finish()
     this.nextMode(Act.Finish)
     return ent
@@ -122,11 +121,15 @@ export class EditMode {
       }
         break
       case Mode.Create: {
-        this.finishCurrentCreate()
+        let isSuccess = this.finishCurrentCreate()
         switch (action) {
           case Act.Finish:
-            if (this.editAfterCreate) {
-              this.editMode()
+            if (isSuccess) {
+              if (this.editAfterCreate) {
+                this.editMode()
+              } else {
+                this.selectMode()
+              }
             } else {
               this.selectMode()
             }
@@ -167,14 +170,25 @@ export class EditMode {
   }
 
 
-  currentEditEnt: Graph
+  currentEditEnt: Graph| undefined = undefined
   hoveredEnt: Cesium.Entity
   pickedctl: Cesium.Entity
+
+  graphSelectHandler: GraphSelectHandler
+  setGraphSelectHandler(handler: GraphSelectHandler) {
+    this.graphSelectHandler = handler
+  }
+
+  setCurrentEditEnt(ent: Graph| undefined) {
+    console.log('select a graph: ', ent)
+    this.currentEditEnt = ent
+    this.graphSelectHandler(ent)
+  }
 
   viewMode() {
     this.mode = Mode.View
     kb.setContext(this.mode)
-    if (this.propEditor) this.propEditor.show(false)
+    // if (this.propEditor) this.propEditor.show(false)
     console.log(`into ${Mode[this.mode]} mode`)
     this.destroyHandler()
     this.setCursor(Cursor.auto)
@@ -188,7 +202,6 @@ export class EditMode {
 
   createMode() {
     this.mode = Mode.Create
-    if (this.propEditor) this.propEditor.show(true, this.currentEditEnt)
     console.log(`into ${Mode[this.mode]} mode`, this.currentEditEnt)
 
     kb.setContext(this.mode)
@@ -220,18 +233,23 @@ export class EditMode {
 
   /**
    * 完成当前绘图，如果图形能够绘制出来，则绘制，否则删除不成形的图形
+   * return true: Graph create success
+   * return false: Graph create fail(deleted)
    */
-  finishCurrentCreate() {
+  finishCurrentCreate(): boolean {
     console.log('finsih create: ', this.currentEditEnt)
     this.viewer.entities.remove(window.cursor)
     if (this.currentEditEnt) {
       if (this.currentEditEnt.isCtlNumValid()) {
         this.currentEditEnt.finish()
+        this.setCurrentEditEnt(this.currentEditEnt)
         this.gm.graphList.push(this.currentEditEnt)
+        return true
       } else {
         console.log('delete graph by invalid ctlNums')
         this.currentEditEnt.delete()
-        this.currentEditEnt = undefined
+        this.setCurrentEditEnt(undefined)
+        return false
       }
     }
   }
@@ -275,7 +293,7 @@ export class EditMode {
   selectMode() {
     this.mode = Mode.Select
     this.hoveredEnt = undefined
-    if (this.propEditor) this.propEditor.show(false)
+//    if (this.propEditor) this.propEditor.show(false)
     console.log(`into ${Mode[this.mode]} mode`)
 
     kb.setContext(this.mode)
@@ -320,9 +338,7 @@ export class EditMode {
 
     this.getHandler().setInputAction(event => {
       if (this.hoveredEnt) {
-        let selectedEnt = this.hoveredEnt.id
-        this.currentEditEnt = selectedEnt.graph
-        console.log('select a graph: ', this.currentEditEnt)
+        this.setCurrentEditEnt(this.hoveredEnt.id.graph)
         this.nextMode(Act.Select)
       }
     }, Cesium.ScreenSpaceEventType.LEFT_CLICK)
@@ -349,9 +365,9 @@ export class EditMode {
 
   editMode() {
     this.mode = Mode.Edit
-    if (this.propEditor) this.propEditor.show(true, this.currentEditEnt)
+//    if (this.propEditor) this.propEditor.show(true, this.currentEditEnt)
     console.log(`into ${Mode[this.mode]} mode`, this.currentEditEnt)
-
+    
     kb.setContext(this.mode)
     this.setCursor(Cursor.crosshair)
     this.currentEditEnt.toEdit()
@@ -373,13 +389,13 @@ export class EditMode {
 
     this.getHandler().setInputAction(event => {
       this.nextMode(Act.Finish)
+      this.setCurrentEditEnt(undefined)
     }, Cesium.ScreenSpaceEventType.RIGHT_CLICK)
   }
 
   finishCurrentEdit() {
     if (this.currentEditEnt) {
       this.currentEditEnt.finish()
-
     }
   }
 
@@ -396,7 +412,7 @@ export class EditMode {
     if (this.currentEditEnt) {
       let graph = this.currentEditEnt
       this.currentEditEnt.delete()
-      this.currentEditEnt = undefined
+      this.setCurrentEditEnt(undefined)
       this.nextMode(Act.Finish)
       return graph
     } else {

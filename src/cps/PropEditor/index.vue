@@ -43,17 +43,13 @@ function getValue(name) {
 function show(isShow0, graph0: Graph) {
   isShow.value = isShow0;
   if (isShow0) {
-    graph.value = graph0;
-  }
-  if (isShow0) {
-    // propDefs.value = {}
     // // 这里如果不将props置空，直接更新props
     // // 会导致vue复用之前的组件，导致编辑界面的组件不更新
     // // 所以用timeout异步更新props
-    // setTimeout(() => {
-    //   console.log("for color: ", props)
-    //   prop.value = props
-    // }, 1)
+    graph.value = {};
+    setTimeout(() => {
+      graph.value = graph0
+    }, 10)
   }
 }
 

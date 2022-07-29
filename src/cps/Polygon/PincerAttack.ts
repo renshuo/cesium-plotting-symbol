@@ -16,7 +16,11 @@ export default class PincerAttack extends Polygon {
   constructor(p: {}, viewer: Cesium.Viewer, layer: Cesium.Entity){
     super({
       type: '钳击',
+      arrowWidth: 10,
       ...p}, viewer, layer)
+    this.propDefs.push(
+      { name: 'arrowWidth', title: '箭头宽度', type: 'number', editable: true, step: 1, min: 1, max: 100 },
+    )
   }
   options: {units: turf.helpers.Units | undefined } = { units:  'kilometers' }
 
@@ -87,10 +91,10 @@ export default class PincerAttack extends Polygon {
         let ctlLeft2 = turfPoints[6]
         let ctlRight2 = turfPoints.length == this.maxPointNum ? turfPoints[7] : undefined
         let ebear1 = turf.bearing(ctlRight, arrow1p)
-        let endArrow1 = this.createEndArrow(arrow1p, ebear1, 20)
+        let endArrow1 = this.createEndArrow(arrow1p, ebear1, this.props.arrowWidth)
         let rightEdge = this.calcEdge2([baseRight, ctlRight, endArrow1[0]])
         let ebear2 = turf.bearing(ctlLeft, arrow2p)
-        let endArrow2 = this.createEndArrow(arrow2p, ebear2, 20)
+        let endArrow2 = this.createEndArrow(arrow2p, ebear2, this.props.arrowWidth)
         let leftEdge = this.calcEdge2([baseLeft, ctlLeft, endArrow2[4]]).reverse()
         let midEdge = this.calcMid([endArrow1[4], ctlRight2, ctlLeft2, endArrow2[0]])
         ps = [
@@ -106,10 +110,10 @@ export default class PincerAttack extends Polygon {
         let arrow2p = turfPoints[4]
         let ctlLeft = turfPoints[5]
         let ebear1 = turf.bearing(ctlRight, arrow1p)
-        let endArrow1 = this.createEndArrow(arrow1p, ebear1, 20)
+        let endArrow1 = this.createEndArrow(arrow1p, ebear1, this.props.arrowWidth)
         let rightEdge = this.calcEdge2([baseRight, ctlRight, endArrow1[0]])
         let ebear2 = turf.bearing(ctlLeft, arrow2p)
-        let endArrow2 = this.createEndArrow(arrow2p, ebear2, 20)
+        let endArrow2 = this.createEndArrow(arrow2p, ebear2, this.props.arrowWidth)
         let leftEdge = this.calcEdge2([baseLeft, ctlLeft, endArrow2[4]]).reverse()
         ps = [
           ...rightEdge, ...endArrow1,

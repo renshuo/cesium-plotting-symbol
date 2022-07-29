@@ -10,7 +10,7 @@ type Pot = turf.Feature<turf.Point, turf.Properties>
 export default class PincerAttack extends Polygon {
 
   minPointNum = 2
-  maxPointNum = 5
+  maxPointNum = 4
 
   constructor(p: {}, viewer: Cesium.Viewer, layer: Cesium.Entity){
     super({
@@ -33,10 +33,10 @@ export default class PincerAttack extends Polygon {
     ]
   }
 
-  private calcEdge(p0: Pot, p1: Pot, p2: Pot, width: number) {
+  private calcEdge(p0: Pot, p1: Pot, p2: Pot, width: number, ebear: number) {
     let midPoint = turf.midpoint(p1, p2)
-    let dis = turf.distance(p0, p1, {units: 'kilometers'}) / 10
-    let tp = turf.destination(midPoint, dis, width>0 ? 90 : -90, {units: 'kilometers'})
+    let dis = turf.distance(p0, p1, {units: 'kilometers'}) / 5
+    let tp = turf.destination(midPoint, dis, width>0 ? 90+ebear : -90+ ebear, {units: 'kilometers'})
 
     let lonlat = [p1, tp, p2].map(p => {
       let c = turf.getCoord(p);
@@ -67,7 +67,7 @@ export default class PincerAttack extends Polygon {
       if (turfPoints.length == 3) {
         let ebear = turf.bearing(turfPoints[1], turfPoints[2])
         let endArrow = this.createEndArrow(turfPoints[2], ebear, 20)
-        let rightEdge = this.calcEdge(turfPoints[0], turfPoints[1], endArrow[0], 20)
+        let rightEdge = this.calcEdge(turfPoints[0], turfPoints[1], endArrow[0], 20, ebear)
         ps = [
           turfPoints[0], ...rightEdge, ...endArrow,
           turfPoints[0],
@@ -75,23 +75,12 @@ export default class PincerAttack extends Polygon {
       } else if (turfPoints.length == 4) {
         let ebear1 = turf.bearing(turfPoints[1], turfPoints[2])
         let endArrow1 = this.createEndArrow(turfPoints[2], ebear1, 20)
-        let rightEdge = this.calcEdge(turfPoints[0], turfPoints[1], endArrow1[0], 20)
+        let rightEdge = this.calcEdge(turfPoints[0], turfPoints[1], endArrow1[0], 40, ebear1)
         let ebear2 = turf.bearing(turfPoints[0], turfPoints[3])
         let endArrow2 = this.createEndArrow(turfPoints[3], ebear2, 20)
-        let leftEdge = this.calcEdge(turfPoints[1], turfPoints[0],  endArrow2[4], -20).reverse()
-        ps = [
-          ...rightEdge, ...endArrow1,
-          ...endArrow2, ...leftEdge
-        ]
-      } else if (turfPoints.length == 5) {
-        let ebear1 = turf.bearing(turfPoints[1], turfPoints[2])
-        let endArrow1 = this.createEndArrow(turfPoints[2], ebear1, 20)
-        let rightEdge = this.calcEdge(turfPoints[0], turfPoints[1], endArrow1[0], 20)
-        let ebear2 = turf.bearing(turfPoints[0], turfPoints[3])
-        let endArrow2 = this.createEndArrow(turfPoints[3], ebear2, 20)
-        let leftEdge = this.calcEdge(turfPoints[1], turfPoints[0], endArrow2[4], -20).reverse()
-
-        let midEdge = this.calcMid([endArrow1[4], turfPoints[1], turfPoints[4], turfPoints[0], endArrow2[0]])
+        let leftEdge = this.calcEdge(turfPoints[1], turfPoints[0],  endArrow2[4], -40, ebear2).reverse()
+        let midPoint = turf.midpoint(turfPoints[0], turfPoints[1])
+        let midEdge = this.calcMid([endArrow1[4], turfPoints[1], midPoint, turfPoints[0], endArrow2[0]])
         ps = [
           ...rightEdge, ...endArrow1,
           ...midEdge,

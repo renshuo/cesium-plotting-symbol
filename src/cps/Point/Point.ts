@@ -30,7 +30,7 @@ export default class Point extends Graph {
     })
     ent.position = new Cesium.CallbackProperty((time, result) => {
       return this.calcuteShape(this.ctls.concat(window.cursor), time)
-    }, false)
+    }, true)
   }
 
   calcuteShape (points, time) {
@@ -45,7 +45,7 @@ export default class Point extends Graph {
     let ent = this.shapes[0]
     ent.position = new Cesium.CallbackProperty((time, result) => {
       return this.calcuteShape(this.ctls, time)
-    }, false)
+    }, true)
   }
 
   finish () {

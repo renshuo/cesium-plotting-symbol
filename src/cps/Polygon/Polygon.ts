@@ -38,7 +38,7 @@ export default class Polygon extends Graph {
       color: new Cesium.CallbackProperty( () => {
         let c = Cesium.Color.fromCssColorString(this.props.color).withAlpha(this.props.alpha)
         return this.highLighted ? c.brighten(0.6, new Cesium.Color()) : c
-      }, false)
+      }, true)
     })
     /* if (material !== undefined && material !== '' ) {
      *   material = new Cesium.ImageMaterialProperty({
@@ -57,22 +57,22 @@ export default class Polygon extends Graph {
      * } */
 
     Object.assign(ent.polygon, {
-      fill: new Cesium.CallbackProperty((time, result) => this.props.fill, false),
+      fill: new Cesium.CallbackProperty((time, result) => this.props.fill, true),
       material: material,
       stRotation: new Cesium.CallbackProperty((time, result) => {
         return this.props.rotation*3.14/180 // convert degree to radian
       }, false),
-      outline: new Cesium.CallbackProperty((time, result) => this.props.outline, false),
+      outline: new Cesium.CallbackProperty((time, result) => this.props.outline, true),
       outlineColor: new Cesium.CallbackProperty(() => {
         let c = Cesium.Color.fromCssColorString(this.props.outlineColor).withAlpha(this.props.alpha)
         return ent.highLighted ? c.brighten(0.6, new Cesium.Color()) : c
-      }, false),
+      }, true),
       height: 0,
       outlineWidth: new Cesium.CallbackProperty((time, result) => this.props.outlineWidth, true),
       hierarchy: new Cesium.CallbackProperty((time, result) => {
         let ps = this.calcuteShape(this.ctls.concat(window.cursor), time)
         return new Cesium.PolygonHierarchy(ps, [])
-      }, false)
+      }, true)
     })
   }
 
@@ -88,7 +88,7 @@ export default class Polygon extends Graph {
     let shp = this.shapes[0]
     shp.polygon.hierarchy = new Cesium.CallbackProperty((time, result) => {
       return new Cesium.PolygonHierarchy(this.calcuteShape(this.ctls, time), [])
-    }, false)
+    }, true)
   }
 
   finish () {

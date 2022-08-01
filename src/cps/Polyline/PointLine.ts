@@ -31,6 +31,6 @@ export default class PointLine extends Polyline {
     })
     p.position = new Cesium.CallbackProperty((time, result) => {
       return ctl.position.getValue(Cesium.JulianDate.fromDate(new Date()))
-    }, false)
+    }, true)
   }
 }

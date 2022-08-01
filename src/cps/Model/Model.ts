@@ -1,18 +1,13 @@
 import Graph from '../Graph'
 import * as Cesium from 'cesium';
 import * as mu from '../mapUtil'
-import type Properties from '../Graph'
-
-type ModelProperties = Properties & {
-  uri: string
-}
 
 export default class Model extends Graph {
 
   maxPointNum:number = 1
   minPointNum:number = 1
 
-  constructor (p: ModelProperties, viewer: Cesium.Viewer, layer: Cesium.Entity) {
+  constructor (p: {}, viewer: Cesium.Viewer, layer: Cesium.Entity) {
     super({
       type: '3D模型',
       scale: 30,
@@ -36,29 +31,26 @@ export default class Model extends Graph {
         return this.highLighted ? c.brighten(0.6, new Cesium.Color()) : c
       }, true)
     })
-    ent.position = new Cesium.CallbackProperty((time, result) => {
-      return this.calcuteShape(this.ctls.concat(window.cursor), time)
-    }, false)
   }
 
-  calcuteShape (points, time) {
-    if (points.length < this.minPointNum) {
+  calcuteShape(ctls: Array<Cesium.Entity>, time: Cesium.JulianDate) {
+    if (ctls.length < this.minPointNum) {
       return []
     }
-    return points[0].position.getValue(time)
+    return ctls[0].position.getValue(time)
   }
 
   toEdit () {
     super.toEdit()
     this.shapes[0].position = new Cesium.CallbackProperty((time, result) => {
       return this.calcuteShape(this.ctls, time)
-    }, false)
+    }, true)
   }
 
   finish () {
     if (this.shapes.length>0) {
       super.finish()
-      this.shapes[0].position = this.calcuteShape(this.ctls, mu.julianDate())
+      this.shapes[0].position = this.calcuteShape(this.ctls, mu.julianDate(new Date()))
     }
   }
 }

@@ -4,14 +4,13 @@ import Polygon from './Polygon'
 import _ from 'lodash'
 import * as Cesium from "cesium"
 import { Bezier } from 'bezier-js';
-import { baseParse } from '@vue/compiler-core'
 
 type Pot = turf.Feature<turf.Point, turf.Properties>
 
 export default class PincerAttack extends Polygon {
 
   minPointNum = 2
-  maxPointNum = 8
+  maxPointNum = 9
 
   constructor(p: {}, viewer: Cesium.Viewer, layer: Cesium.Entity){
     super({
@@ -81,22 +80,21 @@ export default class PincerAttack extends Polygon {
         return turf.point(longLat)
       })
       let ps = []
-      if (turfPoints.length >= this.maxPointNum-1) {
+      if (turfPoints.length >= 7) {
         let baseLeft = turfPoints[0]
         let baseRight = turfPoints[1]
-        let ctlRight = turfPoints[2]
-        let arrow1p = turfPoints[3]
+        let arrow1p = turfPoints[2]
+        let ctlRight = turfPoints[3]
         let arrow2p = turfPoints[4]
         let ctlLeft = turfPoints[5]
-        let ctlLeft2 = turfPoints[6]
-        let ctlRight2 = turfPoints.length == this.maxPointNum ? turfPoints[7] : undefined
+        let mid = turfPoints.slice(6, turfPoints.length)
         let ebear1 = turf.bearing(ctlRight, arrow1p)
         let endArrow1 = this.createEndArrow(arrow1p, ebear1, this.props.arrowWidth)
         let rightEdge = this.calcEdge2([baseRight, ctlRight, endArrow1[0]])
         let ebear2 = turf.bearing(ctlLeft, arrow2p)
         let endArrow2 = this.createEndArrow(arrow2p, ebear2, this.props.arrowWidth)
         let leftEdge = this.calcEdge2([baseLeft, ctlLeft, endArrow2[4]]).reverse()
-        let midEdge = this.calcMid([endArrow1[4], ctlRight2, ctlLeft2, endArrow2[0]])
+        let midEdge = this.calcMid([endArrow1[4]].concat(mid).concat(endArrow2[0]))
         ps = [
           ...rightEdge, ...endArrow1,
           ...midEdge,
@@ -105,8 +103,8 @@ export default class PincerAttack extends Polygon {
       } else if (turfPoints.length == 6) {
         let baseLeft = turfPoints[0]
         let baseRight = turfPoints[1]
-        let ctlRight = turfPoints[2]
-        let arrow1p = turfPoints[3]
+        let arrow1p = turfPoints[2]
+        let ctlRight = turfPoints[3]
         let arrow2p = turfPoints[4]
         let ctlLeft = turfPoints[5]
         let ebear1 = turf.bearing(ctlRight, arrow1p)
@@ -122,8 +120,8 @@ export default class PincerAttack extends Polygon {
       } else if (turfPoints.length >= 4) {
         let baseLeft = turfPoints[0]
         let baseRight = turfPoints[1]
-        let ctlRight = turfPoints[2]
-        let arrow1p = turfPoints[3]
+        let arrow1p = turfPoints[2]
+        let ctlRight = turfPoints[3]
         let ebear1 = turf.bearing(ctlRight, arrow1p)
         let endArrow1 = this.createEndArrow(arrow1p, ebear1, 20)
         let rightEdge = this.calcEdge2([baseRight, ctlRight, endArrow1[0]])
@@ -133,5 +131,71 @@ export default class PincerAttack extends Polygon {
       }
       return ps.map(tgt => mu.lonlat2Cartesian(turf.getCoord(tgt)))
     }
+  }
+
+
+  addTempLine(positions: Cesium.CallbackProperty): Cesium.Entity {
+    let ent = new Cesium.Entity({
+      polyline: {
+        width: 1,
+        material: Cesium.Color.BLUE.withAlpha(0.7),
+        positions: positions
+      }
+    })
+    this.tempShapes.push(this.entities.add(ent))
+    return ent
+  }
+
+  getLinePoints(isWithCursor: boolean) {
+    let ctlss = []
+    if (isWithCursor) {
+      ctlss = this.ctls.concat(window.cursor)
+    } else {
+      ctlss = this.ctls
+    }
+    return ctlss
+  }
+
+  initTempShape(isWithCursor: boolean): void {
+    //add bottom line
+    this.addTempLine(new Cesium.CallbackProperty((time, result) => {
+      let ctlss = this.getLinePoints(isWithCursor)
+      if (ctlss.length >= 2 ) {
+        return [ctlss[0], ctlss[1]].map(ent => ent.position?.getValue(time))
+      } else {
+        return []
+      }
+    }, false))
+
+    // right arrow
+    this.addTempLine(new Cesium.CallbackProperty((time, result) => {
+      let ctlss = this.getLinePoints(isWithCursor)
+      if (ctlss.length >= 4) {
+        return [ctlss[2], ctlss[3]].map(ent => ent.position?.getValue(time))
+      } else {
+        return []
+      }
+    }, false))
+
+    // left arrow
+    this.addTempLine(new Cesium.CallbackProperty((time, result) => {
+      let ctlss = this.getLinePoints(isWithCursor)
+      if (ctlss.length >= 6) {
+        return [ctlss[5], ctlss[4]].map(ent => ent.position?.getValue(time))
+      } else {
+        return []
+      }
+    }, false))
+
+    // inner sp line
+    this.addTempLine(new Cesium.CallbackProperty((time, result) => {
+      let ctlss = this.getLinePoints(isWithCursor)
+      if (ctlss.length >= 7) {
+        let mid = ctlss.slice(6, ctlss.length)
+        return [ctlss[2]].concat(mid).concat(ctlss[4]).map(ent => ent.position?.getValue(time))
+      } else {
+        return []
+      }
+    }, false))
   }
 }

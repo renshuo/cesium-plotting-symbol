@@ -1,6 +1,6 @@
 import * as mu from '../mapUtil'
 import * as turf from '@turf/turf'
-import {Viewer, Entity, JulianDate} from 'cesium';
+import {Viewer, Entity, JulianDate, Color, CallbackProperty} from 'cesium';
 import Polygon from './Polygon';
 
 export default class CircleArcArea extends Polygon {
@@ -8,7 +8,7 @@ export default class CircleArcArea extends Polygon {
   minPointNum = 3
 
   constructor(p: {}, viewer: Viewer, layer: Entity){
-    super({type: '圆弧面', ...p}, viewer, layer)
+    super({type: '圆弧面', ...p}, viewer, layer, true)
   }
 
   calcuteShape (points: Array<Entity>, time: JulianDate) {
@@ -30,4 +30,30 @@ export default class CircleArcArea extends Polygon {
     let area = linestr.geometry.coordinates
     return area.map((p) => mu.lonlat2Cartesian(p))
   }
+
+
+  initTempShape(isWithCursor: boolean): void {
+    this.tempShapes.push(this.entities.add(new Entity({
+      polyline: {
+        width: 1,
+        material: Color.BLUE.withAlpha(0.7),
+        positions: new CallbackProperty((time, result) => {
+          let ctlss = []
+          if (isWithCursor) {
+            ctlss = this.ctls.concat(window.cursor)
+          } else {
+            ctlss = this.ctls
+          }
+          if (ctlss.length == 2) {
+            return [ctlss[1], ctlss[0]].map(ent => ent.position?.getValue(time))
+          } else if (ctlss.length == 3){
+            return [ctlss[1], ctlss[0], ctlss[2]].map(ent => ent.position?.getValue(time))
+          }else {
+            return []
+          }
+        }, false)
+      }
+    })))
+  }
+
 }

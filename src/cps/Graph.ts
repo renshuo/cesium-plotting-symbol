@@ -113,7 +113,7 @@ export default class Graph {
     throw 'should overide by sub class.'
   }
 
-  initTempShape(isWithCursor: boolean) {
+  initTempShape(isWithCursor: boolean): void {
     if (this.isShowTempLine) {
       let ent = this.entities.add(new Cesium.Entity({
         polyline: {

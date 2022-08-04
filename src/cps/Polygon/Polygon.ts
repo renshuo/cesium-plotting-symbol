@@ -6,7 +6,7 @@ export default class Polygon extends Graph {
 
   minPointNum = 3
 
-  constructor (prop, viewer, layer) {
+  constructor(prop: {}, viewer: Cesium.Viewer, layer: Cesium.Entity, isShowTempLine: boolean = false) {
     super({
       rotation: 0,
       material: '',
@@ -15,7 +15,7 @@ export default class Polygon extends Graph {
       outlineColor: '#aaaaaa',
       outlineWidth: 2,
       ...prop
-    }, viewer, layer)
+    }, viewer, layer, isShowTempLine)
     this.propDefs.push(
       { name: 'rotation', title: '旋转', type: 'number', editable: true, min: -360, max: 360, step: 1 },
       { name: 'material', title: '贴图', type: 'string', editable: false },

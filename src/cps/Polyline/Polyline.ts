@@ -6,14 +6,15 @@ import * as mu from '../mapUtil'
 export default class Polyline extends Graph {
 
   minPointNum = 2
+  isShowTempLine = false
 
-  constructor (prop: {}, viewer: Cesium.Viewer, layer: Cesium.Entity) {
+  constructor(prop: {}, viewer: Cesium.Viewer, layer: Cesium.Entity, isShowTempLine: boolean = false) {
     super({
       type: '折线',
       width: 1,
       fill: true,
       ...prop
-    }, viewer, layer)
+    }, viewer, layer, isShowTempLine)
     // console.log('propdef', super.propDefs)
     this.propDefs.push(
       { name: 'width', title: '线宽', type: 'number', editable: true, min: 1, max: 256 },
@@ -40,9 +41,6 @@ export default class Polyline extends Graph {
         return this.calcuteShape(this.ctls.concat(window.cursor), time)
       }, false)
     })
-  }
-
-  initTempShape(): void {
   }
 
   calcuteShape (ctls: Array<Cesium.Entity>, time: Cesium.JulianDate) {

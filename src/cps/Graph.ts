@@ -33,6 +33,7 @@ export default class Graph {
    */
   maxPointNum: number = Infinity
   minPointNum: number = 1
+  isShowTempLine: boolean = false
 
   graph: Cesium.Entity
   ctls: Array<Cesium.Entity> = []
@@ -63,7 +64,7 @@ export default class Graph {
     ctls: []
   }
 
-  constructor(props: {}, viewer: Cesium.Viewer, layer: Cesium.Entity) {
+  constructor(props: {}, viewer: Cesium.Viewer, layer: Cesium.Entity, isShowTempLine: boolean = false) {
     if (!viewer) {
       throw 'get null viewer.'
     }
@@ -77,7 +78,8 @@ export default class Graph {
     this.initRootEntity(layer)
     // this.initProps(properties)
     this.initShape()
-    this.initTempShape()
+    this.isShowTempLine = isShowTempLine
+    this.initTempShape(true)
     this.initCtls(props.ctls)
   }
 
@@ -111,8 +113,25 @@ export default class Graph {
     throw 'should overide by sub class.'
   }
 
-  initTempShape() {
-    throw 'should implement by sub class'
+  initTempShape(isWithCursor: boolean) {
+    if (this.isShowTempLine) {
+      let ent = this.entities.add(new Cesium.Entity({
+        polyline: {
+          width: 1,
+          material: Cesium.Color.BLUE.withAlpha(0.7),
+          positions: new Cesium.CallbackProperty((time, result) => {
+            if (isWithCursor) {
+              return this.ctls.concat(window.cursor).map(ent => ent.position?.getValue(time))
+            } else {
+              return this.ctls.map(ent => ent.position?.getValue(time))
+            }
+          }, false)
+        }
+      }))
+      this.tempShapes.push(ent)
+    } else {
+      console.log(" not show temp line: ", this.isShowTempLine)
+    }
   }
 
   /**
@@ -232,12 +251,16 @@ export default class Graph {
   toEdit () {
     this.highLighted = false
     this.ctls.map( (ctl) => {ctl.show = true})
+    this.initTempShape(false)
   }
+
   /**
    * 图形绘制结束后调用
    */
   finish () {
     this.ctls.map((ctl) => { ctl.show = false })
+    this.tempShapes.map(ent => { this.entities.remove(ent) })
+    this.tempShapes = []
   }
 
   /* ############# delete ############# */

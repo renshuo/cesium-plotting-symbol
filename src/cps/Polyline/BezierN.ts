@@ -6,11 +6,12 @@ import {Entity, Viewer, JulianDate, Color, CallbackProperty} from 'cesium';
 
 export default class BezierN extends Polyline {
 
+
   constructor(p: {}, viewer: Viewer, layer: Entity) {
     super({
       type: 'n阶bezier曲线',
       ...p
-    }, viewer, layer)
+    }, viewer, layer, true)
   }
 
   calcuteShape (points: Array<Entity>, time: JulianDate) {
@@ -27,36 +28,4 @@ export default class BezierN extends Polyline {
     }
   }
 
-  initTempShape(): void {
-    let ent = this.entities.add(new Entity({polyline: {
-      width: 1,
-      material: Color.BLUE.withAlpha(0.7),
-      positions: new CallbackProperty((time, result) => {
-        return this.ctls.concat(window.cursor).map(ent => ent.position?.getValue(time))
-      }, false)
-    }}))
-    ent.graph = this
-    this.tempShapes.push(ent)
-  }
-
-  toEdit() {
-    super.toEdit()
-    let ent = this.entities.add(new Entity({
-      polyline: {
-        width: 1,
-        material: Color.BLUE.withAlpha(0.7),
-        positions: new CallbackProperty((time, result) => {
-          return this.ctls.map(ent => ent.position?.getValue(time))
-        }, false)
-      }
-    }))
-    ent.graph = this
-    this.tempShapes.push(ent)
-  }
-
-  finish () {
-    super.finish()
-    this.tempShapes.map( ent => {this.entities.remove(ent)} )
-    this.tempShapes = []
-  }
 }

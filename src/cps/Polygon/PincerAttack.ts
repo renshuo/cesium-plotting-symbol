@@ -16,7 +16,7 @@ export default class PincerAttack extends Polygon {
     super({
       type: '钳击',
       arrowWidth: 10,
-      ...p}, viewer, layer)
+      ...p}, viewer, layer, true)
     this.propDefs.push(
       { name: 'arrowWidth', title: '箭头宽度', type: 'number', editable: true, step: 1, min: 1, max: 100 },
     )
@@ -133,28 +133,6 @@ export default class PincerAttack extends Polygon {
     }
   }
 
-
-  addTempLine(positions: Cesium.CallbackProperty): Cesium.Entity {
-    let ent = new Cesium.Entity({
-      polyline: {
-        width: 1,
-        material: Cesium.Color.BLUE.withAlpha(0.7),
-        positions: positions
-      }
-    })
-    this.tempShapes.push(this.entities.add(ent))
-    return ent
-  }
-
-  getLinePoints(isWithCursor: boolean) {
-    let ctlss = []
-    if (isWithCursor) {
-      ctlss = this.ctls.concat(window.cursor)
-    } else {
-      ctlss = this.ctls
-    }
-    return ctlss
-  }
 
   initTempShape(isWithCursor: boolean): void {
     //add bottom line

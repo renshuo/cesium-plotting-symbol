@@ -8,7 +8,7 @@ export default class Circle extends Polygon {
   minPointNum = 2
   
   constructor(p, viewer: Viewer, layer: Entity){
-    super({type: '圆', ...p}, viewer, layer)
+    super({type: '圆', ...p}, viewer, layer, true)
   }
 
   calcuteShape (points, time) {

@@ -31,29 +31,17 @@ export default class CircleArcArea extends Polygon {
     return area.map((p) => mu.lonlat2Cartesian(p))
   }
 
-
   initTempShape(isWithCursor: boolean): void {
-    this.tempShapes.push(this.entities.add(new Entity({
-      polyline: {
-        width: 1,
-        material: Color.BLUE.withAlpha(0.7),
-        positions: new CallbackProperty((time, result) => {
-          let ctlss = []
-          if (isWithCursor) {
-            ctlss = this.ctls.concat(window.cursor)
-          } else {
-            ctlss = this.ctls
-          }
-          if (ctlss.length == 2) {
-            return [ctlss[1], ctlss[0]].map(ent => ent.position?.getValue(time))
-          } else if (ctlss.length == 3){
-            return [ctlss[1], ctlss[0], ctlss[2]].map(ent => ent.position?.getValue(time))
-          }else {
-            return []
-          }
-        }, false)
+    this.addTempLine(new CallbackProperty((time, result) => {
+      let ctlss = this.getLinePoints(isWithCursor)
+      if (ctlss.length == 2) {
+        return [ctlss[1], ctlss[0]].map(ent => ent.position?.getValue(time))
+      } else if (ctlss.length == 3){
+        return [ctlss[1], ctlss[0], ctlss[2]].map(ent => ent.position?.getValue(time))
+      }else {
+        return []
       }
-    })))
+    }, false))
   }
 
 }

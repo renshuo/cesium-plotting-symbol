@@ -1,14 +1,14 @@
 import Polyline from './Polyline'
 import * as mu from '../mapUtil'
 import * as turf from '@turf/turf'
-import {Viewer, Entity, JulianDate} from 'cesium';
+import {Viewer, Entity, JulianDate, CallbackProperty} from 'cesium';
 
 export default class CircleArc extends Polyline {
   maxPointNum = 3
   minPointNum = 3
 
   constructor(p: {}, viewer: Viewer, layer: Entity){
-    super({type: '圆弧线', ...p}, viewer, layer)
+    super({type: '圆弧线', ...p}, viewer, layer, true)
   }
 
   calcuteShape (points: Array<Entity>, time: JulianDate) {
@@ -29,5 +29,18 @@ export default class CircleArc extends Polyline {
     let linestr = turf.lineArc(ctls[0], radius, b1, b2)
     let geometry = linestr.geometry.coordinates
     return geometry.map((p) => mu.lonlat2Cartesian(p))
+  }
+
+  initTempShape(isWithCursor: boolean): void {
+    this.addTempLine(new CallbackProperty((time, result) => {
+      let ctlss = this.getLinePoints(isWithCursor)
+      if (ctlss.length == 2) {
+        return [ctlss[1], ctlss[0]].map(ent => ent.position?.getValue(time))
+      } else if (ctlss.length == 3) {
+        return [ctlss[1], ctlss[0], ctlss[2]].map(ent => ent.position?.getValue(time))
+      } else {
+        return []
+      }
+    }, false))
   }
 }

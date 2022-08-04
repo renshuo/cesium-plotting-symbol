@@ -79,7 +79,9 @@ export default class Graph {
     // this.initProps(properties)
     this.initShape()
     this.isShowTempLine = isShowTempLine
-    this.initTempShape(true)
+    if (isShowTempLine) {
+      this.initTempShape(true)
+    }
     this.initCtls(props.ctls)
   }
 
@@ -113,25 +115,33 @@ export default class Graph {
     throw 'should overide by sub class.'
   }
 
-  initTempShape(isWithCursor: boolean): void {
-    if (this.isShowTempLine) {
-      let ent = this.entities.add(new Cesium.Entity({
-        polyline: {
-          width: 1,
-          material: Cesium.Color.BLUE.withAlpha(0.7),
-          positions: new Cesium.CallbackProperty((time, result) => {
-            if (isWithCursor) {
-              return this.ctls.concat(window.cursor).map(ent => ent.position?.getValue(time))
-            } else {
-              return this.ctls.map(ent => ent.position?.getValue(time))
-            }
-          }, false)
-        }
-      }))
-      this.tempShapes.push(ent)
+
+  addTempLine(positions: Cesium.CallbackProperty): Cesium.Entity {
+    let ent = new Cesium.Entity({
+      polyline: {
+        width: 1,
+        material: Cesium.Color.BLUE.withAlpha(0.7),
+        positions: positions
+      }
+    })
+    this.tempShapes.push(this.entities.add(ent))
+    return ent
+  }
+
+  getLinePoints(isWithCursor: boolean) {
+    let ctlss = []
+    if (isWithCursor) {
+      ctlss = this.ctls.concat(window.cursor)
     } else {
-      console.log(" not show temp line: ", this.isShowTempLine)
+      ctlss = this.ctls
     }
+    return ctlss
+  }
+
+  initTempShape(isWithCursor: boolean): void {
+    this.addTempLine(new Cesium.CallbackProperty((time, result) => {
+      return this.getLinePoints(isWithCursor).map(ent => ent.position?.getValue(time))
+    }, false))
   }
 
   /**
@@ -251,7 +261,9 @@ export default class Graph {
   toEdit () {
     this.highLighted = false
     this.ctls.map( (ctl) => {ctl.show = true})
-    this.initTempShape(false)
+    if (this.isShowTempLine) {
+      this.initTempShape(false)
+    }
   }
 
   /**

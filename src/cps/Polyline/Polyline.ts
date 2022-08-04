@@ -6,7 +6,6 @@ import * as mu from '../mapUtil'
 export default class Polyline extends Graph {
 
   minPointNum = 2
-  isShowTempLine = false
 
   constructor(prop: {}, viewer: Cesium.Viewer, layer: Cesium.Entity, isShowTempLine: boolean = false) {
     super({

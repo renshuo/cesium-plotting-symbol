@@ -2,7 +2,7 @@ import Polyline from './Polyline.js'
 import * as mu from '../mapUtil';
 import {Bezier} from 'bezier-js';
 import _ from 'lodash'
-import {Entity, Viewer, JulianDate} from 'cesium';
+import {Entity, Viewer, JulianDate, Color, CallbackProperty} from 'cesium';
 
 export default class BezierN extends Polyline {
 
@@ -25,5 +25,38 @@ export default class BezierN extends Polyline {
       let curvePoints = new Bezier(lonlat).getLUT()
       return curvePoints.map((p) => mu.lonlat2Cartesian([p.x, p.y]))
     }
+  }
+
+  initTempShape(): void {
+    let ent = this.entities.add(new Entity({polyline: {
+      width: 1,
+      material: Color.BLUE.withAlpha(0.7),
+      positions: new CallbackProperty((time, result) => {
+        return this.ctls.concat(window.cursor).map(ent => ent.position?.getValue(time))
+      }, false)
+    }}))
+    ent.graph = this
+    this.tempShapes.push(ent)
+  }
+
+  toEdit() {
+    super.toEdit()
+    let ent = this.entities.add(new Entity({
+      polyline: {
+        width: 1,
+        material: Color.BLUE.withAlpha(0.7),
+        positions: new CallbackProperty((time, result) => {
+          return this.ctls.map(ent => ent.position?.getValue(time))
+        }, false)
+      }
+    }))
+    ent.graph = this
+    this.tempShapes.push(ent)
+  }
+
+  finish () {
+    super.finish()
+    this.tempShapes.map( ent => {this.entities.remove(ent)} )
+    this.tempShapes = []
   }
 }

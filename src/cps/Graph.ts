@@ -4,22 +4,22 @@ import _ from 'lodash';
 
 
 type Pos = {
-  lon: number,
-  lat: number,
-  hei: number
+  lon: number;
+  lat: number;
+  hei: number;
 }
 
 type PropDef = {
-  name: string,
-  title: string,
-  type: string,
-  editable: boolean,
+  name: string;
+  title: string;
+  type: string;
+  editable: boolean;
 }
 
 type PropDefNum = PropDef & {
-  min: number,
-  max: number,
-  step: number
+  min: number;
+  max: number;
+  step: number;
 }
 
 
@@ -37,6 +37,8 @@ export default class Graph {
   graph: Cesium.Entity
   ctls: Array<Cesium.Entity> = []
   shapes: Array<Cesium.Entity> = []
+  ctlpos: Array<Pos> = []
+  tempShapes: Array<Cesium.Entity> = []
 
   highLighted: boolean = false
 
@@ -75,6 +77,7 @@ export default class Graph {
     this.initRootEntity(layer)
     // this.initProps(properties)
     this.initShape()
+    this.initTempShape()
     this.initCtls(props.ctls)
   }
 
@@ -83,15 +86,18 @@ export default class Graph {
       ctlsPos.forEach((pos: Pos | Array<number>) => {
         if (pos instanceof Array) {
           if (pos.length === 2) {
-            let p = {lon: pos[0], lat: pos[1], hei: 0}
+            let p: Pos = { lon: pos[0], lat: pos[1], hei: 0 }
+            this.ctlpos.push(p)
             this.addCtlPoint(p)
           } else if (pos.length === 3) {
-            let p = {lon: pos[0], lat: pos[1], hei: pos[2]}
+            let p: Pos = {lon: pos[0], lat: pos[1], hei: pos[2]}
+            this.ctlpos.push(p)
             this.addCtlPoint(p)
           } else {
             console.log('invalid pos array length: ', pos)
           }
         } else {
+          this.ctlpos.push(pos)
           this.addCtlPoint(pos)
         }
       })
@@ -105,36 +111,38 @@ export default class Graph {
     throw 'should overide by sub class.'
   }
 
+  initTempShape() {
+    throw 'should implement by sub class'
+  }
+
   /**
    * 返回当前Graph的属性，以及控制点数据
    */
   getProperties() {
     let p = {
-      obj: this.constructor.name
+      obj: this.constructor.name,
+      ctls: this.ctlpos
     }
     Object.assign(p, this.props)
-    Object.assign(p, {
-      ctls: this.getCtlPositions().map((c3: Cesium.Cartesian3) => {
-        let lonlat = mu.cartesian2lonlat(c3)
-        return { lon: lonlat[0], lat: lonlat[1] }
-      })
-    })
     return p
   }
 
   /**
+   * 返回当前graph的所有控制点坐标，Pos类型： lon, lat, hei
+   */
+  getCtlPositionsPos (): Array<Pos> {
+    return this.ctlpos
+  }
+  /**
    * 返回当前graph的所有控制点坐标（cartesian3）
    */
   getCtlPositions (): Array<Cesium.Cartesian3> {
-    let dt = Cesium.JulianDate.fromDate(new Date())
-    return this.ctls.map( (ctl: Cesium.Entity) => {
-      let p = ctl.position?.getValue(dt)
-      return p == undefined ? new Cesium.Cartesian3(0,0,0) : p
-    })
+    return this.ctlpos.map(pos => mu.lonlatheiObj2Cartesian(pos) )
   }
 
   addCtl (cartesian3: Cesium.Cartesian3) {
     let pos = mu.cartesian2lonlat(cartesian3)
+    this.ctlpos.push({lon: pos[0], lat: pos[1], hei: 0})
     let ctlPoint: Cesium.Entity = this.entities.add({
       id: this.graph.id + '_ctlpoint_' + Graph.seq++,
       position: cartesian3,
@@ -169,13 +177,8 @@ export default class Graph {
     }
     ctlPoint.graph = this
     console.log('added a ctl: ', ctlPoint)
-    this.handleNewCtl(ctlPoint)
     this.ctls.push(ctlPoint)
     return ctlPoint
-  }
-
-  handleNewCtl(ctl: Cesium.Entity) {
-    console.log("handle new ctl point: ", ctl)
   }
 
   addCtlPoint (pos: Pos) {
@@ -206,7 +209,7 @@ export default class Graph {
    * 比如rectange只需要2个点即可结束绘制
    */
   ishaveMaxCtls () {
-    return this.ctls.length >= this.maxPointNum
+    return this.ctlpos.length >= this.maxPointNum
   }
 
   /**
@@ -215,7 +218,7 @@ export default class Graph {
    * 对于限定ctl数量的图形，ctlnum >= max 返回true
    */
   isCtlNumValid () {
-    let ctlnum = this.ctls.length
+    let ctlnum = this.ctlpos.length
     if (this.maxPointNum === Infinity){
       return ctlnum >= this.minPointNum
     } else {
@@ -242,6 +245,7 @@ export default class Graph {
   delete() {
     this.entities.remove(this.graph)
     this.ctls.map( (ctl) => { this.entities.remove(ctl) })
+    this.ctlpos = []
     this.shapes.map((shp) => { this.entities.remove(shp) })
   }
 
@@ -252,19 +256,20 @@ export default class Graph {
     let e = this.ctls.pop()
     if (e !== undefined) {
       this.entities.remove(e)
+      this.ctlpos.pop()
       console.log('remove last control point: ', e)
     } else {
       console.log('no last point')
     }
   }
 
-  /**
-   * delelte a point in list
-   * @param {ctlPoint} ctlPoint
-   */
-  deleteCtlPoint (ctlPoint: Cesium.Entity) {
-    let i = this.ctls.indexOf(ctlPoint)
-    this.ctls.splice(i, 1)
-    this.entities.remove(ctlPoint)
-  }
+  // /**
+  //  * delelte a point in list
+  //  * @param {ctlPoint} ctlPoint
+  //  */
+  // deleteCtlPoint (ctlPoint: Cesium.Entity) {
+  //   let i = this.ctls.indexOf(ctlPoint)
+  //   this.ctls.splice(i, 1)
+  //   this.entities.remove(ctlPoint)
+  // }
 }

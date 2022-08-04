@@ -42,6 +42,9 @@ export default class Polyline extends Graph {
     })
   }
 
+  initTempShape(): void {
+  }
+
   calcuteShape (ctls: Array<Cesium.Entity>, time: Cesium.JulianDate) {
     return ctls.map(ent => ent.position?.getValue(time))
   }

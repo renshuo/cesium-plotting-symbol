@@ -88,7 +88,7 @@ export default class Polygon extends Graph {
     let shp = this.shapes[0]
     shp.polygon.hierarchy = new Cesium.CallbackProperty((time, result) => {
       return new Cesium.PolygonHierarchy(this.calcuteShape(this.ctls, time), [])
-    }, true)
+    }, false)
   }
 
   finish () {

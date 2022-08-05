@@ -36,7 +36,7 @@ export default class Polyline extends Graph {
       outlineWidth: 1,
       outlineColor: Cesium.Color.fromCssColorString('#fd7f44'),
       positions: new Cesium.CallbackProperty((time, result) => {
-        return this.calcuteShape(this.ctls.concat(window.cursor), time)
+        return this.calcuteShape(this.ctls, time)
       }, false)
     })
   }

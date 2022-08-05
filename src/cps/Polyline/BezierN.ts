@@ -19,7 +19,7 @@ export default class BezierN extends Polyline {
       return []
     }
     if (points.length < 2) {
-      return points.map((p) => p.position.getValue(time))
+      return points.map((p) => p.position?.getValue(time))
     } else {
       let linestr = points.map((p) => mu.cartesian2lonlat(p.position.getValue(time)))
       let lonlat = linestr.map(p => {return {x: p[0], y: p[1]}})

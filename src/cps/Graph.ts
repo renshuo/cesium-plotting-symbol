@@ -128,19 +128,9 @@ export default class Graph {
     return ent
   }
 
-  getLinePoints(isWithCursor: boolean): Array<Cesium.Entity> {
-    let ctlss = []
-    if (isWithCursor) {
-      ctlss = this.ctls.concat(window.cursor)
-    } else {
-      ctlss = this.ctls
-    }
-    return ctlss
-  }
-
   initTempShape(isWithCursor: boolean): void {
     this.addTempLine(new Cesium.CallbackProperty((time, result) => {
-      return this.getLinePoints(isWithCursor).map(ent => ent.position?.getValue(time))
+      return this.ctls.map(ent => ent.position?.getValue(time))
     }, false))
   }
 
@@ -202,12 +192,16 @@ export default class Graph {
                '\nLat: ' + p[1].toPrecision(5) + '\u00B0'
       }, false)
       ctlPoint.position = new Cesium.CallbackProperty((time, result) => {
-        return window.cursorPos.clone()
+        if (window.cursorPos) {
+          return window.cursorPos.clone()
+        } else {
+          return cartesian3
+        }
       }, false)
     }
     ctlPoint.graph = this
-    console.log('added a ctl: ', ctlPoint)
     this.ctls.push(ctlPoint)
+    console.log('added a ctl: ', ctlPoint, this.ctls)
     return ctlPoint
   }
 

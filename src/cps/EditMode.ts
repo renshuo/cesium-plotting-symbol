@@ -200,13 +200,17 @@ export class EditMode {
     })
   }
 
+  lastCtl:Cesium.Entity | undefined
   createMode() {
     this.mode = Mode.Create
     console.log(`into ${Mode[this.mode]} mode`, this.currentEditEnt)
 
+    // add a new ctl point and pick it
+    this.lastCtl = this.currentEditEnt.addCtlPoint({ lon: 0, lat: 0 })
+    this.lastCtl.pickup()
+
     kb.setContext(this.mode)
     this.setCursor(Cursor.crosshair)
-    this.initCreateCursor()
 
     this.getHandler().setInputAction(move => {
       window.cursorScreenPos = mu.screen2lonlat(move.endPosition, this.viewer)
@@ -216,9 +220,13 @@ export class EditMode {
     this.getHandler().setInputAction(event => {
       let newpos = mu.screen2Cartesian(event.position, 0, this.viewer)
       let p = mu.cartesian2lonlat(newpos, this.viewer)
-      this.currentEditEnt.addCtlPoint({ lon: p[0], lat: p[1] })
       if (this.currentEditEnt.ishaveMaxCtls()) {
+        this.lastCtl.finish()
         this.nextMode(Act.Finish)
+      } else {
+        if (this.lastCtl) { this.lastCtl.finish() }
+        this.lastCtl = this.currentEditEnt.addCtlPoint({ lon: p[0], lat: p[1] })
+        this.lastCtl.pickup()
       }
     }, Cesium.ScreenSpaceEventType.LEFT_CLICK)
 
@@ -227,8 +235,10 @@ export class EditMode {
     }, Cesium.ScreenSpaceEventType.MIDDLE_CLICK)
 
     this.getHandler().setInputAction(event => {
+      this.currentEditEnt.deleteLastPoint()
       this.nextMode(Act.Finish)
     }, Cesium.ScreenSpaceEventType.RIGHT_CLICK)
+
   }
 
   /**
@@ -367,7 +377,7 @@ export class EditMode {
     this.mode = Mode.Edit
 //    if (this.propEditor) this.propEditor.show(true, this.currentEditEnt)
     console.log(`into ${Mode[this.mode]} mode`, this.currentEditEnt)
-    
+
     kb.setContext(this.mode)
     this.setCursor(Cursor.crosshair)
     this.currentEditEnt.toEdit()

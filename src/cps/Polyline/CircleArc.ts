@@ -33,11 +33,10 @@ export default class CircleArc extends Polyline {
 
   initTempShape(isWithCursor: boolean): void {
     this.addTempLine(new CallbackProperty((time, result) => {
-      let ctlss = this.getLinePoints(isWithCursor)
-      if (ctlss.length == 2) {
-        return [ctlss[1], ctlss[0]].map(ent => ent.position?.getValue(time))
-      } else if (ctlss.length == 3) {
-        return [ctlss[1], ctlss[0], ctlss[2]].map(ent => ent.position?.getValue(time))
+      if (this.ctls.length == 2) {
+        return [this.ctls[1], this.ctls[0]].map(ent => ent.position?.getValue(time))
+      } else if (this.ctls.length == 3) {
+        return [this.ctls[1], this.ctls[0], this.ctls[2]].map(ent => ent.position?.getValue(time))
       } else {
         return []
       }

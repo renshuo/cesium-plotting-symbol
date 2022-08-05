@@ -35,7 +35,7 @@ export default class Image extends Rectangle {
       height: 0,
       outlineWidth: new CallbackProperty((time, result) => this.props.outlineWidth, true),
       hierarchy: new CallbackProperty((time, result) => {
-        let ps = this.calcuteShape(this.ctls.concat(window.cursor), time)
+        let ps = this.calcuteShape(this.ctls, time)
         return new PolygonHierarchy(ps, [])
       }, false)
     })

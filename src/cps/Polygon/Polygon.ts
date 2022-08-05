@@ -70,7 +70,7 @@ export default class Polygon extends Graph {
       height: 0,
       outlineWidth: new Cesium.CallbackProperty((time, result) => this.props.outlineWidth, true),
       hierarchy: new Cesium.CallbackProperty((time, result) => {
-        let ps = this.calcuteShape(this.ctls.concat(window.cursor), time)
+        let ps = this.calcuteShape(this.ctls, time)
         return new Cesium.PolygonHierarchy(ps, [])
       }, true)
     })

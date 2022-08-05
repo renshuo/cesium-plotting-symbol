@@ -1,7 +1,7 @@
 import * as mu from '../mapUtil.ts'
 import Polygon from './Polygon.js'
 import * as turf from '@turf/turf'
-import { Entity, Viewer } from 'cesium'
+import { Entity, Viewer, JulianDate } from 'cesium'
 
 export default class Circle extends Polygon {
   maxPointNum = 2
@@ -11,7 +11,7 @@ export default class Circle extends Polygon {
     super({type: '圆', ...p}, viewer, layer, true)
   }
 
-  calcuteShape (points, time) {
+  calcuteShape (points: Array<Entity>, time: JulianDate) {
     if (points.length < this.minPointNum) {
       return []
     }

@@ -137,7 +137,7 @@ export default class PincerAttack extends Polygon {
   initTempShape(isWithCursor: boolean): void {
     //add bottom line
     this.addTempLine(new Cesium.CallbackProperty((time, result) => {
-      let ctlss = this.getLinePoints(isWithCursor)
+      let ctlss = this.ctls
       if (ctlss.length >= 2 ) {
         return [ctlss[0], ctlss[1]].map(ent => ent.position?.getValue(time))
       } else {
@@ -147,7 +147,7 @@ export default class PincerAttack extends Polygon {
 
     // right arrow
     this.addTempLine(new Cesium.CallbackProperty((time, result) => {
-      let ctlss = this.getLinePoints(isWithCursor)
+      let ctlss = this.ctls
       if (ctlss.length >= 4) {
         return [ctlss[2], ctlss[3]].map(ent => ent.position?.getValue(time))
       } else {
@@ -157,7 +157,7 @@ export default class PincerAttack extends Polygon {
 
     // left arrow
     this.addTempLine(new Cesium.CallbackProperty((time, result) => {
-      let ctlss = this.getLinePoints(isWithCursor)
+      let ctlss = this.ctls
       if (ctlss.length >= 6) {
         return [ctlss[5], ctlss[4]].map(ent => ent.position?.getValue(time))
       } else {
@@ -167,7 +167,7 @@ export default class PincerAttack extends Polygon {
 
     // inner sp line
     this.addTempLine(new Cesium.CallbackProperty((time, result) => {
-      let ctlss = this.getLinePoints(isWithCursor)
+      let ctlss = this.ctls
       if (ctlss.length >= 7) {
         let mid = ctlss.slice(6, ctlss.length)
         return [ctlss[2]].concat(mid).concat(ctlss[4]).map(ent => ent.position?.getValue(time))

@@ -141,12 +141,13 @@ export class EditMode {
       }
         break
       case Mode.Edit: {
-        this.finishCurrentEdit()
         switch (action) {
           case Act.Finish:
+            this.finishCurrentEdit()
             this.selectMode()
             break
           case Act.Create:
+            this.finishCurrentEdit()
             this.createMode()
             break
           case Act.Pickup:
@@ -220,11 +221,10 @@ export class EditMode {
     this.getHandler().setInputAction(event => {
       let newpos = mu.screen2Cartesian(event.position, 0, this.viewer)
       let p = mu.cartesian2lonlat(newpos, this.viewer)
+      this.lastCtl.finish()
       if (this.currentEditEnt.ishaveMaxCtls()) {
-        this.lastCtl.finish()
         this.nextMode(Act.Finish)
       } else {
-        if (this.lastCtl) { this.lastCtl.finish() }
         this.lastCtl = this.currentEditEnt.addCtlPoint({ lon: p[0], lat: p[1] })
         this.lastCtl.pickup()
       }
@@ -392,6 +392,7 @@ export class EditMode {
         let ctl = objs.filter((st) => { return this.currentEditEnt.ctls.indexOf(st.id) >= 0 })
         if (ctl.length > 0) {
           this.pickedctl = ctl[0].id
+          console.log("click on a ctl point: ", this.pickedctl)
           this.nextMode(Act.Pickup)
         }
       }
@@ -437,7 +438,6 @@ export class EditMode {
 
     kb.setContext(this.mode)
     this.setCursor(Cursor.crosshair)
-    this.currentEditEnt.toEdit()
     this.pickedctl.pickup()
 
     this.getHandler().setInputAction(move => {

@@ -199,6 +199,7 @@ export default class Graph {
         }
       }, false)
     }
+    
     ctlPoint.graph = this
     this.ctls.push(ctlPoint)
     console.log('added a ctl: ', ctlPoint, this.ctls)
@@ -260,6 +261,7 @@ export default class Graph {
    * 图形绘制结束后调用
    */
   finish () {
+    console.log("finish current graph: ", this)
     this.ctls.map((ctl) => { ctl.show = false })
     this.tempShapes.map(ent => { this.entities.remove(ent) })
     this.tempShapes = []

@@ -34,7 +34,7 @@ export default class Ellipse extends Polygon {
     }
   }
 
-  initTempShape(isWithCursor: boolean): void {
+  initTempShape(): void {
     this.addTempLine(new Cesium.CallbackProperty((time, result) => {
       let ctlss = this.ctls
       if (ctlss.length == 2) {

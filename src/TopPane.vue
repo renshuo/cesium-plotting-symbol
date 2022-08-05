@@ -31,7 +31,7 @@ function createByJson () {
   prop.gm.draw({obj: 'Polygon', color: '#ff0088', ctls: [
     {lon: 102, lat: 40},
     [110, 43, 10000],
-    {lon: 110, lat: 43},
+    {lon: 110, lat: 44},
     {lon: 102, lat: 46, hei: 10000},
   ]})
   prop.gm.draw({obj: 'Polyline', color: '#00ffff', ctls: [
@@ -129,6 +129,9 @@ const funcs1 = ref([
   [
     {name: '图', func: () => prop.gm.create({obj: 'Image', color: '#ffff00'}) },
     {name: '红旗', func: () => prop.gm.create({obj: 'RedFlag', color: '#ffff00'}) },
+  ],
+  [
+    {name: '距离测量', func: () => prop.gm.create({obj: 'DistanceMeasure', color: '#00ff00'}) },
   ],
   [
     {name: '删除', func: () => prop.gm.delete() },

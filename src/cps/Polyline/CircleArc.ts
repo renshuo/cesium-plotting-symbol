@@ -31,7 +31,7 @@ export default class CircleArc extends Polyline {
     return geometry.map((p) => mu.lonlat2Cartesian(p))
   }
 
-  initTempShape(isWithCursor: boolean): void {
+  initTempShape(): void {
     this.addTempLine(new CallbackProperty((time, result) => {
       if (this.ctls.length == 2) {
         return [this.ctls[1], this.ctls[0]].map(ent => ent.position?.getValue(time))

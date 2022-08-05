@@ -80,7 +80,7 @@ export default class Graph {
     this.initShape()
     this.isShowTempLine = isShowTempLine
     if (isShowTempLine) {
-      this.initTempShape(true)
+      this.initTempShape()
     }
     this.initCtls(props.ctls)
   }
@@ -128,7 +128,7 @@ export default class Graph {
     return ent
   }
 
-  initTempShape(isWithCursor: boolean): void {
+  initTempShape(): void {
     this.addTempLine(new Cesium.CallbackProperty((time, result) => {
       return this.ctls.map(ent => ent.position?.getValue(time))
     }, false))
@@ -159,7 +159,7 @@ export default class Graph {
     return this.ctlpos.map(pos => mu.lonlatheiObj2Cartesian(pos) )
   }
 
-  addCtlPoint (pos: Pos) {
+  addCtlPoint (pos: Pos): Cesium.Entity {
     console.log("in add ctl Pos")
     let cartesian3 = mu.lonlatheiObj2Cartesian(pos)
     this.ctlpos.push(pos)
@@ -252,7 +252,7 @@ export default class Graph {
     this.highLighted = false
     this.ctls.map( (ctl) => {ctl.show = true})
     if (this.isShowTempLine) {
-      this.initTempShape(false)
+      this.initTempShape()
     }
   }
 

@@ -41,6 +41,10 @@ import PointLine from './Polyline/PointLine';
 import PointSpline from './Polyline/PointSpline';
 import Polyline from './Polyline/Polyline';
 
+
+// measuring
+import DistanceMeasure from './Polyline/DistanceMeasure';
+
 import * as Cesium from 'cesium';
 import _ from 'lodash';
 import * as mapUtil from './mapUtil';
@@ -186,6 +190,7 @@ class GraphManager {
       case 'CircleArc': return new CircleArc(json, this.viewer, this.layer);
       case 'PointLine': return new PointLine(json, this.viewer, this.layer);
       case 'PointSpline': return new PointSpline(json, this.viewer, this.layer);
+      case 'DistanceMeasure': return new DistanceMeasure(json, this.viewer, this.layer);
 
       default:
         console.log('invalid type');

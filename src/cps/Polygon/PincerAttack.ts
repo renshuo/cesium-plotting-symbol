@@ -134,7 +134,7 @@ export default class PincerAttack extends Polygon {
   }
 
 
-  initTempShape(isWithCursor: boolean): void {
+  initTempShape(): void {
     //add bottom line
     this.addTempLine(new Cesium.CallbackProperty((time, result) => {
       let ctlss = this.ctls

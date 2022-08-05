@@ -31,7 +31,7 @@ export default class CircleArcArea extends Polygon {
     return area.map((p) => mu.lonlat2Cartesian(p))
   }
 
-  initTempShape(isWithCursor: boolean): void {
+  initTempShape(): void {
     this.addTempLine(new CallbackProperty((time, result) => {
       let ctlss = this.ctls
       if (ctlss.length == 2) {

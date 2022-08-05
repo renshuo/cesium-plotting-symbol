@@ -14,7 +14,6 @@ export default class Polyline extends Graph {
       fill: true,
       ...prop
     }, viewer, layer, isShowTempLine)
-    // console.log('propdef', super.propDefs)
     this.propDefs.push(
       { name: 'width', title: '线宽', type: 'number', editable: true, min: 1, max: 256 },
       { name: 'fill', title: '是否填充', type: 'boolean', editable: true },

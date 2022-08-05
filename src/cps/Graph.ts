@@ -128,7 +128,7 @@ export default class Graph {
     return ent
   }
 
-  getLinePoints(isWithCursor: boolean) {
+  getLinePoints(isWithCursor: boolean): Array<Cesium.Entity> {
     let ctlss = []
     if (isWithCursor) {
       ctlss = this.ctls.concat(window.cursor)
@@ -169,9 +169,10 @@ export default class Graph {
     return this.ctlpos.map(pos => mu.lonlatheiObj2Cartesian(pos) )
   }
 
-  addCtl (cartesian3: Cesium.Cartesian3) {
-    let pos = mu.cartesian2lonlat(cartesian3)
-    this.ctlpos.push({lon: pos[0], lat: pos[1], hei: 0})
+  addCtlPoint (pos: Pos) {
+    console.log("in add ctl Pos")
+    let cartesian3 = mu.lonlatheiObj2Cartesian(pos)
+    this.ctlpos.push(pos)
     let ctlPoint: Cesium.Entity = this.entities.add({
       id: this.graph.id + '_ctlpoint_' + Graph.seq++,
       position: cartesian3,
@@ -182,8 +183,8 @@ export default class Graph {
         outlineColor: Cesium.Color.AQUA
       },
       label: {
-        text: 'Lon: ' + pos[0].toPrecision(5) + '\u00B0' +
-        '\nLat: ' + pos[1].toPrecision(5) + '\u00B0',
+        text: 'Lon: ' + pos.lon.toPrecision(5) + '\u00B0' +
+        '\nLat: ' + pos.lat.toPrecision(5) + '\u00B0',
         font : '12px monospace',
         horizontalOrigin : Cesium.HorizontalOrigin.LEFT,
         verticalOrigin : Cesium.VerticalOrigin.TOP,
@@ -208,11 +209,6 @@ export default class Graph {
     console.log('added a ctl: ', ctlPoint)
     this.ctls.push(ctlPoint)
     return ctlPoint
-  }
-
-  addCtlPoint (pos: Pos) {
-    let c3 = mu.lonlatheiObj2Cartesian(pos)
-    this.addCtl(c3)
   }
 
   fillShape(ent: Cesium.Entity) {

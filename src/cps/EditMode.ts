@@ -17,7 +17,9 @@ enum Act {
   Create,
   Select,
   Finish,
-  Pickup
+  Pickup,
+  PickDown,
+  PickReset,
 }
 
 enum Cursor {
@@ -112,7 +114,7 @@ export class EditMode {
             this.createMode()
             break
           case Act.Select:
-            this.editMode()
+            this.editMode(action)
             break
           case Act.Finish:
             this.viewMode()
@@ -126,7 +128,7 @@ export class EditMode {
           case Act.Finish:
             if (isSuccess) {
               if (this.editAfterCreate) {
-                this.editMode()
+                this.editMode(action)
               } else {
                 this.selectMode()
               }
@@ -160,7 +162,13 @@ export class EditMode {
         this.finishCurrentCtledit()
         switch (action) {
           case Act.Finish:
-            this.editMode()
+            this.editMode(action)
+            break
+          case Act.PickDown:
+            this.editMode(action)
+            break
+          case Act.PickReset:
+            this.editMode(action)
             break
           case Act.Create:
             this.createMode()
@@ -373,10 +381,10 @@ export class EditMode {
     })
   }
 
-  editMode() {
+  editMode(act: Act) {
     this.mode = Mode.Edit
 //    if (this.propEditor) this.propEditor.show(true, this.currentEditEnt)
-    console.log(`into ${Mode[this.mode]} mode`, this.currentEditEnt)
+    console.log(`into ${Mode[this.mode]} mode by act ${Act[act]}`, this.currentEditEnt)
 
     kb.setContext(this.mode)
     this.setCursor(Cursor.crosshair)
@@ -446,12 +454,12 @@ export class EditMode {
 
     this.getHandler().setInputAction(event => {
       this.pickedctl.finish()
-      this.nextMode(Act.Finish)
+      this.nextMode(Act.PickDown)
     }, Cesium.ScreenSpaceEventType.LEFT_CLICK)
 
     this.getHandler().setInputAction(event => {
       this.pickedctl.finish()
-      this.nextMode(Act.Finish)
+      this.nextMode(Act.PickReset)
     }, Cesium.ScreenSpaceEventType.RIGHT_CLICK)
   }
 

@@ -45,6 +45,7 @@ import Polyline from './Polyline/Polyline';
 // measuring
 import DistanceMeasure from './Polyline/DistanceMeasure';
 import AreaMeasure from './Polygon/AreaMeasure';
+import AngleMeasure from './Polyline/AngleMeasure';
 
 import * as Cesium from 'cesium';
 import _ from 'lodash';
@@ -193,6 +194,7 @@ class GraphManager {
       case 'PointLine': return new PointLine(json, this.viewer, this.layer);
       case 'PointSpline': return new PointSpline(json, this.viewer, this.layer);
       case 'DistanceMeasure': return new DistanceMeasure(json, this.viewer, this.layer);
+      case 'AngleMeasure': return new AngleMeasure(json, this.viewer, this.layer);
 
       default:
         console.log('invalid type');

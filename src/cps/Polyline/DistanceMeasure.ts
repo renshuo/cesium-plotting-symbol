@@ -1,9 +1,8 @@
-import Polyline from './Polyline.js'
-import * as mu from '../mapUtil';
 import _ from 'lodash'
 import * as Cesium from 'cesium';
+import PointLine from './PointLine.js';
 
-export default class DistanceMeasure extends Polyline {
+export default class DistanceMeasure extends PointLine {
 
   constructor(p: {}, viewer: Cesium.Viewer, layer: Cesium.Entity) {
     super({
@@ -13,26 +12,34 @@ export default class DistanceMeasure extends Polyline {
   }
 
 
-  override initTempShape(): void {
-    this.ctls.map( (v,i,l) => {
+  override initShape(): void {
+    super.initShape()
+    this.ctls.map((v, i, l) => {
       let curctl = v
-      let lastctl = i>0 ? l[i-1] : undefined
+      let lastctl = i > 0 ? l[i - 1] : undefined
       if (lastctl) {
-        this.createTempShape(curctl, lastctl)
+        this.createDistanceText(curctl, lastctl)
       }
     })
   }
 
-  override updateTempShape(ctl: Cesium.Entity): void {
+  override increaseShape(ctl: Cesium.Entity): void {
+    super.increaseShape(ctl)
     if (this.ctls.length>1) {
       let curctl = ctl
       let lastctl = this.ctls[this.ctls.length-2]
-      this.createTempShape(curctl, lastctl)
+      this.createDistanceText(curctl, lastctl)
     }
   }
 
-  private createTempShape(curctl: Cesium.Entity, lastctl: Cesium.Entity) {
-    this.tempShapes.push(this.entities.add(new Cesium.Entity({
+  override decreaseShape(ctl: Cesium.Entity): void {
+    super.decreaseShape(ctl)
+    let ent = this.shapes.pop()
+    this.entities.remove(ent)
+  }
+
+  private createDistanceText(curctl: Cesium.Entity, lastctl: Cesium.Entity) {
+    this.shapes.push(this.entities.add(new Cesium.Entity({
       position: new Cesium.CallbackProperty((time, result) => {
         return curctl.position.getValue(time)
       }, false),

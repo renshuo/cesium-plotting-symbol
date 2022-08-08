@@ -18,10 +18,8 @@ export default class PointLine extends Polyline {
     )
   }
 
-
-  //TODO 这里应当用shape实现顶点，类似distanceMeasure
-  handleNewCtl (ctl: Cesium.Entity) {
-    let p = this.entities.add(new Cesium.Entity({ point: {}}))
+  override increaseShape(ctl: Cesium.Entity): void {
+    let p = this.entities.add(new Cesium.Entity({ point: {} }))
     this.fillShape(p)
     Object.assign(p.point, {
       pixelSize: new Cesium.CallbackProperty((time, result) => this.props.pointPixelSize, true),
@@ -35,4 +33,10 @@ export default class PointLine extends Polyline {
       return ctl.position.getValue(Cesium.JulianDate.fromDate(new Date()))
     }, true)
   }
+
+  override decreaseShape(ctl: Cesium.Entity): void {
+    let ent = this.shapes.pop()
+    this.entities.remove(ent)
+  }
+
 }

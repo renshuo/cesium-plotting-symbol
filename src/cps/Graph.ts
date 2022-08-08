@@ -108,11 +108,27 @@ export default class Graph {
   initRootEntity (layer: Cesium.Entity) {
   }
 
+
+
   /**
    * 初始化主图形
    */
-  initShape() {
-    throw 'should overide by sub class.'
+  initShape(): void {
+    console.log('init shape.', this.ctls)
+  }
+
+  /**
+   * 根据新增的ctl, 更新图形。每次增加新的ctl时，会调用此方法更新
+   */
+  increaseShape(ctl: Cesium.Entity): void {
+    console.log("update current shape for increase a ctl. ", ctl)
+  }
+
+  /**
+   * 删除末尾ctl时更新图形。每次删除ctl时，会调用此方法更新
+   */
+  decreaseShape(ctl: Cesium.Entity): void {
+    console.log("update current shape for decrease a ctl: ", ctl)
   }
 
   /**
@@ -125,9 +141,18 @@ export default class Graph {
   /*
    * 更新辅助图形，每次增加新的ctl时，会调用此方法更新
    */
-  updateTempShape(ctl: Cesium.Entity): void {
-    console.log("update temp shape")
+  increaseTempShape(ctl: Cesium.Entity): void {
+    console.log("update temp shape for increase a ctl: ", ctl)
   }
+
+  /**
+   * 删除末尾ctl时更新辅助线。每次删除ctl时，会调用此方法更新
+   */
+  decreaseTempShape(ctl: Cesium.Entity): void {
+    console.log("update temp shape for decrease a ctl: ", ctl)
+  }
+
+
 
   /**
    * 返回当前Graph的属性，以及控制点数据
@@ -198,7 +223,8 @@ export default class Graph {
     ctlPoint.graph = this
     this.ctls.push(ctlPoint)
     console.log('added a ctl: ', ctlPoint, this.ctls)
-    this.updateTempShape(ctlPoint)
+    this.increaseShape(ctlPoint)
+    this.increaseTempShape(ctlPoint)
     return ctlPoint
   }
 
@@ -279,6 +305,8 @@ export default class Graph {
       this.entities.remove(e)
       this.ctlpos.pop()
       console.log('remove last control point: ', e)
+      this.decreaseTempShape(e)
+      this.decreaseShape(e)
     } else {
       console.log('no last point')
     }

@@ -18,7 +18,7 @@
 5. [多边形](https://github.com/renshuo/cesium-plotting-symbol/tree/master/src/cps/Polygon)
     1. 单箭头
     2. 圆形
-    3. 圆弧面    
+    3. 圆弧面
     4. 椭圆
     5. 方型旗
     6. 三角旗
@@ -38,6 +38,10 @@
     6. 带顶点的折线
     7. 带顶点的平滑线
     8. 多段线
+9. 测量工具
+   10. 距离测量
+   11. 面积测量
+   12. 角度测量
 
 ## 安装
 ```bash
@@ -60,8 +64,6 @@ import PropEditor from 'cesium-plotting-symbol/PropEditor/index.vue'
 ```html
 <PropEditor ref="propEdit" /> <!-- 在html template 中插入prop-editor组件 -->
 ```
-
-
 让propHandler响应Graph Select事件：
 ```javascript
   const propEdit = ref();
@@ -77,6 +79,10 @@ import PropEditor from 'cesium-plotting-symbol/PropEditor/index.vue'
     }
   })
 ```
+
+也可以使用自定义的属性编辑功能，gm.value.setGraphSelectHandler 可以指定一个图形选择函数，当某个图形被选择时，会调用此方法。
+ent.props 和 ent.propDefs 分别是此图形的属性值json和属性定义数据。当外部修改ent.props中的内容时，系统会根据新的数据更新当前图形。
+
 
 ## 开始绘图
 通过鼠标和键盘控制图形的绘制过程

@@ -3,8 +3,8 @@
 
 ## 支持图形
 1. [贴图类](https://github.com/renshuo/cesium-plotting-symbol/tree/master/src/cps/Image)
-    1. 红旗
-    2. 地面贴图
+   1. 红旗
+   2. 地面贴图
 2. [3D模型](https://github.com/renshuo/cesium-plotting-symbol/tree/master/src/cps/Model)
    1. 地面模型（地面站）
    2. 带有高度的参数的模型（卫星）
@@ -16,32 +16,33 @@
 4. [点类型](https://github.com/renshuo/cesium-plotting-symbol/tree/master/src/cps/Point)
    1. 单点
 5. [多边形](https://github.com/renshuo/cesium-plotting-symbol/tree/master/src/cps/Polygon)
-    1. 单箭头
-    2. 圆形
-    3. 圆弧面
-    4. 椭圆
-    5. 方型旗
-    6. 三角旗
-    7. 多段线
-    8. 钳击箭头
-    9. 多边形
-    10. 矩形
-    11. 扇形
-    12. 平滑面
-    13. 方箭头
+   1. 单箭头
+   2. 圆形
+   3. 圆弧面
+   4. 椭圆
+   5. 方型旗
+   6. 三角旗
+   7. 多段线
+   8. 钳击箭头
+   9. 多边形
+   10. 矩形
+   11. 扇形
+   12. 平滑面
+   13. 方箭头
 6. [线](https://github.com/renshuo/cesium-plotting-symbol/tree/master/src/cps/Polyline)
-    1. 2阶bezier曲线
-    2. 3阶bezier曲线
-    3. N阶bezier曲线
-    4. bezier平滑线
-    5. 圆弧线
-    6. 带顶点的折线
-    7. 带顶点的平滑线
-    8. 多段线
-9. 测量工具
-   10. 距离测量
-   11. 面积测量
-   12. 角度测量
+   1. 2阶bezier曲线
+   2. 3阶bezier曲线
+   3. N阶bezier曲线
+   4. bezier平滑线
+   5. 圆弧线
+   6. 带顶点的折线
+   7. 带顶点的平滑线
+   8. 多段线
+7. 测量工具
+   1. 距离测量
+   2. 角度测量
+   3. 面积测量
+
 
 ## 安装
 ```bash

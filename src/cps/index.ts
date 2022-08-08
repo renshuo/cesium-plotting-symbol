@@ -44,6 +44,7 @@ import Polyline from './Polyline/Polyline';
 
 // measuring
 import DistanceMeasure from './Polyline/DistanceMeasure';
+import AreaMeasure from './Polygon/AreaMeasure';
 
 import * as Cesium from 'cesium';
 import _ from 'lodash';
@@ -181,6 +182,7 @@ class GraphManager {
       case 'MultiPartArrow': return new MultiPartArrow(json, this.viewer, this.layer);
       case 'SplineArea': return new SplineArea(json, this.viewer, this.layer);
       case 'PincerAttack': return new PincerAttack(json, this.viewer, this.layer);
+      case 'AreaMeasure': return new AreaMeasure(json, this.viewer, this.layer);
 
       case 'Polyline': return new Polyline(json, this.viewer, this.layer);
       case 'Bezier1': return new Bezier1(json, this.viewer, this.layer);

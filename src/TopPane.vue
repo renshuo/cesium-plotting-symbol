@@ -132,6 +132,7 @@ const funcs1 = ref([
   ],
   [
     {name: '距离测量', func: () => prop.gm.create({obj: 'DistanceMeasure', color: '#00ff00'}) },
+    {name: '面积测量', func: () => prop.gm.create({obj: 'AreaMeasure', color: '#00ff00'}) },
   ],
   [
     {name: '删除', func: () => prop.gm.delete() },

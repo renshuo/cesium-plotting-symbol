@@ -7,7 +7,7 @@ export default class PinText extends Pin {
 
   pinBuilder = new Cesium.PinBuilder()
 
-  constructor (p, viewer, layer) {
+  constructor (p: {}, viewer: Cesium.Viewer, layer: Cesium.Entity) {
     super({
       type: '文字板',
       text: 'A',

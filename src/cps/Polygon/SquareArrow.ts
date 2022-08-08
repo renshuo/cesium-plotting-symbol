@@ -8,6 +8,8 @@ export default class Arrow1 extends Polygon {
   maxPointNum = 2
   minPointNum = 2
 
+  options: {} = { units: 'kilometers' }
+
   constructor(p, viewer: Cesium.Viewer, layer: Cesium.Entity){
     super({
       type: '单方型箭头',
@@ -33,9 +35,8 @@ export default class Arrow1 extends Polygon {
       let point2 = turfPoints[1]
 
       let bearing = turf.bearing(point1, point2)
-      let options = {units: 'kilometers'}
 
-      let distance = turf.distance(point1, point2, options)
+      let distance = turf.distance(point1, point2, this.options)
 
       let b = this.props.arrowWidth
 
@@ -45,14 +46,14 @@ export default class Arrow1 extends Polygon {
       let outerDeg = 135
       let outerDis = b* 2.732/2
 
-      tgts.push(turf.destination(point1, b/2, bearing - 90, options))
-      tgts.push(turf.destination(point1, b/2, bearing + 90, options))
+      tgts.push(turf.destination(point1, b/2, bearing - 90, this.options))
+      tgts.push(turf.destination(point1, b/2, bearing + 90, this.options))
 
-      tgts.push(turf.destination(point2, innerDis, bearing + innerDeg, options))
-      tgts.push(turf.destination(point2, outerDis, bearing + outerDeg, options))
-      tgts.push(turf.destination(point2, 0, bearing, options))
-      tgts.push(turf.destination(point2, outerDis, bearing - outerDeg, options))
-      tgts.push(turf.destination(point2, innerDis, bearing - innerDeg, options))
+      tgts.push(turf.destination(point2, innerDis, bearing + innerDeg, this.options))
+      tgts.push(turf.destination(point2, outerDis, bearing + outerDeg, this.options))
+      tgts.push(turf.destination(point2, 0, bearing, this.options))
+      tgts.push(turf.destination(point2, outerDis, bearing - outerDeg, this.options))
+      tgts.push(turf.destination(point2, innerDis, bearing - innerDeg, this.options))
 
       return tgts.map(tgt => mu.lonlat2Cartesian(turf.getCoord(tgt)))
     } else {

@@ -5,14 +5,14 @@ import Pin from './Pin'
 
 export default class PinImage extends Pin {
 
-  constructor (p, viewer, layer) {
+  constructor (p: {}, viewer: Cesium.Viewer, layer: Cesium.Entity) {
     super({
       type: 'BillBoard',
       image: '/facility.gif',
       color: '#ff0',
       alpha: 0.8,
       width: 30,
-      height: 30, 
+      height: 30,
       ...p
     }, viewer, layer)
     this.propDefs.push(

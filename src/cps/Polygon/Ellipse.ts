@@ -8,10 +8,10 @@ export default class Ellipse extends Polygon {
   maxPointNum = 3
   minPointNum = 2 // 2个点的椭圆即退化为圆
 
-  option = { units: 'kilometers' }
+  option: {} = { units: 'kilometers' }
 
   constructor(p: {}, viewer: Cesium.Viewer, layer: Cesium.Entity) {
-    super({ type: '椭圆', ...p }, viewer, layer, true)
+    super({ type: '椭圆', ...p }, viewer, layer)
   }
 
   calcuteShape(points: Array<Cesium.Entity>, time: Cesium.JulianDate) {
@@ -34,7 +34,7 @@ export default class Ellipse extends Polygon {
     }
   }
 
-  initTempShape(): void {
+  override initTempShape(): void {
     this.addTempLine(new Cesium.CallbackProperty((time, result) => {
       let ctlss = this.ctls
       if (ctlss.length == 2) {

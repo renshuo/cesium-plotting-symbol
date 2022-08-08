@@ -1,6 +1,7 @@
-import Polygon from './Polygon'
-import * as mu from '../mapUtil'
+import Polygon from './Polygon';
+import * as mu from '../mapUtil';
 import * as turf from '@turf/turf';
+import {Viewer, Entity, JulianDate} from 'cesium';
 
 
 export default class FlagRectangle extends Polygon {

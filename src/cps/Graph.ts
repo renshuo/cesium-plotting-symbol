@@ -33,7 +33,7 @@ export default class Graph {
    */
   maxPointNum: number = Infinity
   minPointNum: number = 1
-  isShowTempLine: boolean = false
+  isHideTempLine: boolean = true
 
   graph: Cesium.Entity
   ctls: Array<Cesium.Entity> = []
@@ -64,7 +64,7 @@ export default class Graph {
     ctls: []
   }
 
-  constructor(props: {}, viewer: Cesium.Viewer, layer: Cesium.Entity, isShowTempLine: boolean = false) {
+  constructor(props: {}, viewer: Cesium.Viewer, layer: Cesium.Entity) {
     if (!viewer) {
       throw 'get null viewer.'
     }
@@ -78,10 +78,7 @@ export default class Graph {
     this.initRootEntity(layer)
     // this.initProps(properties)
     this.initShape()
-    this.isShowTempLine = isShowTempLine
-    if (isShowTempLine) {
-      this.initTempShape()
-    }
+    this.initTempShape()
     this.initCtls(props.ctls)
   }
 
@@ -111,27 +108,25 @@ export default class Graph {
   initRootEntity (layer: Cesium.Entity) {
   }
 
+  /**
+   * 初始化主图形
+   */
   initShape() {
     throw 'should overide by sub class.'
   }
 
-
-  addTempLine(positions: Cesium.CallbackProperty): Cesium.Entity {
-    let ent = new Cesium.Entity({
-      polyline: {
-        width: 1,
-        material: Cesium.Color.BLUE.withAlpha(0.7),
-        positions: positions
-      }
-    })
-    this.tempShapes.push(this.entities.add(ent))
-    return ent
+  /**
+   * 根据ctls的坐标信息初始化辅助图形
+   */
+  initTempShape(): void {
+    console.log('init temp shape', this.ctls)
   }
 
-  initTempShape(): void {
-    this.addTempLine(new Cesium.CallbackProperty((time, result) => {
-      return this.ctls.map(ent => ent.position?.getValue(time))
-    }, false))
+  /*
+   * 更新辅助图形，每次增加新的ctl时，会调用此方法更新
+   */
+  updateTempShape(ctl: Cesium.Entity): void {
+    console.log("update temp shape")
   }
 
   /**
@@ -203,6 +198,7 @@ export default class Graph {
     ctlPoint.graph = this
     this.ctls.push(ctlPoint)
     console.log('added a ctl: ', ctlPoint, this.ctls)
+    this.updateTempShape(ctlPoint)
     return ctlPoint
   }
 
@@ -252,9 +248,7 @@ export default class Graph {
   toEdit () {
     this.highLighted = false
     this.ctls.map( (ctl) => {ctl.show = true})
-    if (this.isShowTempLine) {
-      this.initTempShape()
-    }
+    this.initTempShape()
   }
 
   /**

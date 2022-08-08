@@ -10,7 +10,7 @@ export default class Pin extends Graph {
 
   pinBuilder = new Cesium.PinBuilder()
 
-  constructor (p, viewer, layer) {
+  constructor (p: {}, viewer: Cesium.Viewer, layer: Cesium.Entity) {
     super({
       type: '钉',
       rotation: 0,
@@ -27,7 +27,7 @@ export default class Pin extends Graph {
     )
   }
 
-  calcuteShape(points, time) {
+  calcuteShape(points: Array<Cesium.Entity>, time: Cesium.JulianDate) {
     if (points.length < this.minPointNum) {
       return []
     }

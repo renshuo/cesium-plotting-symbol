@@ -19,4 +19,11 @@ export default class PointSpline extends PointLine {
     let geometry = curved.geometry.coordinates
     return geometry.map((p) => mu.lonlat2Cartesian(p))
   }
+
+  override initTempShape(): void {
+    this.addTempLine(new Cesium.CallbackProperty((time, result) => {
+      return this.ctls.map(ent => ent.position?.getValue(time))
+    }, false))
+  }
+
 }

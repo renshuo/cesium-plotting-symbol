@@ -7,17 +7,32 @@ export default class Polyline extends Graph {
 
   minPointNum = 2
 
-  constructor(prop: {}, viewer: Cesium.Viewer, layer: Cesium.Entity, isShowTempLine: boolean = false) {
+  constructor(prop: {}, viewer: Cesium.Viewer, layer: Cesium.Entity) {
     super({
       type: '折线',
       width: 1,
       fill: true,
       ...prop
-    }, viewer, layer, isShowTempLine)
+    }, viewer, layer)
     this.propDefs.push(
       { name: 'width', title: '线宽', type: 'number', editable: true, min: 1, max: 256 },
       { name: 'fill', title: '是否填充', type: 'boolean', editable: true },
     )
+  }
+
+  /**
+   * polyline类型的图形的默认辅助线造型
+   */
+  addTempLine(positions: Cesium.CallbackProperty): Cesium.Entity {
+    let ent = new Cesium.Entity({
+      polyline: {
+        width: 1,
+        material: Cesium.Color.BLUE.withAlpha(0.7),
+        positions: positions
+      }
+    })
+    this.tempShapes.push(this.entities.add(ent))
+    return ent
   }
 
   initShape() {

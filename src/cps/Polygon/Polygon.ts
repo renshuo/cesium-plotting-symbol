@@ -6,7 +6,7 @@ export default class Polygon extends Graph {
 
   minPointNum = 3
 
-  constructor(prop: {}, viewer: Cesium.Viewer, layer: Cesium.Entity, isShowTempLine: boolean = false) {
+  constructor(prop: {}, viewer: Cesium.Viewer, layer: Cesium.Entity) {
     super({
       rotation: 0,
       material: '',
@@ -15,7 +15,7 @@ export default class Polygon extends Graph {
       outlineColor: '#aaaaaa',
       outlineWidth: 2,
       ...prop
-    }, viewer, layer, isShowTempLine)
+    }, viewer, layer)
     this.propDefs.push(
       { name: 'rotation', title: '旋转', type: 'number', editable: true, min: -360, max: 360, step: 1 },
       { name: 'material', title: '贴图', type: 'string', editable: false },
@@ -24,6 +24,21 @@ export default class Polygon extends Graph {
       { name: 'outlineColor', title: '边框颜色', type: 'color', editable: true },
       { name: 'outlineWidth', title: '边框宽度', type: 'number', editable: true, step: 1, min: 1, max: 100 },
     )
+  }
+
+  /**
+   * polygon类的图形的默认辅助线造型
+   */
+  addTempLine(positions: Cesium.CallbackProperty): Cesium.Entity {
+    let ent = new Cesium.Entity({
+      polyline: {
+        width: 1,
+        material: Cesium.Color.BLUE.withAlpha(0.7),
+        positions: positions
+      }
+    })
+    this.tempShapes.push(this.entities.add(ent))
+    return ent
   }
 
   initShape() {

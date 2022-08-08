@@ -1,6 +1,6 @@
 import * as mu from '../mapUtil'
 import * as turf from '@turf/turf'
-import {Viewer, Entity, JulianDate} from 'cesium';
+import {Viewer, Entity, JulianDate, CallbackProperty} from 'cesium';
 import Polygon from './Polygon';
 
 export default class SectorArea extends Polygon {
@@ -30,4 +30,17 @@ export default class SectorArea extends Polygon {
     let area = linestr.geometry.coordinates.concat([ctls[0].geometry.coordinates])
     return area.map((p) => mu.lonlat2Cartesian(p))
   }
+
+  initTempShape(): void {
+    this.addTempLine(new CallbackProperty((time, result) => {
+      if (this.ctls.length == 2) {
+        return [this.ctls[1], this.ctls[0]].map(ent => ent.position?.getValue(time))
+      } else if (this.ctls.length == 3) {
+        return [this.ctls[1], this.ctls[0], this.ctls[2]].map(ent => ent.position?.getValue(time))
+      } else {
+        return []
+      }
+    }, false))
+  }
+
 }

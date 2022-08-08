@@ -11,7 +11,7 @@ export default class BezierN extends Polyline {
     super({
       type: 'n阶bezier曲线',
       ...p
-    }, viewer, layer, true)
+    }, viewer, layer)
   }
 
   calcuteShape (points: Array<Entity>, time: JulianDate) {
@@ -26,6 +26,12 @@ export default class BezierN extends Polyline {
       let curvePoints = new Bezier(lonlat).getLUT()
       return curvePoints.map((p) => mu.lonlat2Cartesian([p.x, p.y]))
     }
+  }
+
+  override initTempShape(): void {
+    this.addTempLine(new CallbackProperty((time, result) => {
+      return this.ctls.map(ent => ent.position?.getValue(time))
+    }, false))
   }
 
 }

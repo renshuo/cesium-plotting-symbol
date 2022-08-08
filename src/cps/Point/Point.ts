@@ -6,7 +6,7 @@ export default class Point extends Graph {
   maxPointNum = 1
   minPointNum = 1
 
-  constructor (p, viewer, layer) {
+  constructor (p: {}, viewer: Cesium.Viewer, layer: Cesium.Entity) {
     super({
       type: '点',
       pixelSize: 12,

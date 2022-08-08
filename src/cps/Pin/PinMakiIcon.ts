@@ -11,7 +11,7 @@ export default class PinMakiIcon extends Pin {
 
   pinBuilder = new Cesium.PinBuilder()
 
-  constructor (p, viewer, layer) {
+  constructor (p: {}, viewer: Cesium.Viewer, layer: Cesium.Entity) {
     super({
       type: '图标板',
       icon: 'hospital',
@@ -30,7 +30,6 @@ export default class PinMakiIcon extends Pin {
     Object.assign(ent.billboard, {
       image: new Cesium.CallbackProperty((time, result) => {
         let c = Cesium.Color.fromCssColorString(this.props.color).withAlpha(this.props.alpha)
-        
         return this.pinBuilder.fromMakiIconId(this.props.icon, c, this.props.height)
       }, true),
       rotation: new Cesium.CallbackProperty((time, result) => {

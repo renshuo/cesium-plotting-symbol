@@ -1,14 +1,14 @@
 import * as mu from '../mapUtil.ts'
 import Polygon from './Polygon.js'
 import * as turf from '@turf/turf'
-import { Entity, Viewer, JulianDate } from 'cesium'
+import { Entity, Viewer, JulianDate, CallbackProperty } from 'cesium'
 
 export default class Circle extends Polygon {
   maxPointNum = 2
   minPointNum = 2
   
   constructor(p, viewer: Viewer, layer: Entity){
-    super({type: '圆', ...p}, viewer, layer, true)
+    super({type: '圆', ...p}, viewer, layer)
   }
 
   calcuteShape (points: Array<Entity>, time: JulianDate) {
@@ -23,4 +23,11 @@ export default class Circle extends Polygon {
     let geometry = turf.circle(ctls[0], radius, {units: 'kilometers'})
     return mu.turfGeometry2Cartesians(geometry)
   }
+
+  override initTempShape(): void {
+    this.addTempLine(new CallbackProperty((time, result) => {
+      return this.ctls.map(ent => ent.position?.getValue(time))
+    }, false))
+  }
+
 }

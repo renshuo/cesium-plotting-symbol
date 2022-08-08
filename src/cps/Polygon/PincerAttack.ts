@@ -16,7 +16,7 @@ export default class PincerAttack extends Polygon {
     super({
       type: '钳击',
       arrowWidth: 10,
-      ...p}, viewer, layer, true)
+      ...p}, viewer, layer)
     this.propDefs.push(
       { name: 'arrowWidth', title: '箭头宽度', type: 'number', editable: true, step: 1, min: 1, max: 100 },
     )
@@ -133,8 +133,7 @@ export default class PincerAttack extends Polygon {
     }
   }
 
-
-  initTempShape(): void {
+  override initTempShape(): void {
     //add bottom line
     this.addTempLine(new Cesium.CallbackProperty((time, result) => {
       let ctlss = this.ctls

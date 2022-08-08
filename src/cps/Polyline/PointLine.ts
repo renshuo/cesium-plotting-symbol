@@ -18,6 +18,8 @@ export default class PointLine extends Polyline {
     )
   }
 
+
+  //TODO 这里应当用shape实现顶点，类似distanceMeasure
   handleNewCtl (ctl: Cesium.Entity) {
     let p = this.entities.add(new Cesium.Entity({ point: {}}))
     this.fillShape(p)

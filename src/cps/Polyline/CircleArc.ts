@@ -8,7 +8,7 @@ export default class CircleArc extends Polyline {
   minPointNum = 3
 
   constructor(p: {}, viewer: Viewer, layer: Entity){
-    super({type: '圆弧线', ...p}, viewer, layer, true)
+    super({type: '圆弧线', ...p}, viewer, layer)
   }
 
   calcuteShape (points: Array<Entity>, time: JulianDate) {

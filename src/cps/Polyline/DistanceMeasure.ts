@@ -48,7 +48,13 @@ export default class DistanceMeasure extends PointLine {
           let distance = Cesium.Cartesian3.distance(curctl.position.getValue(Cesium.JulianDate.fromDate(new Date())),
             lastctl.position.getValue(Cesium.JulianDate.fromDate(new Date()))
           )
-          return '距离: ' + distance.toPrecision(8) + " km"
+          if (distance < 1000) {
+            return '距离: ' + distance.toFixed(3) + " m"
+          } else if (distance < 10000) {
+            return '距离: ' + distance.toFixed(2) + " m"
+          } else {
+            return '距离: ' + (distance / 1000).toFixed(1) + " km" 
+          }
         }, false),
         font: '12px monospace',
         horizontalOrigin: Cesium.HorizontalOrigin.LEFT,

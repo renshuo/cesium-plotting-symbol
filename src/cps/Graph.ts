@@ -307,6 +307,7 @@ export default class Graph {
       console.log('remove last control point: ', e)
       this.decreaseTempShape(e)
       this.decreaseShape(e)
+      //TODO 删除最后一个ctl后，需要重新pickup前一个ctl
     } else {
       console.log('no last point')
     }

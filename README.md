@@ -57,6 +57,17 @@ npm install cesium-plotting-symbol --save
 ```javascript
 import {GraphManager} from 'cesium-plotting-symbol'
 ```
+
+## 创建 GraphManager的实例
+```javascript
+  let gm = new GraphManager(viewer, {
+    layerId: 'testbh1',
+    editAfterCreate: true
+  }
+```
+viewer是cesium的 Cesium.Viewer的实例
+
+
 ## 属性编辑窗
 可以使用内置的propEditor：
 ```javascript

@@ -191,7 +191,9 @@ export class EditMode {
   setCurrentEditEnt(ent: Graph| undefined) {
     console.log('select a graph: ', ent)
     this.currentEditEnt = ent
-    this.graphSelectHandler(ent)
+    if (this.graphSelectHandler) {
+      this.graphSelectHandler(ent)
+    }
   }
 
   viewMode() {

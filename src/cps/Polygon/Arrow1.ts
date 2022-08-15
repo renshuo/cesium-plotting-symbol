@@ -34,7 +34,7 @@ export default class Arrow1 extends Polygon {
 
       let bearing = turf.bearing(point1, point2)
 
-      let distance = turf.distance(point1, point2, options)
+      let distance = turf.distance(point1, point2, this.options)
 
       let a = distance/10
       let b = distance/10

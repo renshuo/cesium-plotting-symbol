@@ -23,7 +23,7 @@ export default class AreaMeasure extends Polygon {
     this.shapes.push(this.entities.add(new Cesium.Entity({
       position: new Cesium.CallbackProperty((time, result) => {
         if (this.ctls.length < 3) {
-          return ""
+          return undefined
         } else {
           let pos = this.ctls.map(ctl => mu.cartesian2lonlat(ctl.position.getValue(time)))
           pos.push(pos[0])

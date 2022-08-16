@@ -200,10 +200,15 @@ export default class Graph {
       label: {
         text: 'Lon: ' + pos.lon.toPrecision(5) + '\u00B0' +
         '\nLat: ' + pos.lat.toPrecision(5) + '\u00B0',
-        font : '12px monospace',
+        font: '10px sans-serif',
+        style: Cesium.LabelStyle.FILL,
+        showBackground: true,
+        backgroundColor: Cesium.Color.BLACK.withAlpha(0.3),
+        backgroundPadding: new Cesium.Cartesian2(3,2),
         horizontalOrigin : Cesium.HorizontalOrigin.LEFT,
         verticalOrigin : Cesium.VerticalOrigin.TOP,
-        pixelOffset : new Cesium.Cartesian2(15, 0)
+        pixelOffset : new Cesium.Cartesian2(10, -12),
+        outlineWidth: 0,
       }
     })
     ctlPoint.finish = () => {

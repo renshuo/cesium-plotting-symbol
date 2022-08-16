@@ -68,14 +68,14 @@ export default class Polygon extends Graph {
           let ps = this.calcuteShape(this.ctls, time)
           return new Cesium.PolygonHierarchy(ps, [])
         }, true),
-        heightReference: Cesium.HeightReference.CLAMP_TO_GROUND
+        heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND
       },
       parent: this.graph
     }))
     this.fillShape(ent)
   }
 
-  calcuteShape(points, time) {
+  calcuteShape(points: Array<Cesium.Entity>, time: Cesium.JulianDate) {
     if (points.length < this.minPointNum) {
       return []
     }

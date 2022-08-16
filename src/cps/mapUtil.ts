@@ -1,5 +1,6 @@
 import * as turf from '@turf/turf';
 import * as Cesium from 'cesium';
+import {Pos} from './Graph'
 
 /**
  * 转换屏幕坐标（来自于鼠标的各种event）为地理坐标
@@ -50,11 +51,30 @@ export function lonlatheiObj2Cartesian(obj: { lon: number, lat: number, hei: num
 export function cartesian2lonlat(cartesian: Cesium.Cartesian3): Array<number> {
   let ellipsoid = Cesium.Ellipsoid.WGS84
   var cartographic = ellipsoid.cartesianToCartographic(cartesian)
-  let longitudeString = Cesium.Math.toDegrees(cartographic.longitude)
-  let latitudeString = Cesium.Math.toDegrees(cartographic.latitude)
-  return [longitudeString, latitudeString]
+  if (cartographic) {
+    let longitudeString = Cesium.Math.toDegrees(cartographic.longitude)
+    let latitudeString = Cesium.Math.toDegrees(cartographic.latitude)
+    return [longitudeString, latitudeString]
+  } else {
+    return [0,0]
+  }
 }
 
+export function pos2Cartesian(p: Pos): Cesium.Cartesian3 {
+  return lonlatheiObj2Cartesian(p)
+}
+export function cartesian2Pos(cartesian: Cesium.Cartesian3): Pos {
+  let ellipsoid = Cesium.Ellipsoid.WGS84
+  var cartographic = ellipsoid.cartesianToCartographic(cartesian)
+  if (cartographic) {
+    let longitudeString = Cesium.Math.toDegrees(cartographic.longitude)
+    let latitudeString = Cesium.Math.toDegrees(cartographic.latitude)
+    let hei = cartographic.height
+    return {lon: longitudeString, lat: latitudeString, hei}
+  } else {
+    return {lon: 0, lat: 0, hei: 0}
+  }
+}
 
 export function screen2Cartesian(screenPos: Cesium.Cartesian2, height: number | undefined, viewer: Cesium.Viewer): Cesium.Cartesian3 {
   let degrees = screen2lonlat(screenPos, viewer)

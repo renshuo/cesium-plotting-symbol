@@ -2,7 +2,6 @@ import * as Cesium from 'cesium';
 import kb from 'keyboardjs';
 import Graph from './Graph';
 import { GraphManager } from './index';
-import * as mu from './mapUtil';
 
 enum Mode {
   View,
@@ -59,7 +58,7 @@ export class EditMode {
     this.handler = undefined
   }
 
-  initKeyboard() {
+  private initKeyboard() {
     this.initKeyboardView()
     this.initKeyboardCreate()
     this.initKeyboardSelect()
@@ -180,15 +179,15 @@ export class EditMode {
 
 
   currentEditEnt: Graph| undefined = undefined
-  hoveredEnt: Cesium.Entity
-  pickedctl: Cesium.Entity
+  hoveredEnt: Cesium.Entity | undefined
+  pickedctl: Cesium.Entity | undefined
 
-  graphSelectHandler: GraphSelectHandler
+  graphSelectHandler: GraphSelectHandler | undefined
   setGraphSelectHandler(handler: GraphSelectHandler) {
     this.graphSelectHandler = handler
   }
 
-  setCurrentEditEnt(ent: Graph| undefined) {
+  setCurrentEditEnt(ent: Graph | undefined) {
     console.log('select a graph: ', ent)
     this.currentEditEnt = ent
     if (this.graphSelectHandler) {
@@ -217,24 +216,23 @@ export class EditMode {
     console.log(`into ${Mode[this.mode]} mode`, this.currentEditEnt)
 
     // add a new ctl point and pick it
-    this.lastCtl = this.currentEditEnt.addCtlPoint({ lon: 0, lat: 0 })
+    this.lastCtl = this.currentEditEnt.addCtlPointCar(new Cesium.Cartesian3())
     this.lastCtl.pickup()
 
     kb.setContext(this.mode)
     this.setCursor(Cursor.crosshair)
 
     this.getHandler().setInputAction(move => {
-      window.cursorPos = mu.screen2Cartesian(move.endPosition, 0, this.viewer)
+      window.cursorPos = this.viewer.camera.pickEllipsoid(move.endPosition)
     }, Cesium.ScreenSpaceEventType.MOUSE_MOVE)
 
     this.getHandler().setInputAction(event => {
-      let newpos = mu.screen2Cartesian(event.position, 0, this.viewer)
-      let p = mu.cartesian2lonlat(newpos, this.viewer)
+      let newpos = this.viewer.camera.pickEllipsoid(event.position)
       this.lastCtl.finish()
       if (this.currentEditEnt.ishaveMaxCtls()) {
         this.nextMode(Act.Finish)
       } else {
-        this.lastCtl = this.currentEditEnt.addCtlPoint({ lon: p[0], lat: p[1] })
+        this.lastCtl = this.currentEditEnt.addCtlPointCar(newpos)
         this.lastCtl.pickup()
       }
     }, Cesium.ScreenSpaceEventType.LEFT_CLICK)
@@ -362,7 +360,7 @@ export class EditMode {
     this.currentEditEnt.toEdit()
 
     this.getHandler().setInputAction(move => {
-      window.cursorPos = mu.screen2Cartesian(move.endPosition, 0, this.viewer)
+      window.cursorPos = this.viewer.camera.pickEllipsoid(move.endPosition)
     }, Cesium.ScreenSpaceEventType.MOUSE_MOVE)
 
     this.getHandler().setInputAction(event => {
@@ -420,7 +418,7 @@ export class EditMode {
     this.pickedctl.pickup()
 
     this.getHandler().setInputAction(move => {
-      window.cursorPos = mu.screen2Cartesian(move.endPosition, 0, this.viewer)
+      window.cursorPos = this.viewer.camera.pickEllipsoid(move.endPosition)
     }, Cesium.ScreenSpaceEventType.MOUSE_MOVE)
 
     this.getHandler().setInputAction(event => {

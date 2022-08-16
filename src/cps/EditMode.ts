@@ -224,8 +224,7 @@ export class EditMode {
     this.setCursor(Cursor.crosshair)
 
     this.getHandler().setInputAction(move => {
-      window.cursorScreenPos = mu.screen2lonlat(move.endPosition, this.viewer)
-      window.cursorPos = mu.lonlat2Cartesian(window.cursorScreenPos)
+      window.cursorPos = mu.screen2Cartesian(move.endPosition, 0, this.viewer)
     }, Cesium.ScreenSpaceEventType.MOUSE_MOVE)
 
     this.getHandler().setInputAction(event => {
@@ -272,36 +271,6 @@ export class EditMode {
         return false
       }
     }
-  }
-
-  initCreateCursor() {
-    window.cursor = this.viewer.entities.add({
-      id: 'cursor',
-      position: new Cesium.CallbackProperty((time, result) => {
-        return window.cursorPos === null
-          ? null
-          : Cesium.Cartesian3.clone(window.cursorPos)
-      }, true),
-      point: {
-        pixelSize: 10,
-        color: Cesium.Color.fromBytes(255, 255, 255, 80),
-        heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-        outlineWidth: 1,
-        outlineColor: Cesium.Color.AQUA
-      },
-      label: {
-        text: new Cesium.CallbackProperty((time, result) => {
-          return window.cursorScreenPos ?
-            'Lon: ' + window.cursorScreenPos[0].toPrecision(5) + '\u00B0' +
-            '\nLat: ' + window.cursorScreenPos[1].toPrecision(5) + '\u00B0' :
-            ''
-        }, true),
-        font: '14px monospace',
-        horizontalOrigin: Cesium.HorizontalOrigin.LEFT,
-        verticalOrigin: Cesium.VerticalOrigin.TOP,
-        pixelOffset: new Cesium.Cartesian2(15, 0)
-      }
-    })
   }
 
   initKeyboardCreate() {

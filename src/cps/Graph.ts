@@ -188,7 +188,7 @@ export default class Graph {
       position: cartesian3,
       point: {
         pixelSize: 8,
-        heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+        heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND,
         color: Cesium.Color.fromBytes(255, 255, 255, 70),
         outlineWidth: 1,
         outlineColor: Cesium.Color.AQUA
@@ -220,7 +220,7 @@ export default class Graph {
         }
       }, false)
     }
-    
+
     ctlPoint.graph = this
     this.ctls.push(ctlPoint)
     console.log('added a ctl: ', ctlPoint, this.ctls)

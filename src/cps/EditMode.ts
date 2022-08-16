@@ -223,11 +223,11 @@ export class EditMode {
     this.setCursor(Cursor.crosshair)
 
     this.getHandler().setInputAction(move => {
-      window.cursorPos = this.viewer.camera.pickEllipsoid(move.endPosition)
+      window.cursorPos = this.pickPos(move.endPosition)
     }, Cesium.ScreenSpaceEventType.MOUSE_MOVE)
 
     this.getHandler().setInputAction(event => {
-      let newpos = this.viewer.camera.pickEllipsoid(event.position)
+      let newpos = this.pickPos(event.position)
       this.lastCtl.finish()
       if (this.currentEditEnt.ishaveMaxCtls()) {
         this.nextMode(Act.Finish)
@@ -360,7 +360,7 @@ export class EditMode {
     this.currentEditEnt.toEdit()
 
     this.getHandler().setInputAction(move => {
-      window.cursorPos = this.viewer.camera.pickEllipsoid(move.endPosition)
+      window.cursorPos = this.pickPos(move.endPosition)
     }, Cesium.ScreenSpaceEventType.MOUSE_MOVE)
 
     this.getHandler().setInputAction(event => {
@@ -418,7 +418,7 @@ export class EditMode {
     this.pickedctl.pickup()
 
     this.getHandler().setInputAction(move => {
-      window.cursorPos = this.viewer.camera.pickEllipsoid(move.endPosition)
+      window.cursorPos = this.pickPos(move.endPosition)
     }, Cesium.ScreenSpaceEventType.MOUSE_MOVE)
 
     this.getHandler().setInputAction(event => {
@@ -447,6 +447,18 @@ export class EditMode {
 
   setCursor(cursor: Cursor) {
     this.viewer.canvas.style.cursor = Cursor[cursor]
+  }
+
+
+  /**
+   * use globle.pick instead pickEllipsoid
+   * see: https://zhuanlan.zhihu.com/p/44767866
+   */
+  private pickPos(pos: Cesium.Cartesian2): Cesium.Cartesian3 | undefined {
+    let scene = this.viewer.scene
+    let ray = scene.camera.getPickRay(pos);
+    let c1 = scene.globe.pick(ray, scene);
+    return c1
   }
 }
 export default EditMode

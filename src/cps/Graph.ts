@@ -189,37 +189,37 @@ export default class Graph {
     let pos: Pos = mu.cartesian2Pos(car3)
     let ctlPoint: Cesium.Entity = this.entities.add({
       id: this.graph.id + '_ctlpoint_' + Graph.seq++,
-      position: cartesian3,
       point: {
         pixelSize: 8,
-        heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND,
+        heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
         color: Cesium.Color.fromBytes(255, 255, 255, 70),
         outlineWidth: 1,
         outlineColor: Cesium.Color.AQUA
       },
       label: {
-        text: 'Lon: ' + pos.lon.toPrecision(5) + '\u00B0' +
-        '\nLat: ' + pos.lat.toPrecision(5) + '\u00B0',
         font: '10px sans-serif',
         style: Cesium.LabelStyle.FILL,
         showBackground: true,
         backgroundColor: Cesium.Color.BLACK.withAlpha(0.3),
         backgroundPadding: new Cesium.Cartesian2(3,2),
-        horizontalOrigin : Cesium.HorizontalOrigin.LEFT,
-        verticalOrigin : Cesium.VerticalOrigin.TOP,
-        pixelOffset : new Cesium.Cartesian2(10, -12),
+        horizontalOrigin : Cesium.HorizontalOrigin.CENTER,
+        verticalOrigin : Cesium.VerticalOrigin.BOTTOM,
+        pixelOffset : new Cesium.Cartesian2(0, -10),
         outlineWidth: 0,
+        heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
       }
     })
     ctlPoint.finish = () => {
       ctlPoint.label.text = ctlPoint.label.text.getValue(Cesium.JulianDate.fromDate(new Date()))
-      ctlPoint.position = ctlPoint.position.getValue(Cesium.JulianDate.fromDate(new Date()))
+      let posi = ctlPoint.position.getValue(Cesium.JulianDate.fromDate(new Date()))
+      ctlPoint.position = posi
     }
     ctlPoint.pickup = () => {
       ctlPoint.label.text = new Cesium.CallbackProperty((time, result) => {
         let p: Pos = mu.cartesian2Pos(ctlPoint.position.getValue(time))
-        return 'Lon: ' + p.lon.toPrecision(5) + '\u00B0' +
-               '\nLat: ' + p.lat.toPrecision(5) + '\u00B0'
+        return 'Lon: ' + p.lon.toPrecision(5) + '\u00B0'
+          + '\nLat: ' + p.lat.toPrecision(5) + '\u00B0'
+          + '\nHei: ' + p.hei.toPrecision(5) + 'm'
       }, false)
       ctlPoint.position = new Cesium.CallbackProperty((time, result) => {
         if (window.cursorPos) {

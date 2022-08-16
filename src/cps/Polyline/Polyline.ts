@@ -10,7 +10,7 @@ export default class Polyline extends Graph {
   constructor(prop: {}, viewer: Cesium.Viewer, layer: Cesium.Entity) {
     super({
       type: '折线',
-      width: 1,
+      width: 5,
       fill: true,
       ...prop
     }, viewer, layer)
@@ -36,24 +36,22 @@ export default class Polyline extends Graph {
   }
 
   initShape() {
-    let ent = this.entities.add(new Cesium.Entity({polyline: {}, name: '画线'}))
+    let ent = this.entities.add(new Cesium.Entity({
+      name: '画线',
+      polyline: {
+        width: new Cesium.CallbackProperty((time, result) => this.props.width, true),
+        material: new Cesium.ColorMaterialProperty(
+          new Cesium.CallbackProperty(() => {
+            let c = Cesium.Color.fromCssColorString(this.props.color).withAlpha(this.props.alpha)
+            return this.highLighted ? c.brighten(0.6, new Cesium.Color()) : c
+          }, true)),
+        positions: new Cesium.CallbackProperty((time, result) => {
+          return this.calcuteShape(this.ctls, time)
+        }, false),
+        clampToGround: true,
+      }
+    }))
     this.fillShape(ent)
-    Object.assign(ent.polyline, {
-      width: new Cesium.CallbackProperty((time, result) => this.props.width, true),
-      fill: true,
-      material: new Cesium.ColorMaterialProperty(
-        new Cesium.CallbackProperty(() => {
-          let c = Cesium.Color.fromCssColorString(this.props.color).withAlpha(this.props.alpha)
-          return this.highLighted ? c.brighten(0.6, new Cesium.Color()) : c
-        }, true)),
-      height: 0,
-      outline: true,
-      outlineWidth: 1,
-      outlineColor: Cesium.Color.fromCssColorString('#fd7f44'),
-      positions: new Cesium.CallbackProperty((time, result) => {
-        return this.calcuteShape(this.ctls, time)
-      }, false)
-    })
   }
 
   calcuteShape (ctls: Array<Cesium.Entity>, time: Cesium.JulianDate) {

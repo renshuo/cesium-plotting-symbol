@@ -18,8 +18,6 @@ export function screen2lonlat(screenPos: Cesium.Cartesian2, viewer: Cesium.Viewe
   }
 }
 
-
-
 /**
  * 转换地理坐标到cesium cartesian
  * @param {地理坐标} lonlat

@@ -141,7 +141,8 @@ const funcs1 = ref([
     {name: '删除id', func: testDeleteById },
     {name: '清空', func: () => prop.gm.deleteAll() },
     {name: '自动', func: createByJson },
-    {name: '选择模式', func: () => prop.gm.start() }
+    {name: '选择模式', func: () => prop.gm.start() },
+    {name: '查看模式', func: () => prop.gm.finish() },
   ], [
     {name: '保存', func: saveGraphs },
     {name: '上传', func: loadGraphs },

@@ -72,6 +72,11 @@ export class EditMode {
     this.nextMode(Act.Start)
   }
 
+  public finish(): void {
+    this.nextMode(Act.Finish)
+  }
+
+
   create(ent: Graph) {
     this.nextMode(Act.Finish) // finish last edit if it is
     this.setCurrentEditEnt(ent)

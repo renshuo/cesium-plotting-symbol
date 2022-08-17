@@ -85,8 +85,12 @@ class GraphManager {
   /**
    * into select mode
    */
-  start(): void {
+  public start(): void {
     this.em.start();
+  }
+
+  public finish(): void {
+    this.em.finish()
   }
 
   destroyHandler(): void {

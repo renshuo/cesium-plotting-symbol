@@ -42,7 +42,10 @@ onMounted(() => {
     selectionIndicator: false, //是否显示选取指示器组件
     timeline: false, //是否显示时间轴
     animation: false, //是否创建动画小器件，左下角仪表
+    terrainProvider: Cesium.createWorldTerrain()
   });
+
+  viewer.scene.fog.enabled = false
 
   gm.value = new GraphManager(viewer, {
     layerId: "testbh1",

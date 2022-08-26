@@ -26,7 +26,7 @@ type PropDefNum = PropDef & {
 export default class Graph {
   static seq = new Date().getTime()
   entities: Cesium.EntityCollection
-
+  viewer: Cesium.Viewer
   /**
    * set max ctl point number
    * when ctlPoints.length >= maxPointNum call this.finish()
@@ -63,10 +63,12 @@ export default class Graph {
     ctls: []
   }
 
+
   constructor(props: {}, viewer: Cesium.Viewer, layer: Cesium.Entity) {
     if (!viewer) {
       throw 'get null viewer.'
     }
+    this.viewer = viewer
     this.entities = viewer.entities
     Object.assign(this.props, props)
 
@@ -321,4 +323,17 @@ export default class Graph {
     }
   }
 
+  /* util */
+
+  public Cartesian3ToCartographic(c3: Cesium.Cartesian3): Cesium.Cartographic {
+    return Cesium.Cartographic.fromCartesian(c3, this.viewer.scene.globe.ellipsoid)
+  }
+
+  public getCartographic(c3: Cesium.Entity): Cesium.Cartographic {
+    return this.Cartesian3ToCartographic(c3.position.getValue(Cesium.JulianDate.now()))
+  }
+
+  public CartographicToCartesian3(car: Cesium.Cartographic): Cesium.Cartesian3 {
+    return Cesium.Cartographic.toCartesian(car, this.viewer.scene.globe.ellipsoid)
+  }
 }

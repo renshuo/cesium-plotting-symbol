@@ -39,9 +39,15 @@ export default class TriangleMeasure extends PointLine {
   }
 
   private createDistanceText() {
-    this.addTempLine(new Cesium.CallbackProperty((time, result) => {
-      return (this.ctls.length > 1) ? this.getPx(this.ctls) : []
-    }, false))
+    this.shapes.push(this.entities.add(new Cesium.Entity({
+      polyline: {
+        width: 1,
+        material: Cesium.Color.BLUE.withAlpha(0.7),
+        positions: new Cesium.CallbackProperty((time, result) => {
+          return (this.ctls.length > 1) ? this.getPx(this.ctls) : []
+        }, false)
+      }
+    })))
 
     this.shapes.push(this.entities.add(new Cesium.Entity({
       position: new Cesium.CallbackProperty((time, result) => {
@@ -77,7 +83,7 @@ export default class TriangleMeasure extends PointLine {
         }, false),
         font: "12px monospace",
         horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
-        verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+        verticalOrigin: Cesium.VerticalOrigin.CENTER,
         pixelOffset: new Cesium.Cartesian2(0, 0)
       }
     })))

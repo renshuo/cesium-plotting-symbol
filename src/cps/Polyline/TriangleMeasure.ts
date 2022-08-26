@@ -65,17 +65,17 @@ export default class TriangleMeasure extends PointLine {
             heiDif = Math.abs(heiDif)
 
             if (distance < 1000) {
-              return "两地距离: " + distance.toFixed(3) + " m"
-                + "\n 水平距离：" + distance2.toFixed(3) + " m"
-                + "\n高度差：" + heiDif.toFixed(3) + " m"
+              return "两地距离：" + distance.toFixed(3) + " 米"
+                + "\n水平距离：" + distance2.toFixed(3) + " 米"
+                + "\n高度差：" + heiDif.toFixed(3) + " 米"
             } else if (distance < 10000) {
-              return "两地距离: " + distance.toFixed(2) + " m"
-                + "\n 水平距离：" + distance2.toFixed(2) + " m"
-                + "\n高度差：" + heiDif.toFixed(2) + " m"
+              return "两地距离：" + distance.toFixed(2) + " 米"
+                + "\n水平距离：" + distance2.toFixed(2) + " 米"
+                + "\n高度差：" + heiDif.toFixed(2) + " 米"
             } else {
-              return "两地距离: " + (distance / 1000).toFixed(1) + " km"
-                + "\n 水平距离：" + (distance2/1000).toFixed(1) + " km"
-                + "\n高度差：" + heiDif.toFixed(2) + " m"
+              return "两地距离：" + (distance / 1000).toFixed(1) + " 千米"
+                + "\n水平距离：" + (distance2/1000).toFixed(1) + " 千米"
+                + "\n高度差：" + heiDif.toFixed(2) + " 米"
             }
           } else {
             return ""

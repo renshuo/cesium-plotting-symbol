@@ -12,11 +12,13 @@ export default class Polyline extends Graph {
       type: '折线',
       width: 5,
       fill: true,
+      clamp: true,
       ...prop
     }, viewer, layer)
     this.propDefs.push(
       { name: 'width', title: '线宽', type: 'number', editable: true, min: 1, max: 256 },
       { name: 'fill', title: '是否填充', type: 'boolean', editable: true },
+      { name: 'clamp', title: '是否贴地', type: 'boolean', editable: true },
     )
   }
 
@@ -48,7 +50,7 @@ export default class Polyline extends Graph {
         positions: new Cesium.CallbackProperty((time, result) => {
           return this.calcuteShape(this.ctls, time)
         }, false),
-        clampToGround: true,
+        clampToGround: new Cesium.CallbackProperty((time, result) => this.props.clamp, true),
       }
     }))
     this.fillShape(ent)

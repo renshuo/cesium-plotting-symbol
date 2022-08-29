@@ -40,7 +40,7 @@ import CircleArc from './Polyline/CircleArc';
 import PointLine from './Polyline/PointLine';
 import PointSpline from './Polyline/PointSpline';
 import Polyline from './Polyline/Polyline';
-
+import BeeLine from './Polyline/BeeLine';
 
 // measuring
 import DistanceMeasure from './Polyline/DistanceMeasure';
@@ -201,6 +201,7 @@ class GraphManager {
       case 'DistanceMeasure': return new DistanceMeasure(json, this.viewer, this.layer);
       case 'AngleMeasure': return new AngleMeasure(json, this.viewer, this.layer);
       case 'TriangleMeasure': return new TriangleMeasure(json, this.viewer, this.layer);
+      case 'BeeLine': return new BeeLine(json, this.viewer, this.layer);
       default:
         console.log('invalid type');
         return undefined;

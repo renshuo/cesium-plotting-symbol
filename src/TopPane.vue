@@ -116,7 +116,9 @@ const funcs1 = ref([
     {name: '圆弧线', func: () => prop.gm.create({obj: 'CircleArc', color: '#ff0000'}) },
     {name: '顶点线', func: () => prop.gm.create({obj: 'PointLine', color: '#ff0000'}) },
     {name: '顶点平滑线', func: () => prop.gm.create({obj: 'PointSpline', color: '#ff0000'}) },
+    {name: '线段', func: () => prop.gm.create({obj: 'BeeLine', color: '#ff0000'}) },
   ],
+
   [
     {name: '点', func: () => prop.gm.create({obj: 'Point', color: '#00ff00'}) },
     {name: '地面站', func: () => prop.gm.create({obj: 'Station', color: '#00ff00'}) },

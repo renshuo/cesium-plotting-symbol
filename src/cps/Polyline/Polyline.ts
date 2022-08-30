@@ -50,7 +50,7 @@ export default class Polyline extends Graph {
         positions: new Cesium.CallbackProperty((time, result) => {
           return this.calcuteShape(this.ctls, time)
         }, false),
-        clampToGround: new Cesium.CallbackProperty((time, result) => this.props.clamp, true),
+        clampToGround: new Cesium.CallbackProperty((time, result) => this.props.clamp == true, true),
       }
     }))
     this.fillShape(ent)

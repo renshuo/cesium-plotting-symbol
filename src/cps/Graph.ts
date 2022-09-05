@@ -43,7 +43,6 @@ export default class Graph {
   highLighted: boolean = false
 
   public propDefs: Array<PropDef | PropDefNum> = [
-    { name: 'id', title: '编号', type: 'string', editable: false },
     { name: 'name', title: '名称', type: 'string', editable: true  },
     { name: 'type', title: '类型', type: 'string', editable: false },
     { name: 'description', title: '描述', type: 'string', editable: true},
@@ -53,7 +52,6 @@ export default class Graph {
   ]
 
   props = {
-    id:'',
     name: '',
     description: '',
     level: 1,
@@ -241,9 +239,6 @@ export default class Graph {
   }
 
   fillShape(ent: Cesium.Entity) {
-    if (this.props.id === undefined || this.props.id === '') {
-      this.props.id = ent.id
-    }
     ent.graph = this
     this.shapes.push(ent)
     ent.level = new Cesium.CallbackProperty((time, result) => {

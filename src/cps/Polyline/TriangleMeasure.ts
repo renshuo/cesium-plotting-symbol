@@ -17,9 +17,7 @@ export default class TriangleMeasure extends PointLine {
     super.initShape()
     let shp: Cesium.Entity = this.shapes[0]
     shp.polyline.clampToGround = false
-  }
-
-  override initTempShape() {
+    this.createDistanceLine()
     this.createDistanceText()
   }
 
@@ -38,8 +36,8 @@ export default class TriangleMeasure extends PointLine {
     return [hss[0], hx, hss[1]].map( co => this.CartographicToCartesian3(co))
   }
 
-  private createDistanceText() {
-    this.shapes.push(this.entities.add(new Cesium.Entity({
+  private createDistanceLine() {
+    let tline = this.entities.add(new Cesium.Entity({
       polyline: {
         width: 1,
         material: Cesium.Color.BLUE.withAlpha(0.7),
@@ -47,9 +45,12 @@ export default class TriangleMeasure extends PointLine {
           return (this.ctls.length > 1) ? this.getPx(this.ctls) : []
         }, false)
       }
-    })))
+    }))
+    super.fillShape(tline)
+  }
 
-    this.shapes.push(this.entities.add(new Cesium.Entity({
+  private createDistanceText() {
+    let dt = this.entities.add(new Cesium.Entity({
       position: new Cesium.CallbackProperty((time, result) => {
         return (this.ctls.length>1) ? this.getPx(this.ctls)[1] : undefined
       }, false),
@@ -86,7 +87,8 @@ export default class TriangleMeasure extends PointLine {
         verticalOrigin: Cesium.VerticalOrigin.CENTER,
         pixelOffset: new Cesium.Cartesian2(0, 0)
       }
-    })))
+    }))
+    super.fillShape(dt)
   }
 
 }

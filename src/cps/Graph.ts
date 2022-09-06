@@ -300,6 +300,7 @@ export default class Graph {
     this.entities.remove(this.graph)
     this.ctls.map( (ctl) => { this.entities.remove(ctl) })
     this.shapes.map((shp) => { this.entities.remove(shp) })
+    this.tempShapes.map( (tmp) => {this.entities.remove(tmp)})
   }
 
   /**

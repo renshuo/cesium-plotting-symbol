@@ -1,4 +1,4 @@
-import EditMode, { GraphSelectHandler } from './EditMode';
+import EditMode, { GraphFinishHandler, GraphSelectHandler } from './EditMode';
 
 // image
 import Image from './Image/Image';
@@ -212,6 +212,10 @@ class GraphManager {
 
   setGraphSelectHandler(handler: GraphSelectHandler) {
     this.em.setGraphSelectHandler(handler)
+  }
+
+  setGraphFinishHandler(handler: GraphFinishHandler) {
+    this.em.setGraphFinishHandler(handler)
   }
 }
 

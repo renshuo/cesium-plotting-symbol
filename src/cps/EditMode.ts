@@ -28,6 +28,7 @@ enum Cursor {
 }
 
 export type GraphSelectHandler = (graph: Graph) => void
+export type GraphFinishHandler = (graph: Graph) => void
 
 export class EditMode {
 
@@ -41,7 +42,7 @@ export class EditMode {
     this.editAfterCreate = editAfterCreate
     this.gm = gm0
     this.initKeyboard()
-  }
+   }
 
   /** handler单例 */
   handler: Cesium.ScreenSpaceEventHandler | undefined
@@ -190,6 +191,11 @@ export class EditMode {
   graphSelectHandler: GraphSelectHandler | undefined
   setGraphSelectHandler(handler: GraphSelectHandler) {
     this.graphSelectHandler = handler
+  }
+
+  graphFinishHandler: GraphFinishHandler | undefined
+  public setGraphFinishHandler(handler: GraphFinishHandler) {
+    this.graphFinishHandler = handler
   }
 
   setCurrentEditEnt(ent: Graph | undefined) {
@@ -389,6 +395,9 @@ export class EditMode {
   finishCurrentEdit() {
     if (this.currentEditEnt) {
       this.currentEditEnt.finish()
+      if (this.graphFinishHandler) {
+        this.graphFinishHandler(this.currentEditEnt)
+      }
     }
   }
 

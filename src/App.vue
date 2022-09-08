@@ -63,6 +63,10 @@ onMounted(() => {
       console.log("unselect")
     }
   })
+
+  gm.value.setGraphFinishHandler( (ent: Graph) => {
+    console.log("handler graph finish: ", ent)
+  })
 });
 </script>
 

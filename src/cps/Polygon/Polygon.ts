@@ -68,7 +68,11 @@ export default class Polygon extends Graph {
           let ps = this.calcuteShape(this.ctls, time)
           return new Cesium.PolygonHierarchy(ps, [])
         }, true),
-        heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND
+        height: 0,
+        /**
+           oneTimeWarning.js:38 Entity geometry outlines are unsupported on terrain. Outlines will be disabled. To enable outlines, disable geometry terrain clamping by explicitly setting height to 0.
+           */
+        heightReference: Cesium.HeightReference.NONE
       },
       parent: this.graph
     }))

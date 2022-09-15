@@ -86,16 +86,16 @@ export default class Graph {
       ctlsPos.forEach((pos: Pos | Array<number>) => {
         if (pos instanceof Array) {
           if (pos.length === 2) {
-            let c3 = mu.pos2Cartesian({lon: pos[0], lat: pos[1], hei: 0})
+            let c3 = Cesium.Cartesian3.fromDegrees(pos[0], pos[1])
             this.addCtlPointCar(c3)
           } else if (pos.length === 3) {
-            let c3 = mu.pos2Cartesian({lon: pos[0], lat: pos[1], hei: pos[2] })
+            let c3 = Cesium.Cartesian3.fromDegrees(pos[0], pos[1], pos[2])
             this.addCtlPointCar(c3)
           } else {
             console.log('invalid pos array length: ', pos)
           }
         } else {
-          let c3 = mu.pos2Cartesian(pos)
+          let c3 = Cesium.Cartesian3.fromDegrees(pos.lon, pos.lat, pos.hei)
           this.addCtlPointCar(c3)
         }
       })
@@ -167,7 +167,9 @@ export default class Graph {
    * 返回当前graph的所有控制点坐标，Pos类型： lon, lat, hei
    */
   getCtlPositionsPos (): Array<Pos> {
-    return this.getCtlPositions().map( c3 => mu.cartesian2Pos(c3))
+    return this.getCtlPositions().map( c3 => {
+      mu.cartesian2Pos(c3)
+    } )
   }
   /**
    * 返回当前graph的所有控制点坐标（cartesian3）
@@ -185,8 +187,6 @@ export default class Graph {
 
   addCtlPointCar(car3: Cesium.Cartesian3): Cesium.Entity {
     console.log("in add ctl Pos")
-    let cartesian3 = car3
-    let pos: Pos = mu.cartesian2Pos(car3)
     let ctlPoint: Cesium.Entity = this.entities.add({
       id: this.graph.id + '_ctlpoint_' + Graph.seq++,
       point: {
@@ -216,16 +216,22 @@ export default class Graph {
     }
     ctlPoint.pickup = () => {
       ctlPoint.label.text = new Cesium.CallbackProperty((time, result) => {
-        let p: Pos = mu.cartesian2Pos(ctlPoint.position.getValue(time))
-        return 'Lon: ' + p.lon.toPrecision(5) + '\u00B0'
-          + '\nLat: ' + p.lat.toPrecision(5) + '\u00B0'
-          + '\nHei: ' + p.hei.toPrecision(5) + 'm'
+        let c3 = ctlPoint.position.getValue(time)
+        if (c3) {
+          let p: Cesium.Cartographic = Cesium.Cartographic.fromCartesian(c3)
+          if (p) {
+            return 'Lon: ' + p.longitude.toPrecision(5) + '\u00B0'
+              + '\nLat: ' + p.latitude.toPrecision(5) + '\u00B0'
+              + '\nHei: ' + p.height.toPrecision(5) + 'm'
+          }
+        }
+        return ""
       }, false)
       ctlPoint.position = new Cesium.CallbackProperty((time, result) => {
         if (window.cursorPos) {
           return window.cursorPos.clone()
         } else {
-          return cartesian3
+          return car3
         }
       }, false)
     }

@@ -51,7 +51,6 @@ import SightLine from './Polyline/SightLine';
 
 import * as Cesium from 'cesium';
 import _ from 'lodash';
-import * as mapUtil from './mapUtil';
 import Graph from './Graph';
 
 
@@ -221,7 +220,6 @@ class GraphManager {
 
 
 export {
-  mapUtil,
   GraphManager,
   Graph,
   Polygon,

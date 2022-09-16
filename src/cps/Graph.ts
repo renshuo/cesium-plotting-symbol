@@ -1,7 +1,4 @@
-import * as mu from './mapUtil';
 import * as Cesium from 'cesium';
-import _ from 'lodash';
-
 
 export type Position = {
   longitude: number;
@@ -166,21 +163,21 @@ export default class Graph {
   /**
    * 返回当前graph的所有控制点坐标，Pos类型： lon, lat, hei
    */
-  getCtlPositionsPos (): Array<Pos> {
+  getCtlPositionsPos (): Array<Position|undefined> {
     return this.getCtlPositions().map( c3 => {
-      mu.cartesian2Pos(c3)
+      return this.Cartesian3ToPosition(c3)
     } )
   }
   /**
    * 返回当前graph的所有控制点坐标（cartesian3）
    */
-  getCtlPositions (): Array<Cesium.Cartesian3> {
+  getCtlPositions (): Array<Cesium.Cartesian3|undefined> {
     return this.ctls.map( ctl => {
       let c3 = ctl.position.getValue(Cesium.JulianDate.now())
       if (c3) {
         return c3
       } else {
-        return new Cesium.Cartesian3()
+        return undefined
       }
     })
   }
@@ -324,7 +321,7 @@ export default class Graph {
 
   /* util */
 
-  public Cartesian3ToPosition(c3: Cesium.Cartesian3): Position|undefined {
+  public Cartesian3ToPosition(c3: Cesium.Cartesian3|undefined): Position|undefined {
     if (!c3) {
       return undefined
     }

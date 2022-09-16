@@ -78,9 +78,9 @@ export default class Graph {
     this.initCtls(props.ctls)
   }
 
-  initCtls (ctlsPos: Array<Pos | Array<number>>) {
+  initCtls (ctlsPos: Array<Position | Array<number>>) {
     if (ctlsPos) {
-      ctlsPos.forEach((pos: Pos | Array<number>) => {
+      ctlsPos.forEach((pos: Position | Array<number>) => {
         if (pos instanceof Array) {
           if (pos.length === 2) {
             let c3 = Cesium.Cartesian3.fromDegrees(pos[0], pos[1])
@@ -92,7 +92,7 @@ export default class Graph {
             console.log('invalid pos array length: ', pos)
           }
         } else {
-          let c3 = Cesium.Cartesian3.fromDegrees(pos.lon, pos.lat, pos.hei)
+          let c3 = Cesium.Cartesian3.fromDegrees(pos.longitude, pos.latitude, pos.height)
           this.addCtlPointCar(c3)
         }
       })

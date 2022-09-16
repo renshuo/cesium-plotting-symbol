@@ -147,19 +147,19 @@ const funcs1 = ref([
 
 function createByJson () {
   graphList.push(gm.draw({obj: 'Point', color: '#ff0000', ctls: [[98, 37]]}))
-  graphList.push(gm.draw({obj: 'Point', color: '#ff5500', ctls: [{lon: 98, lat: 39}]}))
-  graphList.push(gm.draw({obj: 'Point', color: '#ff8800', ctls: [{lon: 100, lat: 39}]}))
+  graphList.push(gm.draw({obj: 'Point', color: '#ff5500', ctls: [{longitude: 98, latitude: 39}]}))
+  graphList.push(gm.draw({obj: 'Point', color: '#ff8800', ctls: [{longitude: 100, latitude: 39}]}))
   graphList.push(gm.draw({obj: 'Point', color: '#ffcc00', ctls: [[100, 37]]}))
   gm.draw({obj: 'Polygon', color: '#ff0088', ctls: [
-    {lon: 102, lat: 40},
+    {longitude: 102, latitude: 40},
     [110, 43, 10000],
-    {lon: 110, lat: 44},
-    {lon: 102, lat: 46, hei: 10000},
+    {longitude: 110, latitude: 44},
+    {longitude: 102, latitude: 46, height: 10000},
   ]})
   gm.draw({obj: 'Polyline', color: '#00ffff', ctls: [
-    {lon: 112, lat: 40, hei: 0},
-    {lon: 120, lat: 43, hei: 10000},
-    {lon: 112, lat: 46},
+    {longitude: 112, latitude: 40, height: 0},
+    {longitude: 120, latitude: 43, height: 10000},
+    {longitude: 112, latitude: 46},
   ]})
 }
 

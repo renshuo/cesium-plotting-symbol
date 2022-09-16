@@ -1,4 +1,4 @@
-import { Cartesian3, Entity, Entity, Entity, JulianDate, Ray, Viewer, CallbackProperty, ColorMaterialProperty, Color, IntersectionTests, HeightReference, ClassificationType } from 'cesium';
+import { Cartesian3, Entity, JulianDate, Ray, Viewer, CallbackProperty, ColorMaterialProperty, Color, HeightReference, ClassificationType } from 'cesium';
 import Graph from '../Graph';
 
 export default class SightLine extends Graph  {

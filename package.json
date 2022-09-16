@@ -1,7 +1,7 @@
 {
   "name": "cesium-plotting-symbol",
   "private": false,
-  "version": "0.0.70",
+  "version": "0.0.71",
   "author": "sren",
   "files": [
     "dist"

@@ -222,5 +222,9 @@ class GraphManager {
 
 export {
   mapUtil,
-  GraphManager
+  GraphManager,
+  Graph,
+  Polygon,
+  Polyline,
+  Point
 };

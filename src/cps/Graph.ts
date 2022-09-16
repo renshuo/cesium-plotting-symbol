@@ -3,10 +3,10 @@ import * as Cesium from 'cesium';
 import _ from 'lodash';
 
 
-export type Pos = {
-  lon: number;
-  lat: number;
-  hei: number;
+export type Position = {
+  longitude: number;
+  latitude: number;
+  height: number;
 }
 
 type PropDef = {
@@ -176,7 +176,7 @@ export default class Graph {
    */
   getCtlPositions (): Array<Cesium.Cartesian3> {
     return this.ctls.map( ctl => {
-      let c3 = ctl.position.getValue(new Cesium.JulianDate())
+      let c3 = ctl.position.getValue(Cesium.JulianDate.now())
       if (c3) {
         return c3
       } else {
@@ -210,22 +210,19 @@ export default class Graph {
       }
     })
     ctlPoint.finish = () => {
-      ctlPoint.label.text = ctlPoint.label.text.getValue(Cesium.JulianDate.fromDate(new Date()))
-      let posi = ctlPoint.position.getValue(Cesium.JulianDate.fromDate(new Date()))
-      ctlPoint.position = posi
+      ctlPoint.label.text = ctlPoint.label.text.getValue(Cesium.JulianDate.now())
+      ctlPoint.position = ctlPoint.position.getValue(Cesium.JulianDate.now())
     }
     ctlPoint.pickup = () => {
       ctlPoint.label.text = new Cesium.CallbackProperty((time, result) => {
-        let c3 = ctlPoint.position.getValue(time)
-        if (c3) {
-          let p: Cesium.Cartographic = Cesium.Cartographic.fromCartesian(c3)
-          if (p) {
-            return 'Lon: ' + p.longitude.toPrecision(5) + '\u00B0'
-              + '\nLat: ' + p.latitude.toPrecision(5) + '\u00B0'
-              + '\nHei: ' + p.height.toPrecision(5) + 'm'
-          }
+        let p: Position|undefined = this.Cartesian3ToPosition(ctlPoint.position.getValue(time))
+        if (p) {
+          return 'Lon: ' + p.longitude.toPrecision(5) + '\u00B0'
+            + '\nLat: ' + p.latitude.toPrecision(5) + '\u00B0'
+            + '\nHei: ' + p.height.toPrecision(5) + 'm'
+        } else {
+          return ""
         }
-        return ""
       }, false)
       ctlPoint.position = new Cesium.CallbackProperty((time, result) => {
         if (window.cursorPos) {
@@ -327,15 +324,19 @@ export default class Graph {
 
   /* util */
 
-  public Cartesian3ToCartographic(c3: Cesium.Cartesian3): Cesium.Cartographic {
-    return Cesium.Cartographic.fromCartesian(c3, this.viewer.scene.globe.ellipsoid)
-  }
-
-  public getCartographic(c3: Cesium.Entity): Cesium.Cartographic {
-    return this.Cartesian3ToCartographic(c3.position.getValue(Cesium.JulianDate.now()))
-  }
-
-  public CartographicToCartesian3(car: Cesium.Cartographic): Cesium.Cartesian3 {
-    return Cesium.Cartographic.toCartesian(car, this.viewer.scene.globe.ellipsoid)
+  public Cartesian3ToPosition(c3: Cesium.Cartesian3): Position|undefined {
+    if (!c3) {
+      return undefined
+    }
+    let co = Cesium.Cartographic.fromCartesian(c3, this.viewer.scene.globe.ellipsoid)
+    if (!co) {
+      return undefined
+    }
+    let pos: Position = {
+      longitude: Cesium.Math.toDegrees(co.longitude),
+      latitude: Cesium.Math.toDegrees(co.latitude),
+      height: co.height
+    }
+    return pos
   }
 }

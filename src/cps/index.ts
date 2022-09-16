@@ -69,9 +69,7 @@ class GraphManager {
     editAfterCreate: false
   }
 
-  graphList: Array<Graph> = []
-
-  layer: Cesium.Entity
+  layer: Cesium.DataSource
 
   em: EditMode
 
@@ -79,8 +77,10 @@ class GraphManager {
     this.viewer = viewer;
     Object.assign(this.config, userCfg)
     console.log("create GraphManager: ", viewer, this.config)
-    this.layer = this.viewer.entities.getOrCreateEntity(this.config.layerId);
-    this.em = new EditMode(viewer, this.config.propEditor, this, this.config.editAfterCreate);
+    //this.layer = //this.viewer.entities.getOrCreateEntity(this.config.layerId);
+    this.em = new EditMode(viewer.scene, this.config.propEditor, this, this.config.editAfterCreate);
+    this.layer = new Cesium.CustomDataSource(this.config.layerId)
+    this.viewer.dataSources.add(this.layer)
   }
 
   /**
@@ -118,11 +118,11 @@ class GraphManager {
   }
 
   findById(id: string): Cesium.Entity | undefined {
-    return _.find(this.graphList, (graph: Cesium.Entity) => graph.propx.id.value === id);
+    return this.layer.entities.getById(id)
   }
 
-  findByType(type: string): Cesium.Entity | undefined {
-    return _.find(this.graphList, (graph: Cesium.Entity) => graph.propx.type.value === type);
+  findByType(graphType: string): Cesium.Entity | undefined {
+    return _.find(this.layer.entities.values, (graph: Cesium.Entity) => graph.propx.type.value === graphType);
   }
 
   delete(graph) {
@@ -130,21 +130,14 @@ class GraphManager {
     if (graph) {
       graph.delete();
       deleted = graph;
-      _.remove(this.graphList, deleted);
     } else {
       deleted = this.em.deleteSelectGraph();
-      if (deleted) {
-        _.remove(this.graphList, deleted);
-      }
     }
     console.log('deleted graph: ', deleted);
   }
 
   clean() {
-    this.graphList.forEach(graph => {
-      graph.delete();
-    });
-    this.graphList.splice(0, this.graphList.length);
+    this.layer.entities.removeAll()
   }
 
   deleteAll() {

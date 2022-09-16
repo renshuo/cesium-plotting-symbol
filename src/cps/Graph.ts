@@ -1,5 +1,4 @@
 import * as Cesium from 'cesium';
-
 export type Position = {
   longitude: number;
   latitude: number;
@@ -59,17 +58,16 @@ export default class Graph {
   }
 
 
-  constructor(props: {}, viewer: Cesium.Viewer, layer: Cesium.Entity) {
+  constructor(props: {}, viewer: Cesium.Viewer, layer: Cesium.DataSource) {
     if (!viewer) {
       throw 'get null viewer.'
     }
     this.viewer = viewer
-    this.entities = viewer.entities
+    this.entities = layer.entities
     Object.assign(this.props, props)
 
     this.graph = this.entities.add({
-      id: layer.id + '_graph_' + Graph.seq++,
-      parent: layer
+      id: layer.name + '_graph_' + Graph.seq++,
     })
     this.initRootEntity(layer)
     // this.initProps(properties)
@@ -99,7 +97,7 @@ export default class Graph {
     }
   }
 
-  initRootEntity (layer: Cesium.Entity) {
+  initRootEntity (layer: Cesium.DataSource) {
   }
 
 

@@ -32,23 +32,26 @@ export type GraphFinishHandler = (graph: Graph) => void
 
 export class EditMode {
 
-  viewer: Cesium.Viewer
   editAfterCreate: boolean
   gm: GraphManager
 
-  constructor(viewer: Cesium.Viewer, pe: HTMLElement, gm0: GraphManager, editAfterCreate: boolean) {
-    console.log('create editmode: ', this, viewer, pe, gm0)
-    this.viewer = viewer
+  layer: Cesium.DataSource
+  scene: Cesium.Scene
+
+  constructor(scene: Cesium.Scene, pe: HTMLElement, gm0: GraphManager, editAfterCreate: boolean) {
+    console.log('create editmode: ', pe, gm0)
     this.editAfterCreate = editAfterCreate
     this.gm = gm0
     this.initKeyboard()
+    this.layer = gm0.layer
+    this.scene = scene
    }
 
   /** handler单例 */
   handler: Cesium.ScreenSpaceEventHandler | undefined
   getHandler(): Cesium.ScreenSpaceEventHandler {
     if (!this.handler || this.handler.isDestroyed()) {
-      this.handler = new Cesium.ScreenSpaceEventHandler(this.viewer.scene.canvas)
+      this.handler = new Cesium.ScreenSpaceEventHandler(this.scene.canvas)
     }
     return this.handler
   }
@@ -266,7 +269,7 @@ export class EditMode {
    */
   finishCurrentCreate(): boolean {
     console.log('finsih create: ', this.currentEditEnt)
-    this.viewer.entities.remove(window.cursor)
+    this.layer.entities.remove(window.cursor)
     if (this.currentEditEnt) {
       if (this.currentEditEnt.isCtlNumValid()) {
         this.currentEditEnt.finish()
@@ -298,7 +301,7 @@ export class EditMode {
     this.setCursor(Cursor.auto)
 
     this.getHandler().setInputAction(movement => {
-      let objs = this.viewer.scene.drillPick(movement.endPosition)
+      let objs = this.scene.drillPick(movement.endPosition)
       if (Cesium.defined(objs)) {
         if (this.hoveredEnt === undefined && objs.length > 0) {
           // moved from empty to ent
@@ -375,7 +378,7 @@ export class EditMode {
     }, Cesium.ScreenSpaceEventType.MOUSE_MOVE)
 
     this.getHandler().setInputAction(event => {
-      let objs = this.viewer.scene.drillPick(event.position)
+      let objs = this.scene.drillPick(event.position)
       if (Cesium.defined(objs)) {
         let ctl = objs.filter((st) => { return this.currentEditEnt.ctls.indexOf(st.id) >= 0 })
         if (ctl.length > 0) {
@@ -460,7 +463,7 @@ export class EditMode {
   }
 
   setCursor(cursor: Cursor) {
-    this.viewer.canvas.style.cursor = Cursor[cursor]
+    this.scene.canvas.style.cursor = Cursor[cursor]
   }
 
 
@@ -469,9 +472,8 @@ export class EditMode {
    * see: https://zhuanlan.zhihu.com/p/44767866
    */
   private pickPos(pos: Cesium.Cartesian2): Cesium.Cartesian3 | undefined {
-    let scene = this.viewer.scene
-    let ray = scene.camera.getPickRay(pos);
-    let c1 = scene.globe.pick(ray, scene);
+    let ray = this.scene.camera.getPickRay(pos);
+    let c1 = this.scene.globe.pick(ray, this.scene);
     return c1
   }
 }

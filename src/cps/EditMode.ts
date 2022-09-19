@@ -1,7 +1,6 @@
 import * as Cesium from 'cesium';
 import kb from 'keyboardjs';
 import Graph from './Graph';
-import { GraphManager } from './index';
 
 enum Mode {
   View,
@@ -33,17 +32,15 @@ export type GraphFinishHandler = (graph: Graph) => void
 export class EditMode {
 
   editAfterCreate: boolean
-  gm: GraphManager
 
   layer: Cesium.DataSource
   scene: Cesium.Scene
 
-  constructor(scene: Cesium.Scene, pe: HTMLElement, gm0: GraphManager, editAfterCreate: boolean) {
-    console.log('create editmode: ', pe, gm0)
+  constructor(scene: Cesium.Scene, pe: HTMLElement, layer: Cesium.DataSource, editAfterCreate: boolean) {
+    console.log('create editmode: ', pe, layer)
     this.editAfterCreate = editAfterCreate
-    this.gm = gm0
     this.initKeyboard()
-    this.layer = gm0.layer
+    this.layer = layer
     this.scene = scene
    }
 
@@ -274,7 +271,6 @@ export class EditMode {
       if (this.currentEditEnt.isCtlNumValid()) {
         this.currentEditEnt.finish()
         this.setCurrentEditEnt(this.currentEditEnt)
-        this.gm.graphList.push(this.currentEditEnt)
         return true
       } else {
         console.log('delete graph by invalid ctlNums')

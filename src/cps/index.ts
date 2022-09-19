@@ -77,9 +77,8 @@ class GraphManager {
     this.viewer = viewer;
     Object.assign(this.config, userCfg)
     console.log("create GraphManager: ", viewer, this.config)
-    //this.layer = //this.viewer.entities.getOrCreateEntity(this.config.layerId);
-    this.em = new EditMode(viewer.scene, this.config.propEditor, this, this.config.editAfterCreate);
     this.layer = new Cesium.CustomDataSource(this.config.layerId)
+    this.em = new EditMode(viewer.scene, this.config.propEditor, this.layer, this.config.editAfterCreate);
     this.viewer.dataSources.add(this.layer)
   }
 

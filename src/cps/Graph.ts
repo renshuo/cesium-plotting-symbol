@@ -73,10 +73,7 @@ export default class Graph {
     // this.initProps(properties)
     this.initShape()
     this.initTempShape()
-    if (props.ctls) {
-      this.initCtls(props.ctls)
-      this.finish()
-    }
+    this.initCtls(props.ctls)
   }
 
   initCtls (ctlsPos: Array<Position | Array<number>>) {
@@ -100,6 +97,7 @@ export default class Graph {
           ctl.finish()
         }
       })
+      this.finish()
     }
   }
 
@@ -200,14 +198,6 @@ export default class Graph {
       }
     }, false)
 
-    let ctlpos = new Cesium.CallbackProperty((time, result) => {
-      if (window.cursorPos) {
-        return window.cursorPos.clone()
-      } else {
-        return car3
-      }
-    }, false) 
-
     let ctlPoint: Cesium.Entity = this.entities.add({
       id: this.graph.id + '_ctlpoint_' + Graph.seq++,
       graph: this,
@@ -231,14 +221,20 @@ export default class Graph {
         heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
         text: labelText
       },
-      position: ctlpos,
+      position: car3,
       finish: () => {
         ctlPoint.label.text = ctlPoint.label.text.getValue(Cesium.JulianDate.now())
         ctlPoint.position = ctlPoint.position.getValue(Cesium.JulianDate.now())
       },
       pickup: () => {
         ctlPoint.label.text = labelText
-        ctlPoint.position = ctlpos
+        ctlPoint.position = new Cesium.CallbackProperty((time, result) => {
+          if (window.cursorPos) {
+            return window.cursorPos.clone()
+          } else {
+            return car3
+          }
+        }, false)
       }
     })
 

@@ -14,6 +14,7 @@ export default class Polygon extends Graph {
       outline: true,
       outlineColor: '#aaaaaa',
       outlineWidth: 2,
+      heightReference: Cesium.HeightReference.NONE,
       ...prop
     }, viewer, layer)
     this.propDefs.push(
@@ -44,7 +45,6 @@ export default class Polygon extends Graph {
   initShape() {
 
     let mat = this.props.material
-
     let ent = this.entities.add(new Cesium.Entity({
       polygon: {
         fill: new Cesium.CallbackProperty((time, result) => this.props.fill, true),
@@ -72,7 +72,9 @@ export default class Polygon extends Graph {
         /**
            oneTimeWarning.js:38 Entity geometry outlines are unsupported on terrain. Outlines will be disabled. To enable outlines, disable geometry terrain clamping by explicitly setting height to 0.
            */
-        heightReference: Cesium.HeightReference.NONE
+        heightReference: new Cesium.CallbackProperty((time, result) => {
+          return this.props.heightReference
+        }, true)
       },
       parent: this.graph
     }))

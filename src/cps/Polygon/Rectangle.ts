@@ -1,6 +1,5 @@
 import Polygon from './Polygon'
-import * as mu from '../mapUtil'
-import {Viewer, Entity, JulianDate} from 'cesium';
+import {Viewer, Entity, JulianDate, Cartesian3} from 'cesium';
 
 
 export default class Rectangle extends Polygon {
@@ -16,16 +15,16 @@ export default class Rectangle extends Polygon {
       return []
     }
     let ctls = points.map((p) => {
-      return mu.cartesian2lonlat(p.position.getValue(time))
+      return this.Cartesian3ToPosition(p.position.getValue(time))
     })
     let p1 = ctls[0]
     let p2 = ctls[1]
     let p = [
-      [p1[0], p1[1]],
-      [p1[0], p2[1]],
-      [p2[0], p2[1]],
-      [p2[0], p1[1]]
+      p1.longitude, p1.latitude,
+      p1.longitude, p2.latitude,
+      p2.longitude, p2.latitude,
+      p2.longitude, p1.latitude,
     ]
-    return p.map((p) => mu.lonlat2Cartesian(p))
+    return Cartesian3.fromDegreesArray(p)
   }
 }

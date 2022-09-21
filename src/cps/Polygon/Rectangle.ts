@@ -20,11 +20,11 @@ export default class Rectangle extends Polygon {
     let p1 = ctls[0]
     let p2 = ctls[1]
     let p = [
-      p1.longitude, p1.latitude,
-      p1.longitude, p2.latitude,
-      p2.longitude, p2.latitude,
-      p2.longitude, p1.latitude,
+      p1.longitude, p1.latitude, p1.height,
+      p1.longitude, p2.latitude, p1.height,
+      p2.longitude, p2.latitude, p2.height,
+      p2.longitude, p1.latitude, p2.height,
     ]
-    return Cartesian3.fromDegreesArray(p)
+    return Cartesian3.fromDegreesArrayHeights(p)
   }
 }

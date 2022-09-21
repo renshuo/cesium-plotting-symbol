@@ -14,7 +14,7 @@ export default class Polygon extends Graph {
       outline: true,
       outlineColor: '#aaaaaa',
       outlineWidth: 2,
-      heightReference: Cesium.HeightReference.NONE,
+      clamp: false,
       ...prop
     }, viewer, layer)
     this.propDefs.push(
@@ -43,7 +43,6 @@ export default class Polygon extends Graph {
   }
 
   initShape() {
-
     let mat = this.props.material
     let ent = this.entities.add(new Cesium.Entity({
       polygon: {
@@ -68,13 +67,8 @@ export default class Polygon extends Graph {
           let ps = this.calcuteShape(this.ctls, time)
           return new Cesium.PolygonHierarchy(ps, [])
         }, true),
-        height: 0,
-        /**
-           oneTimeWarning.js:38 Entity geometry outlines are unsupported on terrain. Outlines will be disabled. To enable outlines, disable geometry terrain clamping by explicitly setting height to 0.
-           */
-        heightReference: new Cesium.CallbackProperty((time, result) => {
-          return this.props.heightReference
-        }, true)
+        perPositionHeight:  this.props.clamp ? false : true,
+        heightReference: this.props.clamp ? Cesium.HeightReference.CLAMP_TO_GROUND : undefined,
       },
       parent: this.graph
     }))
@@ -82,10 +76,7 @@ export default class Polygon extends Graph {
   }
 
   calcuteShape(points: Array<Cesium.Entity>, time: Cesium.JulianDate) {
-    if (points.length < this.minPointNum) {
-      return []
-    }
-    return points.map((pt) => pt.position.getValue(time))
+    return points.length < this.minPointNum ? [] :  points.map((pt) => pt.position.getValue(time))
   }
 
   toEdit() {

@@ -100,12 +100,12 @@ export class EditMode {
       case Mode.View:
         switch (action) {
           case Act.Start:
-            this.selectMode()
+            this.viewStart()
             break
           case Act.Create:
             /** 原本设计有启动绘图面板，即 Mode.View + Act.Start，然后才可进入create模式
              * 如果没有绘图面板开启功能，则Act.Create 直接进入创建模式 */
-            this.createMode()
+            this.viewCreate()
             break
           case Act.Finish:
             // TODO nothing to do for draw a graph ?
@@ -113,36 +113,26 @@ export class EditMode {
         }
         break
       case Mode.Select: {
-        this.finishCurrentSelect()
         switch (action) {
           case Act.Create:
-            this.createMode()
+            this.selectCreate()
             break
           case Act.Select:
-            this.editMode(action)
+            this.selectSelect()
             break
           case Act.Finish:
-            this.viewMode()
+            this.selectFinish()
             break
         }
       }
         break
       case Mode.Create: {
-        let isSuccess = this.finishCurrentCreate()
         switch (action) {
           case Act.Finish:
-            if (isSuccess) {
-              if (this.editAfterCreate) {
-                this.editMode(action)
-              } else {
-                this.selectMode()
-              }
-            } else {
-              this.selectMode()
-            }
+            this.createFinish()
             break
           case Act.Create:
-            this.createMode()
+            this.createCreate()
             break
         }
       }
@@ -150,33 +140,27 @@ export class EditMode {
       case Mode.Edit: {
         switch (action) {
           case Act.Finish:
-            this.finishCurrentEdit()
-            this.selectMode()
+            this.editFinish()
             break
           case Act.Create:
-            this.finishCurrentEdit()
-            this.createMode()
+            this.editCreate()
             break
           case Act.Pickup:
-            this.ctlEditMode()
+            this.editPickup()
             break
         }
       }
         break
       case Mode.CtlEdit: {
-        this.finishCurrentCtledit()
         switch (action) {
           case Act.Finish:
-            this.editMode(action)
+            this.ctlEditFinish()
             break
           case Act.PickDown:
-            this.editMode(action)
+            this.ctlEditPickDown()
             break
           case Act.PickReset:
-            this.editMode(action)
-            break
-          case Act.Create:
-            this.createMode()
+            this.ctlEditPickReset()
             break
         }
       }
@@ -205,6 +189,74 @@ export class EditMode {
       this.graphSelectHandler(ent)
     }
   }
+
+
+  /* view state actions */
+  private viewStart() {
+    this.selectMode()
+  }
+  private viewCreate() {
+    this.createMode()
+  }
+
+  /* select state actions */
+  private selectCreate() {
+    this.finishCurrentSelect()
+    this.createMode()
+  }
+  private selectSelect() {
+    this.finishCurrentSelect()
+    this.editMode(Act.Select)
+  }
+  private selectFinish() {
+    this.finishCurrentSelect()
+    this.viewMode()
+  }
+
+  /* create state actions */
+  private createFinish() {
+    let isSuccess = this.finishCurrentCreate()
+    if (isSuccess) {
+      if (this.editAfterCreate) {
+        this.editMode(Act.Finish)
+      } else {
+        this.selectMode()
+      }
+    } else {
+      this.selectMode()
+    }
+  }
+  private createCreate() {
+    this.createMode()
+  }
+
+  /* edit state actions */
+  private editFinish() {
+    this.finishCurrentEdit()
+    this.selectMode()
+  }
+  private editCreate() {
+    this.finishCurrentEdit()
+    this.createMode()
+  }
+  private editPickup() {
+    this.ctlEditMode()
+  }
+
+  /* ctl edit state actions */
+  private ctlEditFinish(){
+    this.finishCurrentCtledit()
+    this.editMode(Act.Finish)
+  }
+  private ctlEditPickDown() {
+    this.finishCurrentCtledit()
+    this.editMode(Act.PickDown)
+  }
+  private ctlEditPickReset() {
+    this.finishCurrentCtledit()
+    this.editMode(Act.PickReset)
+  }
+
 
   viewMode() {
     this.mode = Mode.View

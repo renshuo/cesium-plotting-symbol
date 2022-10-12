@@ -1,5 +1,6 @@
 import * as Cesium from 'cesium';
 import kb from 'keyboardjs';
+import MouseHandler from './Edit/MouseHandler';
 import Graph from './Graph';
 
 enum Mode {
@@ -29,34 +30,25 @@ enum Cursor {
 export type GraphSelectHandler = (graph: Graph) => void
 export type GraphFinishHandler = (graph: Graph) => void
 
-export class EditMode {
+export default class EditMode {
 
   editAfterCreate: boolean
 
   layer: Cesium.DataSource
   scene: Cesium.Scene
 
+  private mouseHandler
   constructor(scene: Cesium.Scene, pe: HTMLElement, layer: Cesium.DataSource, editAfterCreate: boolean) {
     console.log('create editmode: ', pe, layer)
     this.editAfterCreate = editAfterCreate
     this.initKeyboard()
     this.layer = layer
     this.scene = scene
+    this.mouseHandler = new MouseHandler(scene)
   }
-
-  /** handler单例 */
-  handler: Cesium.ScreenSpaceEventHandler | undefined
-  getHandler(): Cesium.ScreenSpaceEventHandler {
-    if (!this.handler || this.handler.isDestroyed()) {
-      this.handler = new Cesium.ScreenSpaceEventHandler(this.scene.canvas)
-    }
-    return this.handler
-  }
-
 
   destroyHandler() {
-    this.handler?.destroy()
-    this.handler = undefined
+    this.mouseHandler.destory()
   }
 
   private initKeyboard() {
@@ -285,11 +277,11 @@ export class EditMode {
     kb.setContext(this.mode)
     this.setCursor(Cursor.crosshair)
 
-    this.getHandler().setInputAction(move => {
-      window.cursorPos = this.pickPos(move.endPosition)
-    }, Cesium.ScreenSpaceEventType.MOUSE_MOVE)
 
-    this.getHandler().setInputAction(event => {
+    this.mouseHandler.setMove(move => {
+      window.cursorPos = this.pickPos(move.endPosition)
+    })
+    this.mouseHandler.setLeftClick(event => {
       let newpos = this.pickPos(event.position)
       this.pickDownCtl(this.lastCtl)
       if (this.currentEditEnt.ishaveMaxCtls()) {
@@ -298,16 +290,14 @@ export class EditMode {
         this.lastCtl = this.currentEditEnt.addCtlPointCar(newpos)
         this.pickUpCtl(this.lastCtl)
       }
-    }, Cesium.ScreenSpaceEventType.LEFT_CLICK)
-
-    this.getHandler().setInputAction(event => {
+    })
+    this.mouseHandler.setMiddleClick(event => {
       this.currentEditEnt.deleteLastPoint()
-    }, Cesium.ScreenSpaceEventType.MIDDLE_CLICK)
-
-    this.getHandler().setInputAction(event => {
+    })
+    this.mouseHandler.setRightClick(event => {
       this.currentEditEnt.deleteLastPoint()
       this.nextMode(Act.Finish)
-    }, Cesium.ScreenSpaceEventType.RIGHT_CLICK)
+    })
 
   }
 
@@ -350,7 +340,7 @@ export class EditMode {
     kb.setContext(this.mode)
     this.setCursor(Cursor.auto)
 
-    this.getHandler().setInputAction(movement => {
+    this.mouseHandler.setMove(movement => {
       let objs = this.scene.drillPick(movement.endPosition)
       if (Cesium.defined(objs)) {
         if (this.hoveredEnt === undefined && objs.length > 0) {
@@ -385,18 +375,16 @@ export class EditMode {
           // nothing for this.hoveredEnt is null and objs is empty
         }
       }
-    }, Cesium.ScreenSpaceEventType.MOUSE_MOVE)
-
-    this.getHandler().setInputAction(event => {
+    })
+    this.mouseHandler.setLeftClick(event => {
       if (this.hoveredEnt) {
         this.setCurrentEditEnt(this.hoveredEnt.id.graph)
         this.nextMode(Act.Select)
       }
-    }, Cesium.ScreenSpaceEventType.LEFT_CLICK)
-
-    this.getHandler().setInputAction(event => {
+    })
+    this.mouseHandler.setRightClick(event => {
       this.nextMode(Act.Finish)
-    }, Cesium.ScreenSpaceEventType.RIGHT_CLICK)
+    })
   }
 
   finishCurrentSelect() {
@@ -423,11 +411,11 @@ export class EditMode {
     this.setCursor(Cursor.crosshair)
     this.currentEditEnt.toEdit()
 
-    this.getHandler().setInputAction(move => {
+    this.mouseHandler.setMove(move => {
       window.cursorPos = this.pickPos(move.endPosition)
-    }, Cesium.ScreenSpaceEventType.MOUSE_MOVE)
+    })
 
-    this.getHandler().setInputAction(event => {
+    this.mouseHandler.setLeftClick(event => {
       let objs = this.scene.drillPick(event.position)
       if (Cesium.defined(objs)) {
         let ctl = objs.filter((st) => { return this.currentEditEnt.ctls.indexOf(st.id) >= 0 })
@@ -437,12 +425,12 @@ export class EditMode {
           this.nextMode(Act.Pickup)
         }
       }
-    }, Cesium.ScreenSpaceEventType.LEFT_CLICK)
+    })
 
-    this.getHandler().setInputAction(event => {
+    this.mouseHandler.setRightClick(event => {
       this.nextMode(Act.Finish)
       this.setCurrentEditEnt(undefined)
-    }, Cesium.ScreenSpaceEventType.RIGHT_CLICK)
+    })
   }
 
   finishCurrentEdit() {
@@ -484,19 +472,19 @@ export class EditMode {
     this.setCursor(Cursor.crosshair)
     this.pickUpCtl(this.pickedctl)
 
-    this.getHandler().setInputAction(move => {
+    this.mouseHandler.setMove(move => {
       window.cursorPos = this.pickPos(move.endPosition)
-    }, Cesium.ScreenSpaceEventType.MOUSE_MOVE)
+    })
 
-    this.getHandler().setInputAction(event => {
+    this.mouseHandler.setLeftClick(event => {
       this.pickDownCtl(this.pickedctl)
       this.nextMode(Act.PickDown)
-    }, Cesium.ScreenSpaceEventType.LEFT_CLICK)
+    })
 
-    this.getHandler().setInputAction(event => {
+    this.mouseHandler.setRightClick(event => {
       this.pickResetCtl(this.pickedctl)
       this.nextMode(Act.PickReset)
-    }, Cesium.ScreenSpaceEventType.RIGHT_CLICK)
+    })
   }
 
   finishCurrentCtledit() {
@@ -555,6 +543,4 @@ export class EditMode {
     ctl.position = ctl.position.getValue(Cesium.JulianDate.now())
   }
 
-
 }
-export default EditMode

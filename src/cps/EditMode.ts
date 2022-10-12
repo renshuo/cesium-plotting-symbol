@@ -15,6 +15,7 @@ enum Act {
   Start,
   Create,
   Select,
+  UnSelect,
   Finish,
   Pickup,
   PickDown,
@@ -47,10 +48,6 @@ export default class EditMode {
     this.mouseHandler = new MouseHandler(scene)
   }
 
-  destroyHandler() {
-    this.mouseHandler.destory()
-  }
-
   private initKeyboard() {
     this.initKeyboardView()
     this.initKeyboardCreate()
@@ -61,7 +58,7 @@ export default class EditMode {
 
   static seq = new Date().getTime()
 
-  start() {
+  public start() {
     this.nextMode(Act.Start)
   }
 
@@ -69,15 +66,24 @@ export default class EditMode {
     this.nextMode(Act.Finish)
   }
 
+  graphSelectHandler: GraphSelectHandler | undefined
+  public setGraphSelectHandler(handler: GraphSelectHandler) {
+    this.graphSelectHandler = handler
+  }
 
-  create(ent: Graph) {
+  graphFinishHandler: GraphFinishHandler | undefined
+  public setGraphFinishHandler(handler: GraphFinishHandler) {
+    this.graphFinishHandler = handler
+  }
+
+  public create(ent: Graph) {
     this.nextMode(Act.Finish) // finish last edit if it is
     this.setCurrentEditEnt(ent)
     this.nextMode(Act.Create)
     return ent
   }
 
-  draw(ent: Graph) {
+  public draw(ent: Graph) {
     this.nextMode(Act.Finish)
     this.setCurrentEditEnt(ent)
     ent.finish()
@@ -92,201 +98,118 @@ export default class EditMode {
       case Mode.View:
         switch (action) {
           case Act.Start:
-            this.viewStart()
+            this.selectMode()
             break
           case Act.Create:
             /** 原本设计有启动绘图面板，即 Mode.View + Act.Start，然后才可进入create模式
              * 如果没有绘图面板开启功能，则Act.Create 直接进入创建模式 */
-            this.viewCreate()
+            this.createMode()
             break
           case Act.Finish:
             // TODO nothing to do for draw a graph ?
             break
         }
         break
-      case Mode.Select: {
+
+      case Mode.Select:
         switch (action) {
           case Act.Create:
-            this.selectCreate()
+            this.finishCurrentSelect()
+            this.createMode()
             break
           case Act.Select:
-            this.selectSelect()
+            this.finishCurrentSelect()
+            this.editMode()
             break
           case Act.Finish:
-            this.selectFinish()
+            this.finishCurrentSelect()
+            this.viewMode()
             break
         }
-      }
         break
-      case Mode.Create: {
+
+      case Mode.Create:
         switch (action) {
           case Act.Finish:
-            this.createFinish()
+            let issuccess = this.finishCurrentCreate()
+            if (issuccess) {
+              if (this.editaftercreate) {
+                this.editMode()
+              } else {
+                this.selectMode()
+              }
+            } else {
+              this.selectMode()
+            }
             break
           case Act.Create:
-            this.createCreate()
+            this.createMode()
             break
         }
-      }
         break
-      case Mode.Edit: {
+
+      case Mode.Edit:
         switch (action) {
-          case Act.Finish:
-            this.editFinish()
+          case Act.UnSelect:
+            this.finishCurrentEdit()
+            this.selectMode()
             break
           case Act.Create:
-            this.editCreate()
+            this.finishCurrentEdit()
+            this.createMode()
             break
           case Act.Pickup:
-            this.editPickup()
+            this.ctlEditMode()
+            break
+          case Act.Finish:
+            this.finishCurrentEdit()
+            this.selectMode()
             break
         }
-      }
         break
-      case Mode.CtlEdit: {
+
+      case Mode.CtlEdit:
         switch (action) {
           case Act.Finish:
-            this.ctlEditFinish()
+            this.finishCurrentCtledit()
+            this.editMode()
             break
           case Act.PickDown:
-            this.ctlEditPickDown()
+            this.finishCurrentCtledit()
+            this.editMode()
             break
           case Act.PickReset:
-            this.ctlEditPickReset()
+            this.finishCurrentCtledit()
+            this.editMode()
             break
         }
-      }
     }
   }
-
 
   currentEditEnt: Graph | undefined = undefined
   hoveredEnt: Cesium.Entity | undefined
   pickedctl: Cesium.Entity | undefined
 
-  graphSelectHandler: GraphSelectHandler | undefined
-  setGraphSelectHandler(handler: GraphSelectHandler) {
-    this.graphSelectHandler = handler
-  }
-
-  graphFinishHandler: GraphFinishHandler | undefined
-  public setGraphFinishHandler(handler: GraphFinishHandler) {
-    this.graphFinishHandler = handler
-  }
-
-  setCurrentEditEnt(ent: Graph | undefined) {
-    console.log('select a graph: ', ent)
-    this.currentEditEnt = ent
-    if (this.graphSelectHandler) {
-      this.graphSelectHandler(ent)
-    }
-  }
-
-
-  /* view state actions */
-  private viewStart() {
-    this.selectMode()
-  }
-  private viewCreate() {
-    this.createMode()
-  }
-
-  /* select state actions */
-  private selectCreate() {
-    this.finishCurrentSelect()
-    this.createMode()
-  }
-  private selectSelect() {
-    this.finishCurrentSelect()
-    this.editMode()
-  }
-  private selectFinish() {
-    this.finishCurrentSelect()
-    this.viewMode()
-  }
-
-  /* create state actions */
-  private createFinish() {
-    let isSuccess = this.finishCurrentCreate()
-    if (isSuccess) {
-      if (this.editAfterCreate) {
-        this.editMode()
-      } else {
-        this.selectMode()
-      }
-    } else {
-      this.selectMode()
-    }
-  }
-  private createCreate() {
-    this.createMode()
-  }
-
-  /* edit state actions */
-  private editFinish() {
-    this.finishCurrentEdit()
-    this.selectMode()
-  }
-  private editCreate() {
-    this.finishCurrentEdit()
-    this.createMode()
-  }
-  private editPickup() {
-    this.ctlEditMode()
-  }
-
-  /* ctl edit state actions */
-  private ctlEditFinish() {
-    this.finishCurrentCtledit()
-    this.editMode()
-  }
-  private ctlEditPickDown() {
-    this.finishCurrentCtledit()
-    this.editMode()
-  }
-  private ctlEditPickReset() {
-    this.finishCurrentCtledit()
-    this.editMode()
-  }
-
-
   viewMode() {
-    this.mode = Mode.View
-    kb.setContext(this.mode)
+    this.setMode(Mode.View)
     // if (this.propEditor) this.propEditor.show(false)
-    console.log(`into ${Mode[this.mode]} mode`)
-    this.destroyHandler()
-    this.setCursor(Cursor.auto)
+    this.mouseHandler.destory()
   }
 
-  initKeyboardView() {
-    kb.withContext(Mode.View, () => {
-      kb.bind('1', (e) => console.log('view: ', e, this))
-    })
-  }
-
-  lastCtl: Cesium.Entity | undefined
   createMode() {
-    this.mode = Mode.Create
-    console.log(`into ${Mode[this.mode]} mode`, this.currentEditEnt)
-
+    this.setMode(Mode.Create)
     // add a new ctl point and pick it
-    this.lastCtl = this.currentEditEnt.addCtlPointCar(new Cesium.Cartesian3())
-    this.pickUpCtl(this.lastCtl)
-
-    kb.setContext(this.mode)
-    this.setCursor(Cursor.crosshair)
-
-
+    let lastCtl = this.currentEditEnt.addCtlPointCar(new Cesium.Cartesian3())
+    this.pickUpCtl(lastCtl)
     this.setMouseMove()
     this.mouseHandler.setLeftClick(event => {
       let newpos = this.pickPos(event.position)
-      this.pickDownCtl(this.lastCtl)
+      this.pickDownCtl(lastCtl)
       if (this.currentEditEnt.ishaveMaxCtls()) {
         this.nextMode(Act.Finish)
       } else {
-        this.lastCtl = this.currentEditEnt.addCtlPointCar(newpos)
-        this.pickUpCtl(this.lastCtl)
+        lastCtl = this.currentEditEnt.addCtlPointCar(newpos)
+        this.pickUpCtl(lastCtl)
       }
     })
     this.mouseHandler.setMiddleClick(event => {
@@ -296,15 +219,74 @@ export default class EditMode {
       this.currentEditEnt.deleteLastPoint()
       this.nextMode(Act.Finish)
     })
-
   }
 
+  selectMode() {
+    this.setMode(Mode.Select)
+    //    if (this.propEditor) this.propEditor.show(false)
+    this.hoveredEnt = undefined
+    this.setMouseHieghtMove()
+    this.mouseHandler.setLeftClick(event => {
+      if (this.hoveredEnt) {
+        this.setCurrentEditEnt(this.hoveredEnt.id.graph)
+        this.nextMode(Act.Select)
+      }
+    })
+    this.mouseHandler.setRightClick(event => this.nextMode(Act.Finish))
+  }
+
+  editMode() {
+    this.setMode(Mode.Edit)
+    //    if (this.propEditor) this.propEditor.show(true, this.currentEditEnt)
+    this.currentEditEnt.toEdit()
+    this.setMouseMove()
+    this.mouseHandler.setLeftClick(event => {
+      if (this.drillCtl(event.position)) {
+        this.nextMode(Act.Pickup)
+      }
+    })
+    this.mouseHandler.setRightClick(event => {
+      this.setCurrentEditEnt(undefined)
+      this.nextMode(Act.UnSelect)
+    })
+  }
+
+  ctlEditMode() {
+    this.setMode(Mode.CtlEdit)
+    this.pickUpCtl(this.pickedctl)
+    this.setMouseMove()
+    this.mouseHandler.setLeftClick(event => this.nextMode(Act.PickDown))
+    this.mouseHandler.setRightClick(event => this.nextMode(Act.PickReset))
+  }
+
+  private modeCursor = {
+    View: Cursor.auto,
+    Create: Cursor.crosshair,
+    Select: Cursor.pointer,
+    Edit: Cursor.crosshair,
+    CtlEdit: Cursor.crosshair
+  }
+  private setMode(mode: Mode) {
+    this.mode = mode
+    kb.setContext(mode)
+    this.setCursor(this.modeCursor[Mode[mode]])
+    console.log(`into ${Mode[this.mode]} mode`)
+  }
+
+  //TODO 在select模式下，发生select act时直接调用
+  private setCurrentEditEnt(ent: Graph | undefined) {
+    console.log('select a graph: ', ent)
+    this.currentEditEnt = ent
+    if (this.graphSelectHandler) {
+      this.graphSelectHandler(ent)
+    }
+  }
   /**
    * 完成当前绘图，如果图形能够绘制出来，则绘制，否则删除不成形的图形
    * return true: Graph create success
    * return false: Graph create fail(deleted)
    */
-  finishCurrentCreate(): boolean {
+  private finishCurrentCreate(): boolean {
     console.log('finsih create: ', this.currentEditEnt)
     this.layer.entities.remove(window.cursor)
     if (this.currentEditEnt) {
@@ -323,74 +305,13 @@ export default class EditMode {
     }
   }
 
-  initKeyboardCreate() {
-    kb.withContext(Mode.Create, () => {
-      kb.bind('1', (e) => console.log('create: ', e, this))
-    })
-  }
-
-  selectMode() {
-    this.mode = Mode.Select
-    this.hoveredEnt = undefined
-    //    if (this.propEditor) this.propEditor.show(false)
-    console.log(`into ${Mode[this.mode]} mode`)
-
-    kb.setContext(this.mode)
-    this.setCursor(Cursor.auto)
-    this.setMouseHieghtMove()
-    this.mouseHandler.setLeftClick(event => {
-      if (this.hoveredEnt) {
-        this.setCurrentEditEnt(this.hoveredEnt.id.graph)
-        this.nextMode(Act.Select)
-      }
-    })
-    this.mouseHandler.setRightClick(event => this.nextMode(Act.Finish))
-  }
-
-  finishCurrentSelect() {
+  private finishCurrentSelect() {
     if (this.hoveredEnt) {
       this.hoveredEnt.id.graph.lowLight()
     }
   }
 
-  initKeyboardSelect() {
-    kb.withContext(Mode.Select, () => {
-      kb.bind('1', (e) => console.log('select: ', e, this))
-      kb.bind(['ctrl+shift+d', 'shift+delete'], e => {
-        this.deleteAllGraph()
-      })
-    })
-  }
-
-  editMode() {
-    this.mode = Mode.Edit
-    //    if (this.propEditor) this.propEditor.show(true, this.currentEditEnt)
-    console.log(`into ${Mode[this.mode]} mode}`, this.currentEditEnt)
-
-    kb.setContext(this.mode)
-    this.setCursor(Cursor.crosshair)
-    this.currentEditEnt.toEdit()
-
-    this.setMouseMove()
-    this.mouseHandler.setLeftClick(event => {
-      let objs = this.scene.drillPick(event.position)
-      if (Cesium.defined(objs)) {
-        let ctl = objs.filter((st) => { return this.currentEditEnt.ctls.indexOf(st.id) >= 0 })
-        if (ctl.length > 0) {
-          this.pickedctl = ctl[0].id
-          console.log("click on a ctl point: ", this.pickedctl)
-          this.nextMode(Act.Pickup)
-        }
-      }
-    })
-
-    this.mouseHandler.setRightClick(event => {
-      this.nextMode(Act.Finish)
-      this.setCurrentEditEnt(undefined)
-    })
-  }
-
-  finishCurrentEdit() {
+  private finishCurrentEdit() {
     if (this.currentEditEnt) {
       this.currentEditEnt.finish()
       if (this.graphFinishHandler) {
@@ -399,7 +320,28 @@ export default class EditMode {
     }
   }
 
-  initKeyboardEdit() {
+  private initKeyboardCreate() {
+    kb.withContext(Mode.Create, () => {
+      kb.bind('1', (e) => console.log('create: ', e, this))
+    })
+  }
+
+  private initKeyboardSelect() {
+    kb.withContext(Mode.Select, () => {
+      kb.bind('1', (e) => console.log('select: ', e, this))
+      kb.bind(['ctrl+shift+d', 'shift+delete'], e => {
+        this.deleteAllGraph()
+      })
+    })
+  }
+
+  private initKeyboardView() {
+    kb.withContext(Mode.View, () => {
+      kb.bind('1', (e) => console.log('view: ', e, this))
+    })
+  }
+
+  private initKeyboardEdit() {
     kb.withContext(Mode.Edit, () => {
       kb.bind('1', (e) => console.log('edit: ', e, this))
       kb.bind(['delete', 'ctrl+d'], e => {
@@ -408,7 +350,7 @@ export default class EditMode {
     })
   }
 
-  deleteSelectGraph() {
+  private deleteSelectGraph() {
     if (this.currentEditEnt) {
       let graph = this.currentEditEnt
       this.currentEditEnt.delete()
@@ -421,17 +363,6 @@ export default class EditMode {
     }
   }
 
-  ctlEditMode() {
-    this.mode = Mode.CtlEdit
-    console.log(`into ${Mode[this.mode]} mode`, this.pickedctl, this.currentEditEnt)
-    kb.setContext(this.mode)
-    this.setCursor(Cursor.crosshair)
-    this.pickUpCtl(this.pickedctl)
-    this.setMouseMove()
-    this.mouseHandler.setLeftClick(event => this.nextMode(Act.PickDown))
-    this.mouseHandler.setRightClick(event => this.nextMode(Act.PickReset))
-  }
-
   private finishCurrentCtledit() {
     if (this.pickedctl) {
       this.pickDownCtl(this.pickedctl)
@@ -439,13 +370,30 @@ export default class EditMode {
     }
   }
 
-  initKeyboardCtledit() {
+  private initKeyboardCtledit() {
     kb.withContext(Mode.CtlEdit, () => {
       kb.bind('1', (e) => console.log('ctledit: ', e, this))
     })
   }
 
-  setMouseHieghtMove() {
+  private drillCtl(position): Cesium.Entity | undefined{
+    let objs = this.scene.drillPick(position)
+    if (Cesium.defined(objs)) {
+      let ctl = objs.filter((st) => { return this.currentEditEnt.ctls.indexOf(st.id) >= 0 })
+      if (ctl.length > 0) {
+        this.pickedctl = ctl[0].id
+        console.log("click on a ctl point: ", this.pickedctl)
+        return this.pickedctl
+      }else {
+        return undefined
+      }
+    } else {
+      return undefined
+    }
+
+  }
+
+  private setMouseHieghtMove() {
     this.mouseHandler.setMove(movement => {
       let objs = this.scene.drillPick(movement.endPosition)
       if (Cesium.defined(objs)) {
@@ -484,15 +432,15 @@ export default class EditMode {
     })
   }
 
-  setMouseMove() {
+  private setMouseMove() {
     this.mouseHandler.setMove(move => {
       window.cursorPos = this.pickPos(move.endPosition)
     })
   }
-  setCursor(cursor: Cursor) {
+
+  private setCursor(cursor: Cursor) {
     this.scene.canvas.style.cursor = Cursor[cursor]
   }
-
 
   /**
    * use globle.pick instead pickEllipsoid
@@ -503,7 +451,6 @@ export default class EditMode {
     let c1 = this.scene.globe.pick(ray, this.scene);
     return c1
   }
-
 
   private pickUpCtl(ctl: Cesium.Entity) {
     ctl.label.text = new Cesium.CallbackProperty((time, result) => {

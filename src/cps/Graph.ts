@@ -187,17 +187,6 @@ export default class Graph {
   addCtlPointCar(car3: Cesium.Cartesian3): Cesium.Entity {
     console.log("in add ctl Pos")
 
-    let labelText = new Cesium.CallbackProperty((time, result) => {
-      let p: Position | undefined = this.Cartesian3ToPosition(ctlPoint.position.getValue(time))
-      if (p) {
-        return 'Lon: ' + p.longitude.toPrecision(5) + '\u00B0'
-          + '\nLat: ' + p.latitude.toPrecision(5) + '\u00B0'
-          + '\nHei: ' + p.height.toPrecision(5) + 'm'
-      } else {
-        return ""
-      }
-    }, false)
-
     let ctlPoint: Cesium.Entity = this.entities.add({
       id: this.graph.id + '_ctlpoint_' + Graph.seq++,
       graph: this,
@@ -219,23 +208,9 @@ export default class Graph {
         pixelOffset : new Cesium.Cartesian2(0, -10),
         outlineWidth: 0,
         heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-        text: labelText
+        text: ""
       },
       position: car3,
-      finish: () => {
-        ctlPoint.label.text = ctlPoint.label.text.getValue(Cesium.JulianDate.now())
-        ctlPoint.position = ctlPoint.position.getValue(Cesium.JulianDate.now())
-      },
-      pickup: () => {
-        ctlPoint.label.text = labelText
-        ctlPoint.position = new Cesium.CallbackProperty((time, result) => {
-          if (window.cursorPos) {
-            return window.cursorPos.clone()
-          } else {
-            return car3
-          }
-        }, false)
-      }
     })
 
     this.ctls.push(ctlPoint)

@@ -42,7 +42,7 @@ export class EditMode {
     this.initKeyboard()
     this.layer = layer
     this.scene = scene
-   }
+  }
 
   /** handler单例 */
   handler: Cesium.ScreenSpaceEventHandler | undefined
@@ -168,7 +168,7 @@ export class EditMode {
   }
 
 
-  currentEditEnt: Graph| undefined = undefined
+  currentEditEnt: Graph | undefined = undefined
   hoveredEnt: Cesium.Entity | undefined
   pickedctl: Cesium.Entity | undefined
 
@@ -244,7 +244,7 @@ export class EditMode {
   }
 
   /* ctl edit state actions */
-  private ctlEditFinish(){
+  private ctlEditFinish() {
     this.finishCurrentCtledit()
     this.editMode(Act.Finish)
   }
@@ -273,14 +273,14 @@ export class EditMode {
     })
   }
 
-  lastCtl:Cesium.Entity | undefined
+  lastCtl: Cesium.Entity | undefined
   createMode() {
     this.mode = Mode.Create
     console.log(`into ${Mode[this.mode]} mode`, this.currentEditEnt)
 
     // add a new ctl point and pick it
     this.lastCtl = this.currentEditEnt.addCtlPointCar(new Cesium.Cartesian3())
-    this.lastCtl.pickup()
+    this.pickUpCtl(this.lastCtl)
 
     kb.setContext(this.mode)
     this.setCursor(Cursor.crosshair)
@@ -291,12 +291,12 @@ export class EditMode {
 
     this.getHandler().setInputAction(event => {
       let newpos = this.pickPos(event.position)
-      this.lastCtl.finish()
+      this.pickDownCtl(this.lastCtl)
       if (this.currentEditEnt.ishaveMaxCtls()) {
         this.nextMode(Act.Finish)
       } else {
         this.lastCtl = this.currentEditEnt.addCtlPointCar(newpos)
-        this.lastCtl.pickup()
+        this.pickUpCtl(this.lastCtl)
       }
     }, Cesium.ScreenSpaceEventType.LEFT_CLICK)
 
@@ -330,6 +330,8 @@ export class EditMode {
         this.setCurrentEditEnt(undefined)
         return false
       }
+    } else {
+      return false
     }
   }
 
@@ -342,7 +344,7 @@ export class EditMode {
   selectMode() {
     this.mode = Mode.Select
     this.hoveredEnt = undefined
-//    if (this.propEditor) this.propEditor.show(false)
+    //    if (this.propEditor) this.propEditor.show(false)
     console.log(`into ${Mode[this.mode]} mode`)
 
     kb.setContext(this.mode)
@@ -414,7 +416,7 @@ export class EditMode {
 
   editMode(act: Act) {
     this.mode = Mode.Edit
-//    if (this.propEditor) this.propEditor.show(true, this.currentEditEnt)
+    //    if (this.propEditor) this.propEditor.show(true, this.currentEditEnt)
     console.log(`into ${Mode[this.mode]} mode by act ${Act[act]}`, this.currentEditEnt)
 
     kb.setContext(this.mode)
@@ -480,26 +482,26 @@ export class EditMode {
 
     kb.setContext(this.mode)
     this.setCursor(Cursor.crosshair)
-    this.pickedctl.pickup()
+    this.pickUpCtl(this.pickedctl)
 
     this.getHandler().setInputAction(move => {
       window.cursorPos = this.pickPos(move.endPosition)
     }, Cesium.ScreenSpaceEventType.MOUSE_MOVE)
 
     this.getHandler().setInputAction(event => {
-      this.pickedctl.finish()
+      this.pickDownCtl(this.pickedctl)
       this.nextMode(Act.PickDown)
     }, Cesium.ScreenSpaceEventType.LEFT_CLICK)
 
     this.getHandler().setInputAction(event => {
-      this.pickedctl.finish()
+      this.pickResetCtl(this.pickedctl)
       this.nextMode(Act.PickReset)
     }, Cesium.ScreenSpaceEventType.RIGHT_CLICK)
   }
 
   finishCurrentCtledit() {
     if (this.pickedctl) {
-      this.pickedctl.finish()
+      this.pickDownCtl(this.pickedctl)
       this.pickedctl = undefined
     }
   }
@@ -524,5 +526,35 @@ export class EditMode {
     let c1 = this.scene.globe.pick(ray, this.scene);
     return c1
   }
+
+
+  private pickUpCtl(ctl: Cesium.Entity) {
+    ctl.label.text = new Cesium.CallbackProperty((time, result) => {
+      if (window.cursorPos) {
+        let p = Cesium.Cartographic.fromCartesian(window.cursorPos) 
+        if (p) {
+          return 'Lon: ' + Cesium.Math.toDegrees(p.longitude).toPrecision(5) + '\u00B0'
+            + '\nLat: ' + Cesium.Math.toDegrees(p.latitude).toPrecision(5) + '\u00B0'
+            + '\nHei: ' + p.height.toPrecision(5) + 'm'
+        }
+      }
+      return ""
+    }, false)
+    ctl.position = new Cesium.CallbackProperty((time, result) => {
+      return window.cursorPos
+    }, false)
+  }
+
+  private pickDownCtl(ctl: Cesium.Entity) {
+    ctl.label.text = ctl.label.text.getValue(Cesium.JulianDate.now())
+    ctl.position = ctl.position.getValue(Cesium.JulianDate.now())
+  }
+
+  private pickResetCtl(ctl: Cesium.Entity) {
+    ctl.label.text = ctl.label.text.getValue(Cesium.JulianDate.now())
+    ctl.position = ctl.position.getValue(Cesium.JulianDate.now())
+  }
+
+
 }
 export default EditMode

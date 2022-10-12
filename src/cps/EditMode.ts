@@ -278,9 +278,7 @@ export default class EditMode {
     this.setCursor(Cursor.crosshair)
 
 
-    this.mouseHandler.setMove(move => {
-      window.cursorPos = this.pickPos(move.endPosition)
-    })
+    this.setMouseMove()
     this.mouseHandler.setLeftClick(event => {
       let newpos = this.pickPos(event.position)
       this.pickDownCtl(this.lastCtl)
@@ -339,52 +337,14 @@ export default class EditMode {
 
     kb.setContext(this.mode)
     this.setCursor(Cursor.auto)
-
-    this.mouseHandler.setMove(movement => {
-      let objs = this.scene.drillPick(movement.endPosition)
-      if (Cesium.defined(objs)) {
-        if (this.hoveredEnt === undefined && objs.length > 0) {
-          // moved from empty to ent
-          let obj = objs.reduce((a, cur) => {
-            return cur.id.level.getValue() > a.id.level.getValue() ? cur : a
-          }, objs[0])
-          console.debug(`moved to ent:`, obj)
-          obj.id.graph.highLight()
-          this.setCursor(Cursor.pointer)
-          this.hoveredEnt = obj
-        } else if (this.hoveredEnt !== undefined && objs.length > 0) {
-          let obj = objs.reduce((a, cur) => {
-            return cur.id.level.getValue() > a.id.level.getValue() ? cur : a
-          }, objs[0])
-          if (this.hoveredEnt === obj) {
-            // moved on same ent
-          } else {
-            // moved from ent1 to ent2. ent1 and ent2 maybe overlap
-            console.debug(`moved from ent1 to ent2: `, this.hoveredEnt, obj)
-            this.hoveredEnt.id.graph.lowLight()
-            obj.id.graph.highLight()
-            this.setCursor(Cursor.pointer)
-            this.hoveredEnt = obj
-          }
-        } else if (this.hoveredEnt !== undefined && objs.length === 0) {
-          console.debug(`moved out of ent: `, this.hoveredEnt)
-          this.hoveredEnt.id.graph.lowLight()
-          this.setCursor(Cursor.auto)
-          this.hoveredEnt = undefined
-        } else {
-          // nothing for this.hoveredEnt is null and objs is empty
-        }
-      }
-    })
+    this.setMouseHieghtMove()
     this.mouseHandler.setLeftClick(event => {
       if (this.hoveredEnt) {
         this.setCurrentEditEnt(this.hoveredEnt.id.graph)
         this.nextMode(Act.Select)
       }
     })
-    this.mouseHandler.setRightClick(event => {
-      this.nextMode(Act.Finish)
-    })
+    this.mouseHandler.setRightClick(event => this.nextMode(Act.Finish))
   }
 
   finishCurrentSelect() {
@@ -411,10 +371,7 @@ export default class EditMode {
     this.setCursor(Cursor.crosshair)
     this.currentEditEnt.toEdit()
 
-    this.mouseHandler.setMove(move => {
-      window.cursorPos = this.pickPos(move.endPosition)
-    })
-
+    this.setMouseMove()
     this.mouseHandler.setLeftClick(event => {
       let objs = this.scene.drillPick(event.position)
       if (Cesium.defined(objs)) {
@@ -467,27 +424,15 @@ export default class EditMode {
   ctlEditMode() {
     this.mode = Mode.CtlEdit
     console.log(`into ${Mode[this.mode]} mode`, this.pickedctl, this.currentEditEnt)
-
     kb.setContext(this.mode)
     this.setCursor(Cursor.crosshair)
     this.pickUpCtl(this.pickedctl)
-
-    this.mouseHandler.setMove(move => {
-      window.cursorPos = this.pickPos(move.endPosition)
-    })
-
-    this.mouseHandler.setLeftClick(event => {
-      this.pickDownCtl(this.pickedctl)
-      this.nextMode(Act.PickDown)
-    })
-
-    this.mouseHandler.setRightClick(event => {
-      this.pickResetCtl(this.pickedctl)
-      this.nextMode(Act.PickReset)
-    })
+    this.setMouseMove()
+    this.mouseHandler.setLeftClick(event => this.nextMode(Act.PickDown))
+    this.mouseHandler.setRightClick(event => this.nextMode(Act.PickReset))
   }
 
-  finishCurrentCtledit() {
+  private finishCurrentCtledit() {
     if (this.pickedctl) {
       this.pickDownCtl(this.pickedctl)
       this.pickedctl = undefined
@@ -500,6 +445,50 @@ export default class EditMode {
     })
   }
 
+  setMouseHieghtMove() {
+    this.mouseHandler.setMove(movement => {
+      let objs = this.scene.drillPick(movement.endPosition)
+      if (Cesium.defined(objs)) {
+        if (this.hoveredEnt === undefined && objs.length > 0) {
+          // moved from empty to ent
+          let obj = objs.reduce((a, cur) => {
+            return cur.id.level.getValue() > a.id.level.getValue() ? cur : a
+          }, objs[0])
+          console.debug(`moved to ent:`, obj)
+          obj.id.graph.highLight()
+          this.setCursor(Cursor.pointer)
+          this.hoveredEnt = obj
+        } else if (this.hoveredEnt !== undefined && objs.length > 0) {
+          let obj = objs.reduce((a, cur) => {
+            return cur.id.level.getValue() > a.id.level.getValue() ? cur : a
+          }, objs[0])
+          if (this.hoveredEnt === obj) {
+            // moved on same ent
+          } else {
+            // moved from ent1 to ent2. ent1 and ent2 maybe overlap
+            console.debug(`moved from ent1 to ent2: `, this.hoveredEnt, obj)
+            this.hoveredEnt.id.graph.lowLight()
+            obj.id.graph.highLight()
+            this.setCursor(Cursor.pointer)
+            this.hoveredEnt = obj
+          }
+        } else if (this.hoveredEnt !== undefined && objs.length === 0) {
+          console.debug(`moved out of ent: `, this.hoveredEnt)
+          this.hoveredEnt.id.graph.lowLight()
+          this.setCursor(Cursor.auto)
+          this.hoveredEnt = undefined
+        } else {
+          // nothing for this.hoveredEnt is null and objs is empty
+        }
+      }
+    })
+  }
+
+  setMouseMove() {
+    this.mouseHandler.setMove(move => {
+      window.cursorPos = this.pickPos(move.endPosition)
+    })
+  }
   setCursor(cursor: Cursor) {
     this.scene.canvas.style.cursor = Cursor[cursor]
   }

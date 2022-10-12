@@ -198,7 +198,7 @@ export default class EditMode {
   }
   private selectSelect() {
     this.finishCurrentSelect()
-    this.editMode(Act.Select)
+    this.editMode()
   }
   private selectFinish() {
     this.finishCurrentSelect()
@@ -210,7 +210,7 @@ export default class EditMode {
     let isSuccess = this.finishCurrentCreate()
     if (isSuccess) {
       if (this.editAfterCreate) {
-        this.editMode(Act.Finish)
+        this.editMode()
       } else {
         this.selectMode()
       }
@@ -238,15 +238,15 @@ export default class EditMode {
   /* ctl edit state actions */
   private ctlEditFinish() {
     this.finishCurrentCtledit()
-    this.editMode(Act.Finish)
+    this.editMode()
   }
   private ctlEditPickDown() {
     this.finishCurrentCtledit()
-    this.editMode(Act.PickDown)
+    this.editMode()
   }
   private ctlEditPickReset() {
     this.finishCurrentCtledit()
-    this.editMode(Act.PickReset)
+    this.editMode()
   }
 
 
@@ -402,10 +402,10 @@ export default class EditMode {
     })
   }
 
-  editMode(act: Act) {
+  editMode() {
     this.mode = Mode.Edit
     //    if (this.propEditor) this.propEditor.show(true, this.currentEditEnt)
-    console.log(`into ${Mode[this.mode]} mode by act ${Act[act]}`, this.currentEditEnt)
+    console.log(`into ${Mode[this.mode]} mode}`, this.currentEditEnt)
 
     kb.setContext(this.mode)
     this.setCursor(Cursor.crosshair)

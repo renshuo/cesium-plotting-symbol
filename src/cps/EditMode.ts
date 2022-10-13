@@ -209,6 +209,9 @@ export default class EditMode {
     let entity = this.currentEditEnt
     if (entity.isCtlNumValid()) {
       entity.finish()
+      if (this.graphFinishHandler) {
+        this.graphFinishHandler(entity)
+      }
     } else {
       entity.delete()
     }
@@ -254,7 +257,7 @@ export default class EditMode {
   }
   clearEdit() {
     this.currentEditEnt.finish()
-    if (this.graphFinishHandler) {
+    if (this.graphFinishHandler) { //TODO use graphModifiedHandler?
       this.graphFinishHandler(this.currentEditEnt)
     }
     this.currentEditEnt = undefined

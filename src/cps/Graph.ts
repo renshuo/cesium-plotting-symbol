@@ -18,6 +18,8 @@ type PropDefNum = PropDef & {
   step: number;
 }
 
+export type SelectHandler = (self: Graph) => void
+export type FinishHandler = (self: Graph) => void
 
 export default class Graph {
   static seq = new Date().getTime()
@@ -74,6 +76,14 @@ export default class Graph {
     this.initShape()
     this.initTempShape()
     this.initCtls(props.ctls)
+    this.initHandler(props)
+  }
+
+  selectHandler: SelectHandler | undefined
+  finishHandler: FinishHandler | undefined
+  private initHandler(props: {}) {
+    this.selectHandler = props.selectHandler
+    this.finishHandler = props.finishHandler
   }
 
   initCtls (ctlsPos: Array<Position | Array<number>>) {
@@ -269,13 +279,24 @@ export default class Graph {
   /**
    * 图形绘制结束后调用
    */
-  finish () {
+  public finish () {
     console.log("finish current graph: ", this)
     this.ctls.map((ctl) => { ctl.show = false })
+    if (this.finishHandler) {
+      this.finishHandler(this)
+    }
     this.tempShapes.map(ent => { this.entities.remove(ent) })
     this.tempShapes = []
   }
 
+  /**
+   * 图形被选择时调用
+   */
+  public selected() {
+    if (this.selectHandler) {
+      this.selectHandler(this)
+    }
+  }
   /* ############# delete ############# */
 
   delete() {

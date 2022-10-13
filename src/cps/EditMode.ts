@@ -238,6 +238,7 @@ export default class EditMode {
   private setSelectEntity(entity: Graph) {
     entity.lowLight()
     this.currentEditEnt = entity
+    entity.selected()
     entity.toEdit()
     this.callSelectHandler(entity)
   }

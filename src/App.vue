@@ -75,7 +75,11 @@ onMounted(() => {
   });
 
   gm.setGraphFinishHandler( (ent: Graph) => {
-    console.log("handler graph finish: ", ent)
+    console.log("global finish handler call: ", ent)
+  })
+
+  gm.setGraphSelectHandler( (ent: Graph) => {
+    console.log("global select handler call", ent)
   })
 });
 
@@ -84,7 +88,10 @@ const graphList = []
 
 const funcs1 = ref([
   [
-    {name: '多边形', func: () => gm.create({obj: 'Polygon', color: '#00FF00'}) },
+    {name: '多边形', func: () => gm.create({obj: 'Polygon', color: '#00FF00',
+                                            selectHandler: (self) => { console.log("self select handler call: ", self)},
+                                            finishHandler: (self) => { console.log("self finish handler call: ", self)},
+    })},
     {name: '矩形', func: () => gm.create({obj: 'Rectangle', color: '#00FF00'}) },
     {name: '单箭头', func: () => gm.create({obj: 'Arrow1', color: '#00FF00'}) },
     {name: '椭圆', func: () => gm.create({obj: 'Ellipse', color: '#00FF00'}) },

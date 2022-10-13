@@ -131,14 +131,16 @@ export default class EditMode {
       case Mode.Create:
         switch (action) {
           case Act.Finish:
-            let issuccess = this.finishCurrentCreate()
-            if (issuccess) {
-              if (this.editaftercreate) {
+            if (this.currentEditEnt.isCtlNumValid()) {
+              this.currentEditEnt.finish()
+              if (this.editAfterCreate) {
+                this.setCurrentEditEnt(this.currentEditEnt)
                 this.editMode()
-              } else {
+              }else {
                 this.selectMode()
               }
-            } else {
+            }else {
+              this.currentEditEnt.delete()
               this.selectMode()
             }
             break
@@ -212,9 +214,7 @@ export default class EditMode {
         this.pickUpCtl(lastCtl)
       }
     })
-    this.mouseHandler.setMiddleClick(event => {
-      this.currentEditEnt.deleteLastPoint()
-    })
+    this.mouseHandler.setMiddleClick(event => this.currentEditEnt.deleteLastPoint())
     this.mouseHandler.setRightClick(event => {
       this.currentEditEnt.deleteLastPoint()
       this.nextMode(Act.Finish)
@@ -246,8 +246,7 @@ export default class EditMode {
       }
     })
     this.mouseHandler.setRightClick(event => {
-      this.setCurrentEditEnt(undefined)
-      this.nextMode(Act.UnSelect)
+      this.nextMode(Act.Finish)
     })
   }
 
@@ -281,29 +280,6 @@ export default class EditMode {
       this.graphSelectHandler(ent)
     }
   }
-  /**
-   * 完成当前绘图，如果图形能够绘制出来，则绘制，否则删除不成形的图形
-   * return true: Graph create success
-   * return false: Graph create fail(deleted)
-   */
-  private finishCurrentCreate(): boolean {
-    console.log('finsih create: ', this.currentEditEnt)
-    this.layer.entities.remove(window.cursor)
-    if (this.currentEditEnt) {
-      if (this.currentEditEnt.isCtlNumValid()) {
-        this.currentEditEnt.finish()
-        this.setCurrentEditEnt(this.currentEditEnt)
-        return true
-      } else {
-        console.log('delete graph by invalid ctlNums')
-        this.currentEditEnt.delete()
-        this.setCurrentEditEnt(undefined)
-        return false
-      }
-    } else {
-      return false
-    }
-  }
 
   private finishCurrentSelect() {
     if (this.hoveredEnt) {
@@ -312,12 +288,11 @@ export default class EditMode {
   }
 
   private finishCurrentEdit() {
-    if (this.currentEditEnt) {
-      this.currentEditEnt.finish()
-      if (this.graphFinishHandler) {
-        this.graphFinishHandler(this.currentEditEnt)
-      }
+    this.currentEditEnt.finish()
+    if (this.graphFinishHandler) {
+      this.graphFinishHandler(this.currentEditEnt)
     }
+    this.currentEditEnt = undefined
   }
 
   private initKeyboardCreate() {

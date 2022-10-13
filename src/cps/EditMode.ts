@@ -14,9 +14,9 @@ enum Mode {
 enum Act {
   Start,
   Create,
+  Finish,
   Select,
   UnSelect,
-  Finish,
   Pickup,
   PickDown,
   PickReset,
@@ -33,15 +33,12 @@ export type GraphFinishHandler = (graph: Graph) => void
 
 export default class EditMode {
 
-  editAfterCreate: boolean
-
   layer: Cesium.DataSource
   scene: Cesium.Scene
 
   private mouseHandler
-  constructor(scene: Cesium.Scene, pe: HTMLElement, layer: Cesium.DataSource, editAfterCreate: boolean) {
+  constructor(scene: Cesium.Scene, pe: HTMLElement, layer: Cesium.DataSource) {
     console.log('create editmode: ', pe, layer)
-    this.editAfterCreate = editAfterCreate
     this.initKeyboard()
     this.layer = layer
     this.scene = scene
@@ -59,11 +56,11 @@ export default class EditMode {
   static seq = new Date().getTime()
 
   public start() {
-    this.nextMode(Act.Start)
+    this.nextMode(Act.Start, {})
   }
 
   public finish(): void {
-    this.nextMode(Act.Finish)
+    this.nextMode(Act.Finish, {})
   }
 
   graphSelectHandler: GraphSelectHandler | undefined
@@ -77,22 +74,18 @@ export default class EditMode {
   }
 
   public create(ent: Graph) {
-    this.nextMode(Act.Finish) // finish last edit if it is
-    this.setCurrentEditEnt(ent)
-    this.nextMode(Act.Create)
+    this.nextMode(Act.Create, {newEntity: ent})
     return ent
   }
 
   public draw(ent: Graph) {
-    this.nextMode(Act.Finish)
-    this.setCurrentEditEnt(ent)
-    ent.finish()
-    this.nextMode(Act.Finish)
+    this.nextMode(Act.Create, {newEntity: ent})
+    this.nextMode(Act.Finish, {})
     return ent
   }
 
   mode = Mode.View
-  nextMode(action: Act) {
+  nextMode(action: Act, params: {}) {
     console.log(`mode changed from '${Mode[this.mode]}' by action '${Act[action]}'`)
     switch (this.mode) {
       case Mode.View:
@@ -101,90 +94,81 @@ export default class EditMode {
             this.selectMode()
             break
           case Act.Create:
-            /** 原本设计有启动绘图面板，即 Mode.View + Act.Start，然后才可进入create模式
-             * 如果没有绘图面板开启功能，则Act.Create 直接进入创建模式 */
-            this.createMode()
+            this.createMode(params.newEntity)
             break
-          case Act.Finish:
-            // TODO nothing to do for draw a graph ?
-            break
+          default:
+            throw new Error(`invalid action: mode=${Mode[this.mode]}, act=${Act[action]}`)
         }
         break
 
       case Mode.Select:
         switch (action) {
           case Act.Create:
-            this.finishCurrentSelect()
-            this.createMode()
+            this.clearSelect()
+            this.createMode(params.newEntity)
             break
           case Act.Select:
-            this.finishCurrentSelect()
+            this.setSelectEntity(params.entity)
             this.editMode()
             break
           case Act.Finish:
-            this.finishCurrentSelect()
+            this.clearSelect()
             this.viewMode()
             break
+          default:
+            throw new Error(`invalid action: mode=${Mode[this.mode]}, act=${Act[action]}`)
         }
         break
 
       case Mode.Create:
         switch (action) {
           case Act.Finish:
-            if (this.currentEditEnt.isCtlNumValid()) {
-              this.currentEditEnt.finish()
-              if (this.editAfterCreate) {
-                this.setCurrentEditEnt(this.currentEditEnt)
-                this.editMode()
-              }else {
-                this.selectMode()
-              }
-            }else {
-              this.currentEditEnt.delete()
-              this.selectMode()
-            }
+            this.clearCreate()
+            this.selectMode()
             break
           case Act.Create:
-            this.createMode()
+            this.clearCreate()
+            this.createMode(params.newEntity)
             break
+          default:
+            throw new Error(`invalid action: mode=${Mode[this.mode]}, act=${Act[action]}`)
         }
         break
 
       case Mode.Edit:
         switch (action) {
           case Act.UnSelect:
-            this.finishCurrentEdit()
+            this.clearEdit()
             this.selectMode()
             break
           case Act.Create:
-            this.finishCurrentEdit()
-            this.createMode()
+            this.clearEdit()
+            this.createMode(params.newEntity)
             break
           case Act.Pickup:
             this.ctlEditMode()
             break
-          case Act.Finish:
-            this.finishCurrentEdit()
-            this.selectMode()
-            break
+          default:
+            throw new Error(`invalid action: mode=${Mode[this.mode]}, act=${Act[action]}`)
         }
         break
 
       case Mode.CtlEdit:
         switch (action) {
-          case Act.Finish:
-            this.finishCurrentCtledit()
-            this.editMode()
-            break
           case Act.PickDown:
-            this.finishCurrentCtledit()
+            this.clearCtlEdit(false)
             this.editMode()
             break
           case Act.PickReset:
-            this.finishCurrentCtledit()
+            this.clearCtlEdit(true)
             this.editMode()
             break
+          default:
+            throw new Error(`invalid action: mode=${Mode[this.mode]}, act=${Act[action]}`)
         }
+        break
+      default:
+        throw new Error(`invalid mode: mode=${Mode[this.mode]}, act=${Act[action]}`)
     }
   }
 
@@ -198,8 +182,9 @@ export default class EditMode {
     this.mouseHandler.destory()
   }
 
-  createMode() {
+  createMode(newEntity: Graph) {
     this.setMode(Mode.Create)
+    this.currentEditEnt = newEntity
     // add a new ctl point and pick it
     let lastCtl = this.currentEditEnt.addCtlPointCar(new Cesium.Cartesian3())
     this.pickUpCtl(lastCtl)
@@ -220,25 +205,43 @@ export default class EditMode {
       this.nextMode(Act.Finish)
     })
   }
+  clearCreate() {
+    let entity = this.currentEditEnt
+    if (entity.isCtlNumValid()) {
+      entity.finish()
+    } else {
+      entity.delete()
+    }
+  }
 
-  selectMode() {
+  private selectMode() {
     this.setMode(Mode.Select)
     //    if (this.propEditor) this.propEditor.show(false)
     this.hoveredEnt = undefined
     this.setMouseHieghtMove()
     this.mouseHandler.setLeftClick(event => {
       if (this.hoveredEnt) {
-        this.setCurrentEditEnt(this.hoveredEnt.id.graph)
-        this.nextMode(Act.Select)
+        let entity = this.hoveredEnt.id.graph
+        this.nextMode(Act.Select, { entity })
       }
     })
     this.mouseHandler.setRightClick(event => this.nextMode(Act.Finish))
+  }
+  private clearSelect() {
+    if (this.hoveredEnt) {
+      this.hoveredEnt.id.graph.lowLight()
+    }
+  }
+  private setSelectEntity(entity: Graph) {
+    entity.lowLight()
+    this.currentEditEnt = entity
+    entity.toEdit()
+    this.callSelectHandler(entity)
   }
 
   editMode() {
     this.setMode(Mode.Edit)
     //    if (this.propEditor) this.propEditor.show(true, this.currentEditEnt)
-    this.currentEditEnt.toEdit()
     this.setMouseMove()
     this.mouseHandler.setLeftClick(event => {
       if (this.drillCtl(event.position)) {
@@ -246,8 +249,15 @@ export default class EditMode {
       }
     })
     this.mouseHandler.setRightClick(event => {
-      this.nextMode(Act.Finish)
+      this.nextMode(Act.UnSelect)
     })
+  }
+  clearEdit() {
+    this.currentEditEnt.finish()
+    if (this.graphFinishHandler) {
+      this.graphFinishHandler(this.currentEditEnt)
+    }
+    this.currentEditEnt = undefined
   }
 
   ctlEditMode() {
@@ -256,6 +266,18 @@ export default class EditMode {
     this.setMouseMove()
     this.mouseHandler.setLeftClick(event => this.nextMode(Act.PickDown))
     this.mouseHandler.setRightClick(event => this.nextMode(Act.PickReset))
+    this.mouseHandler.setMiddleClick(event => this.nextMode(Act.PickReset))
+  }
+
+  clearCtlEdit(isReset: boolean) {
+    if (this.pickedctl) {
+      if (!isReset) {
+        this.pickDownCtl(this.pickedctl)
+      } else {
+        this.pickResetCtl(this.pickedctl)
+      }
+      this.pickedctl = undefined
+    }
   }
 
   private modeCursor = {
@@ -272,27 +294,10 @@ export default class EditMode {
     console.log(`into ${Mode[this.mode]} mode`)
   }
 
-  //TODO 在select模式下，发生select act时直接调用
-  private setCurrentEditEnt(ent: Graph | undefined) {
-    console.log('select a graph: ', ent)
-    this.currentEditEnt = ent
+  private callSelectHandler(ent: Graph) {
     if (this.graphSelectHandler) {
       this.graphSelectHandler(ent)
     }
-  }
-
-  private finishCurrentSelect() {
-    if (this.hoveredEnt) {
-      this.hoveredEnt.id.graph.lowLight()
-    }
-  }
-
-  private finishCurrentEdit() {
-    this.currentEditEnt.finish()
-    if (this.graphFinishHandler) {
-      this.graphFinishHandler(this.currentEditEnt)
-    }
-    this.currentEditEnt = undefined
   }
 
   private initKeyboardCreate() {
@@ -325,11 +330,16 @@ export default class EditMode {
     })
   }
 
+  private initKeyboardCtledit() {
+    kb.withContext(Mode.CtlEdit, () => {
+      kb.bind('1', (e) => console.log('ctledit: ', e, this))
+    })
+  }
+
   private deleteSelectGraph() {
     if (this.currentEditEnt) {
       let graph = this.currentEditEnt
       this.currentEditEnt.delete()
-      this.setCurrentEditEnt(undefined)
       this.nextMode(Act.Finish)
       return graph
     } else {
@@ -338,18 +348,6 @@ export default class EditMode {
     }
   }
 
-  private finishCurrentCtledit() {
-    if (this.pickedctl) {
-      this.pickDownCtl(this.pickedctl)
-      this.pickedctl = undefined
-    }
-  }
-
-  private initKeyboardCtledit() {
-    kb.withContext(Mode.CtlEdit, () => {
-      kb.bind('1', (e) => console.log('ctledit: ', e, this))
-    })
-  }
 
   private drillCtl(position): Cesium.Entity | undefined{
     let objs = this.scene.drillPick(position)
@@ -365,7 +363,6 @@ export default class EditMode {
     } else {
       return undefined
     }
-
   }
 
   private setMouseHieghtMove() {
@@ -449,6 +446,7 @@ export default class EditMode {
     ctl.position = ctl.position.getValue(Cesium.JulianDate.now())
   }
 
+   //TODO undo ctl move option
   private pickResetCtl(ctl: Cesium.Entity) {
     ctl.label.text = ctl.label.text.getValue(Cesium.JulianDate.now())
     ctl.position = ctl.position.getValue(Cesium.JulianDate.now())
